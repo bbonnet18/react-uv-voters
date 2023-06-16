@@ -41,7 +41,7 @@ app.get('/voters/:voter/*', function(req, res) {
 });
 
 /****************************
-* Example post method *
+* Example post method * 
 ****************************/
 
 app.post('/voters/:voter', function(req, res) {
@@ -74,12 +74,12 @@ app.put('/voters/:voter/*', function(req, res) {
 
 app.delete('/voters/:voter', function(req, res) {
   // Add your code here
-  res.json({success: 'delete call succeed!', url: req.url});
+  res.json({success: 'delete call succeed - amazeness!', url: req.url});
 });
 
 app.delete('/voters/:voter/*', function(req, res) {
   // Add your code here
-  res.json({success: 'delete call succeed!', url: req.url});
+  res.json({success: 'delete call succeed - greating!', url: req.url});
 });
 
 app.listen(3000, function() {
