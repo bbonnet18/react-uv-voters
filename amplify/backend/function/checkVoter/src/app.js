@@ -32,12 +32,12 @@ app.use(function(req, res, next) {
 
 app.get('/votes/:voter', function(req, res) {
   // Add your code here
-  res.json({success: 'get call succeed!', url: req.url});
+  res.json({success: 'get call succeed - you are done!', url: req.url});
 });
 
 app.get('/votes/:voter/*', function(req, res) {
   // Add your code here
-  res.json({success: 'get call succeed!', url: req.url});
+  res.json({success: 'get call succeed - all done!', url: req.url});
 });
 
 /****************************
