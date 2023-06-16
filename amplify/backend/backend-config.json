@@ -1,4 +1,36 @@
 {
+  "api": {
+    "votersapi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "getVoters"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "checkVoter"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "sendKey"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
   "auth": {
     "reactuvvoters1e466fb6": {
       "customAuth": false,
@@ -23,6 +55,73 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "function": {
+    "checkVoter": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "getVoters": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "sendKey": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_checkVoter_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "checkVoter"
+        }
+      ]
+    },
+    "AMPLIFY_function_checkVoter_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "checkVoter"
+        }
+      ]
+    },
+    "AMPLIFY_function_getVoters_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getVoters"
+        }
+      ]
+    },
+    "AMPLIFY_function_getVoters_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getVoters"
+        }
+      ]
+    },
+    "AMPLIFY_function_sendKey_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "sendKey"
+        }
+      ]
+    },
+    "AMPLIFY_function_sendKey_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "sendKey"
+        }
+      ]
     }
   }
 }
