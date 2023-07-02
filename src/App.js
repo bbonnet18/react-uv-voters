@@ -1,53 +1,69 @@
 import logo from './logo.svg';
 import './App.css';
-import "@aws-amplify/ui-react/styles.css";
-import {Amplify,API} from "aws-amplify";
-import awsconfig from './aws-exports';  
 
 
-import {
-  withAuthenticator,
-  Button,
-  Heading,
-  Image,
-  View,
-  Card,
-} from "@aws-amplify/ui-react";
+import { InputGroup, Form, Card, Button, Container, Image, Spinner } from "react-bootstrap";
+import { useState } from 'react';
 
-function App({ signOut }) {
+function App() {
 
-  Amplify.configure(awsconfig);
+  const [loading, setLoading] = useState(false);
 
+  // function getData() {
 
-  function getData() {
-    const apiName = 'votersapi';
-    const path = '/voters/voter';
-    const myInit = {
-      headers: {} // OPTIONAL
-    };
-  
-    return API.get(apiName, path, myInit);
-  }
-  
-  (async function() {
-    const response = await getData();
-    console.log(response);
-  })();
+  // }
 
-  const getVoters =  () => {
+  // (async function() {
+  //   const response = await getData();
+  //   console.log(response);
+  // })();
+
+  const getVoters = () => {
     console.log('getting voters')
   }
 
   return (
-    <View className="App">
+    <Container>
       <Card>
         <Image src={logo} className="App-logo" alt="logo" />
-        <Heading level={1}>We now have Auth!</Heading>
+
       </Card>
       <Button onClick={getVoters}>Get Voters</Button>
-      <Button onClick={signOut}>Sign Out</Button>
-    </View>
+      <Form>
+      <InputGroup className="mb-3">
+        <InputGroup.Text id="aFirst">First</InputGroup.Text>
+        <Form.Control id="lastName" size="lg" type="text" placeholder="first name" />
+        <InputGroup.Text id="aLast">Last</InputGroup.Text>
+        <Form.Control id="firstName" size="lg" type="text" placeholder="last name" />
+      </InputGroup>
+      <InputGroup>
+        <InputGroup.Text id="aCity">City</InputGroup.Text>
+        <Form.Control id="city" size="lg" type="text" placeholder="Large text" />
+        <InputGroup.Text id="aState-addon1">State</InputGroup.Text>
+        <Form.Control id="state" size="lg" type="text" placeholder="Large text" />
+      </InputGroup>
+      <InputGroup>
+        <InputGroup.Text id="aPhone">Phone</InputGroup.Text>
+        <Form.Control id="phone" size="lg" type="tel" placeholder="Large text" />
+      </InputGroup>
+      <Button variant='primary' onClick={()=>setLoading(!loading)}>Submit</Button>
+      </Form>
+      <br/>
+      <Card style={{ width: '18rem' }}>
+      <Card.Body>
+        <Card.Title>Results</Card.Title>
+          {loading ? 
+           <Spinner animation="border" role="status">
+           <span className="visually-hidden">Loading...</span>
+         </Spinner> :  <Card.Text>
+          Call results will show here
+        </Card.Text>}
+      </Card.Body>
+    </Card>
+    </Container>
+
+
   );
 }
 
-export default withAuthenticator(App);
+export default App;
