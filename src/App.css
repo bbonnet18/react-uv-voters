@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+
+.invalid {
+
+}
+
+.invalid .form-control:invalid{
+  border:1px red inset;
+}
