@@ -23,19 +23,23 @@ function VoterList (){
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>#</th>
+              <th>Phone</th>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Username</th>
+              <th>Age</th>
+              <th>State</th>
+              <th>City</th>
             </tr>
           </thead>
           <tbody>
             { voters && voters.length ? voters.map((itm,ind)=>{
               return <tr key={ind}> 
-              <td>1</td>
+              <td>{itm.phone}</td>
               <td>{itm.firstname}</td>
               <td>{itm.lastname}</td>
-              <td>@mdo</td>
+              <td>{itm.age}</td>
+              <td>{itm.state}</td>
+              <td>{itm.county}</td>
             </tr>
             }) : <></>}
           
