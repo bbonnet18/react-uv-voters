@@ -29,11 +29,13 @@ function App() {
     if(isValid){
       form.classList.remove('invalid');
       var formFields = form.querySelectorAll('.form-control');
+      var genderSelect = form.querySelector('#aGender');
       var payload = {}
       for(let i=0; i<formFields.length; i++){
         console.log('val: ', formFields[i].value);
         payload[formFields[i].name] = formFields[i].value; 
       }
+      payload['gender'] = genderSelect.value;
       let res = await axios.post("http://localhost:3003/admin/add-voter",payload);
       form.reset();
       console.log(res);
@@ -66,10 +68,17 @@ function App() {
         <Form.Control id="age" name="age" size="lg" type="number" placeholder="age" defaultValue={currentVoter.state} required/>
       </InputGroup>
       <InputGroup className='mb-3'>
+      <Form.Check // prettier-ignore
+            type={'checkbox'}
+            id={'opt-in'}
+            label={'Agree to receive text messages'} required
+          />
+      </InputGroup>
+      <InputGroup className='mb-3'>
         <Form.Select aria-label="Gender" name="gender" id="aGender" required defaultValue="F">
           <option value="F">Female</option>
           <option value="M">Male</option>
-          <option value="U">Unknow</option>
+          <option value="U">Unknown</option>
         </Form.Select>
       </InputGroup>
       <Button variant='primary' onClick={()=>addVoter()}>Submit</Button>
