@@ -39,7 +39,7 @@ function VoterList (){
               <td>{itm.lastname}</td>
               <td>{itm.age}</td>
               <td>{itm.state}</td>
-              <td>{itm.county}</td>
+              <td>{itm.city}</td>
             </tr>
             }) : <></>}
           
