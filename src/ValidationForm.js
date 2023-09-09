@@ -4,13 +4,11 @@ import {Form, InputGroup, Card, Spinner, Button} from "react-bootstrap";
 import axios from 'axios';
 
 
-function ValidationForm({validation}) {
+function ValidationForm({validation,setValidation}) {
 
     
     const [loading,setLoading] = useState(false);
     const [resultsText,setResultsText] = useState(null);
-
-
 
    // check fields and attempt to add
     const addValidation = async () => {
@@ -22,6 +20,7 @@ function ValidationForm({validation}) {
       var formFields = form.querySelectorAll('.form-control');
       var genderSelect = form.querySelector('#aGender');
       var stateSelect = form.querySelector('#aState');
+      var validCheck = form.querySelector("#valid");
       var payload = {}
       for (let i = 0; i < formFields.length; i++) {
         console.log('val: ', formFields[i].value);
@@ -29,14 +28,14 @@ function ValidationForm({validation}) {
       }
       payload['gender'] = genderSelect.value;
       payload['state'] = stateSelect.value; 
-
+      payload['valid'] = validCheck.value;
       console.log('payload: ', payload);
 
       setLoading(true)
-    //   let res = await axios.post("https://vote.u-vote.us/admin/add-Validation", payload);
-    //   form.reset();
-    //   console.log(res);
-    //   setResultsText("confirmed");
+      let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
+      form.reset();
+      console.log(res);
+      setResultsText("confirmed");
       setLoading(false)
     } else {
       form.classList.add('invalid');
@@ -49,16 +48,16 @@ function ValidationForm({validation}) {
         <Form id="ValidationForm">
         <InputGroup className="mb-3">
           <InputGroup.Text id="aFirst">First</InputGroup.Text>
-          <Form.Control id="firstName" name="firstname" size="lg" type="text" placeholder="first name" value={validation.firstname} required />
+          <Form.Control id="firstName" name="firstname" size="lg" type="text" placeholder="first name" onChange={()=>{}} value={validation.firstname} required />
           <InputGroup.Text id="aLast" className='form-col'>Last</InputGroup.Text>
-          <Form.Control id="lastName" name="lastname" size="lg" type="text" placeholder="last name" value={validation.lastname}  required />
+          <Form.Control id="lastName" name="lastname" size="lg" type="text" placeholder="last name" onChange={()=>{}} value={validation.lastname} required />
         </InputGroup>
         <InputGroup className='mb-3'>
           <InputGroup.Text id="aCity">City</InputGroup.Text>
-          <Form.Control id="city" name="city" size="lg" type="text" minLength={2} placeholder="city" value={validation.city}  required />
+          <Form.Control id="city" name="city" size="lg" type="text" minLength={2} placeholder="city" onChange={()=>{}} value={validation.city} required />
           <InputGroup.Text id="aState-addon1" className='form-col' >State</InputGroup.Text>
           {/* <Form.Control id="state" name="state" size="lg" type="text" minLength={2} maxLength={2} placeholder="state" defaultValue={currentValidation.state} required/> */}
-          <Form.Select aria-label="State" name="state" id="aState" required value={validation.state} >
+          <Form.Select aria-label="State" name="state" id="aState"  onChange={()=>{}}  required value={validation.state} >
             <option value="AL">Alabama</option>
             <option value="AK">Alaska</option>
             <option value="AZ">Arizona</option>
@@ -114,27 +113,27 @@ function ValidationForm({validation}) {
         </InputGroup>
         <InputGroup className='mb-3'>
           <InputGroup.Text id="aPhone" >Phone</InputGroup.Text>
-          <Form.Control id="phone" name="phone" size="lg" type="tel" placeholder="phone"  value={validation.phone}  required />
+          <Form.Control id="phone" name="phone" size="lg" type="tel" placeholder="phone" onChange={()=>{}} value={validation.phone}   required />
           <InputGroup.Text id="aAge" className='form-col' >Age</InputGroup.Text>
-          <Form.Control id="age" name="age" size="lg" type="number" placeholder="age" value={validation.age}  required />
+          <Form.Control id="age" name="age" size="lg" type="number" placeholder="age" onChange={()=>{}} value={validation.age}   required />
+        </InputGroup>
+        <InputGroup className='mb-3'>
+          <Form.Select aria-label="Gender" name="gender" id="aGender"  onChange={()=>{}} required value={validation.gender}  >
+            <option value="F">Female</option>
+            <option value="M">Male</option>
+            <option value="U">Unknown</option>
+          </Form.Select>
         </InputGroup>
         <InputGroup className='mb-3'>
           <Form.Check // prettier-ignore
             type={'checkbox'}
             id={'valid'}
-            label={'valid'} required
+            label={'valid'} required  onChange={(e)=>{setValidation({...validation,valid:e.target.value})}}  value={validation.valid}
           />
         </InputGroup>
         <InputGroup className='mb-3'>
           <InputGroup.Text id="aIdsample" >idsample</InputGroup.Text>
-          <Form.Control id="idsample" name="idsample" size="lg" type="text" placeholder="idsample"  required />
-        </InputGroup>
-        <InputGroup className='mb-3'>
-          <Form.Select aria-label="Gender" name="gender" id="aGender" required value={validation.gender} >
-            <option value="F">Female</option>
-            <option value="M">Male</option>
-            <option value="U">Unknown</option>
-          </Form.Select>
+          <Form.Control id="idsample" name="idsample" size="lg" type="text" onChange={(e)=>{setValidation({...validation,idsample:e.target.value})}}  placeholder="idsample" value={validation.idsample}  required />
         </InputGroup>
         <Button variant='primary' onClick={() => addValidation()}>Submit</Button>
         <Card style={{ width: '18rem' }}>

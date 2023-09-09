@@ -7,14 +7,15 @@ import axios from "axios";
 function ValidationList (){
     
     const starterValidation = {
-        "lastname": "",
-        "firstname": "",
-        "city": "",
-        "state": "",
-        "phone": "",
-        "gender":"",
-        "valid":false,
-        "idsample":""
+        "lastname": "clownface",
+        "firstname": "bobo",
+        "city": "circus",
+        "state": "IL",
+        "age" : "55",
+        "phone": "11231231234",
+        "gender":"U",
+        "valid":"true",
+        "idsample":"1111"
       }
 
     const [currentValidation,setCurrentValidation] = useState(starterValidation);
@@ -49,7 +50,7 @@ function ValidationList (){
     return (
         <>
         <h3>Update Validation</h3>
-        <ValidationForm validation={currentValidation}></ValidationForm>
+        <ValidationForm validation={currentValidation} setValidation={setCurrentValidation}></ValidationForm>
         <div className='img-preview-wrapper'>
                     <img id="previewImg" alt="preview image" src={img} className='img-preview'/>
         </div>
@@ -66,6 +67,7 @@ function ValidationList (){
               <th>Age</th>
               <th>State</th>
               <th>City</th>
+              <th>Gender</th>
               <th>valid</th>
               <th>idsample</th>
               <th>action</th>
@@ -80,6 +82,7 @@ function ValidationList (){
               <td>{itm.age}</td>
               <td>{itm.state}</td>
               <td>{itm.city}</td>
+              <td>{itm.gender}</td>
               <td>{itm.valid}</td>
               <td>{itm.idsample}</td>
               <td><Button onClick={()=>{
