@@ -48,3 +48,29 @@
 .invalid .form-control:invalid{
   border:1px red inset;
 }
+
+
+.img-preview-wrapper{
+  width:100%;
+  height:auto;
+  min-height: 200px;
+  background-position: center;
+  background-size: 180px;
+  background-image: url('person-badge.svg');
+  background-repeat: no-repeat;
+  border: 1px black outset;
+  
+
+}
+
+.img-preview-wrapper::after{
+  content: "preview image";
+}
+
+.img-preview{
+  visibility: visible;
+  max-width: 1000px;
+}
+.img-preview.showing{
+  visibility: visible;
+}

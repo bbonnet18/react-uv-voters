@@ -8,9 +8,8 @@ function VoterList (){
     var [voters,setVoters] = useState(null);
     useEffect(()=>{ 
         async function getVoters(){
-            voters = await axios.get("http://localhost:3003/admin/voter-list");
+            voters = await axios.get("https://vote.u-vote.us/admin/voter-list");
             if(voters && voters.data){
-              
               setVoters(voters.data);
             }else{
               console.error('noting back from call to server');
