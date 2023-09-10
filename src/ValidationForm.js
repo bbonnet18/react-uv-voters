@@ -1,6 +1,6 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import {Form, InputGroup, Card, Spinner, Button} from "react-bootstrap";
+import {Form, InputGroup, Card, Spinner, FormLabel, Button} from "react-bootstrap";
 import axios from 'axios';
 
 
@@ -20,7 +20,7 @@ function ValidationForm({validation,setValidation}) {
       var formFields = form.querySelectorAll('.form-control');
       var genderSelect = form.querySelector('#aGender');
       var stateSelect = form.querySelector('#aState');
-      var validCheck = form.querySelector("#valid");
+      var validCheck = form.querySelector("#Valid");
       var payload = {}
       for (let i = 0; i < formFields.length; i++) {
         console.log('val: ', formFields[i].value);
@@ -28,7 +28,7 @@ function ValidationForm({validation,setValidation}) {
       }
       payload['gender'] = genderSelect.value;
       payload['state'] = stateSelect.value; 
-      payload['valid'] = validCheck.value;
+      payload['valid'] = (validCheck.checked) ? true : false;
       console.log('payload: ', payload);
 
       setLoading(true)
@@ -118,7 +118,8 @@ function ValidationForm({validation,setValidation}) {
           <Form.Control id="age" name="age" size="lg" type="number" placeholder="age" onChange={()=>{}} value={validation.age}   required />
         </InputGroup>
         <InputGroup className='mb-3'>
-          <Form.Select aria-label="Gender" name="gender" id="aGender"  onChange={()=>{}} required value={validation.gender}  >
+            <InputGroup.Text>Gender</InputGroup.Text>
+          <Form.Select aria-label="Gender" name="gender" id="aGender"  onChange={(e)=>{setValidation({...validation,gender:e.target.value})}} required value={validation.gender}  >
             <option value="F">Female</option>
             <option value="M">Male</option>
             <option value="U">Unknown</option>
@@ -127,12 +128,12 @@ function ValidationForm({validation,setValidation}) {
         <InputGroup className='mb-3'>
           <Form.Check // prettier-ignore
             type={'checkbox'}
-            id={'valid'}
+            id={'Valid'}
             label={'valid'} required  onChange={(e)=>{setValidation({...validation,valid:e.target.value})}}  value={validation.valid}
           />
         </InputGroup>
         <InputGroup className='mb-3'>
-          <InputGroup.Text id="aIdsample" >idsample</InputGroup.Text>
+          <FormLabel>ID sample</FormLabel>
           <Form.Control id="idsample" name="idsample" size="lg" type="text" onChange={(e)=>{setValidation({...validation,idsample:e.target.value})}}  placeholder="idsample" value={validation.idsample}  required />
         </InputGroup>
         <Button variant='primary' onClick={() => addValidation()}>Submit</Button>
