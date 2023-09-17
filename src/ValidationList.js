@@ -15,7 +15,8 @@ function ValidationList (){
         "phone": "11231231234",
         "gender":"U",
         "valid":"true",
-        "idsample":"1111"
+        "idsample":"1111",
+        "idtype":"D"
       }
 
     const [currentValidation,setCurrentValidation] = useState(starterValidation);
@@ -70,6 +71,7 @@ function ValidationList (){
               <th>Gender</th>
               <th>valid</th>
               <th>idsample</th>
+              <th>idtype</th>
               <th>action</th>
             </tr>
           </thead>
@@ -85,6 +87,7 @@ function ValidationList (){
               <td>{itm.gender}</td>
               <td>{itm.valid}</td>
               <td>{itm.idsample}</td>
+              <td>{itm.idtype}</td>
               <td><Button onClick={()=>{
                 setCurrentValidation(itm);
               }}>Load</Button></td>

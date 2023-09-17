@@ -3,20 +3,21 @@ import Table from "react-bootstrap/Table";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function VoterList (){
+function DuplicateList ({newVoter}){
    
-    var [voters,setVoters] = useState(null);
+    var [duplicates,setDuplicates] = useState(null);
     useEffect(()=>{ 
-        async function getVoters(){
-            voters = await axios.get("https://vote.u-vote.us/admin/voter-list");
-            if(voters && voters.data){
-              setVoters(voters.data);
+        console.log('trying to get duplicates')
+        async function getDuplicates(){
+            duplicates = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
+            if(duplicates && duplicates.data){
+              setDuplicates(duplicates.data);
             }else{
               console.error('noting back from call to server');
             }
         }
-        getVoters();
-    },[])
+        getDuplicates();
+    },[newVoter])
 
     return (
         <Table striped bordered hover>
@@ -31,7 +32,7 @@ function VoterList (){
             </tr>
           </thead>
           <tbody>
-            { voters && voters.length ? voters.map((itm,ind)=>{
+            { duplicates && duplicates.length ? duplicates.map((itm,ind)=>{
               return <tr key={ind}> 
               <td>{itm.phone}</td>
               <td>{itm.firstname}</td>
@@ -49,4 +50,4 @@ function VoterList (){
 
 
 
-export default VoterList
+export default DuplicateList
