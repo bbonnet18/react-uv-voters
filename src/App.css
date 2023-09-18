@@ -54,23 +54,38 @@
   width:100%;
   height:auto;
   min-height: 200px;
-  background-position: center;
-  background-size: 180px;
-  background-image: url('person-badge.svg');
-  background-repeat: no-repeat;
-  border: 1px black outset;
+  box-sizing: border-box;
+  padding: 10px;
   
-
 }
 
-.img-preview-wrapper::after{
-  content: "preview image";
+.img-preview-wrapper{
+  width:100%;
+  height:auto;
+  min-height: 200px;
+  box-sizing: border-box;
+  padding: 10px;
+  
 }
 
 .img-preview{
-  visibility: visible;
-  max-width: 1000px;
+  background-position: center;
+  background-size: 180px;
+  background-image: url('person-vcard-fill.svg');
+  background-repeat: no-repeat;
+  border: 2px solid grey;
+  border-radius: 15px;
 }
-.img-preview.showing{
+
+.img-preview.selfy{
+  background-image: url('person-bounding-box.svg');
+}
+
+
+.img-preview img{
+  visibility: hidden;
+  width:100%;
+}
+.img-preview img.showing{
   visibility: visible;
 }

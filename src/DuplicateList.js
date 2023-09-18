@@ -7,7 +7,7 @@ function DuplicateList ({newVoter}){
    
     var [duplicates,setDuplicates] = useState(null);
     useEffect(()=>{ 
-        console.log('trying to get duplicates')
+        console.log('trying to get duplicates', newVoter)
         async function getDuplicates(){
             duplicates = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
             if(duplicates && duplicates.data){
@@ -16,7 +16,11 @@ function DuplicateList ({newVoter}){
               console.error('noting back from call to server');
             }
         }
-        getDuplicates();
+        if(newVoter && newVoter.lastname){
+            getDuplicates();
+        }
+         
+        
     },[newVoter])
 
     return (
@@ -29,6 +33,8 @@ function DuplicateList ({newVoter}){
               <th>Age</th>
               <th>State</th>
               <th>City</th>
+              <th>ID Type</th>
+              <th>ID Sample</th>
             </tr>
           </thead>
           <tbody>
@@ -40,6 +46,8 @@ function DuplicateList ({newVoter}){
               <td>{itm.age}</td>
               <td>{itm.state}</td>
               <td>{itm.city}</td>
+              <td>{itm.idtype}</td>
+              <td>{itm.idsample}</td>
             </tr>
             }) : <></>}
           

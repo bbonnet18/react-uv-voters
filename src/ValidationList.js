@@ -1,6 +1,6 @@
 import Table from "react-bootstrap/Table";
 import ValidationForm from "./ValidationForm";
-import { Button } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -22,6 +22,7 @@ function ValidationList (){
     const [currentValidation,setCurrentValidation] = useState(starterValidation);
     const [validations,setValidations] = useState();
     const [img, setImg] = useState(null);
+    const [selfy, setSelfy] = useState(null);
     useEffect(()=>{ 
         async function getValidations(){
             let myvalidations = await axios.get("http://localhost:3003/admin/validation-list");
@@ -34,31 +35,45 @@ function ValidationList (){
         getValidations();
     },[])
 
-    async function getIDImg(){
+    async function getIDImgs(){
 
-        let myImgUrl = await axios.get(`http://localhost:3003/admin/id-image?phone=${currentValidation.phone}`);
-        if(myImgUrl){
-            setImg(myImgUrl.data.link);
+        let myImgUrls = await axios.get(`http://localhost:3003/admin/id-image?phone=${currentValidation.phone}`);
+        if(myImgUrls){
+            setImg(myImgUrls.data.idlink);
+            setSelfy(myImgUrls.data.selfylink);
         }
+
+        let imgPreviews = document.querySelectorAll('.img-preview img');
+        imgPreviews.forEach((itm)=>{
+          itm.classList.add('showing');
+        })
 
     }
 
     useEffect(()=>{
         //console.log('updated - ', currentValidation)
         console.log('image',img)
-    },[img])
+    },[img,selfy])
 
     return (
-        <>
+        <Container>
         <h3>Update Validation</h3>
         <ValidationForm validation={currentValidation} setValidation={setCurrentValidation}></ValidationForm>
-        <div className='img-preview-wrapper'>
+        {/* <div className='img-preview-wrapper'>
                     <img id="previewImg" alt="preview image" src={img} className='img-preview'/>
-        </div>
+        </div> */}
+        <Row className="img-preview-wrapper" >
+                    <Col className='img-preview' lg={{span:4,offset:2}}>
+                    <img id="previewImg" alt="ID" src={img} />
+                    </Col>
+                    <Col className='img-preview selfy' lg={{span:4,offset:2}}>
+                    <img id="selfyImg" alt="selfy" src={selfy} />
+                    </Col>
+        </Row>
         <div><Button onClick={async ()=>{
-            getIDImg();
+            getIDImgs();
 
-        }}>Get Selfy</Button></div>
+        }}>Get ID Images</Button></div>
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -100,7 +115,7 @@ function ValidationList (){
         <hr></hr>
         
 
-        </>
+        </Container>
       );
 }
 
