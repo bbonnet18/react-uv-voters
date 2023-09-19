@@ -67,7 +67,7 @@ function VoterForm({ checkVoter }) {
             console.log('payload: ', payload);
 
             setLoading(true)
-            let res = await axios.post("http://localhost:3003/admin/add-voter", payload);
+            let res = await axios.post("http://vote.u-vote.us/admin/add-voter", payload);
             form.reset();
             console.log(res);
             setResultsText("confirmed");

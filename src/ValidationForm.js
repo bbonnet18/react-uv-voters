@@ -32,7 +32,7 @@ function ValidationForm({validation,setValidation}) {
       console.log('payload: ', payload);
 
       setLoading(true)
-      let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
+      let res = await axios.post("http://vote.u-vote.us/admin/validation-list", payload);
       form.reset();
       console.log(res);
       setResultsText("confirmed");

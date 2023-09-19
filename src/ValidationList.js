@@ -25,7 +25,7 @@ function ValidationList (){
     const [selfy, setSelfy] = useState(null);
     useEffect(()=>{ 
         async function getValidations(){
-            let myvalidations = await axios.get("http://localhost:3003/admin/validation-list");
+            let myvalidations = await axios.get("http://vote.u-vote.us/admin/validation-list");
             if(myvalidations && myvalidations.data){
               setValidations(myvalidations.data.validations);
             }else{
@@ -37,7 +37,7 @@ function ValidationList (){
 
     async function getIDImgs(){
 
-        let myImgUrls = await axios.get(`http://localhost:3003/admin/id-image?phone=${currentValidation.phone}`);
+        let myImgUrls = await axios.get(`http://vote.u-vote.us/admin/id-image?phone=${currentValidation.phone}`);
         if(myImgUrls){
             setImg(myImgUrls.data.idlink);
             setSelfy(myImgUrls.data.selfylink);
