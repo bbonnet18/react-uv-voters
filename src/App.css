@@ -13,6 +13,14 @@
   }
 }
 
+body{
+  background-color: darkslategrey !important;
+}
+
+.container{
+  background-color: whitesmoke
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -39,6 +47,23 @@
 
 .form-col{
   margin-left:10px !important;
+}
+
+.header{
+  font-size: x-large;
+  font-weight: 600;
+  line-height: 1.5em;
+  padding: 10px;
+  background-color: dimgray;
+  vertical-align: middle;
+}
+.header img{
+  width:45px;
+  height: 45px;
+} 
+.header div{
+  padding-top:5px;
+  display: inline-block;
 }
 
 .invalid {
@@ -77,6 +102,23 @@
   border-radius: 15px;
 }
 
+.img-preview.ID{
+  max-height: 350px;
+}
+
+.img-preview.ID .id-img-holder{
+  max-height: 300px;
+  clip-path: inset(5px 5px 5px 5px);
+}
+
+.img-preview.ID .id-btn-holder div{
+  margin: 0 auto;
+  display: inline-block;
+  width: auto;
+  text-align: center;
+}
+
+
 .img-preview.selfy{
   background-image: url('person-bounding-box.svg');
 }
@@ -88,4 +130,25 @@
 }
 .img-preview img.showing{
   visibility: visible;
+}
+
+
+.img-preview button{
+  max-width: 50%;
+}
+
+/** Forms **/
+
+.form-control:invalid{
+  border-color: red;
+}
+
+/** Modal **/
+
+.modal.show .modal-dialog{
+  max-width: 80% !important;
+}
+
+.modal.show .modal-body{
+  text-align: center;
 }

@@ -9,7 +9,7 @@ function DuplicateList ({newVoter}){
     useEffect(()=>{ 
         console.log('trying to get duplicates', newVoter)
         async function getDuplicates(){
-            duplicates = await axios.post("http://vote.u-vote.us/admin/check-duplicates",newVoter);
+            duplicates = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
             if(duplicates && duplicates.data){
               setDuplicates(duplicates.data);
             }else{

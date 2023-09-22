@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import {  Container, Tabs, Tab } from "react-bootstrap";
+import {  Container, Tabs, Tab, Row, Col, Navbar } from "react-bootstrap";
 import DuplicateList from './DuplicateList';
 import ValidationList from './ValidationList';
 import VoterForm from './VoterForm';
@@ -18,7 +18,18 @@ function App() {
 
   return (
     <Container> 
-      <h2>U-Vote Admin</h2>
+      <Row className='header'>
+        <Col lg={12}>
+        <img
+              src="/vote_draft_icon.png"
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+              alt="U-Vote"
+            />
+          <div >U-Vote Admin</div>
+        </Col>
+      </Row>
       <Tabs
       defaultActiveKey="voterList"
       id="uncontrolled-tab-example"
