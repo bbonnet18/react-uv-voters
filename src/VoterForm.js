@@ -160,6 +160,7 @@ function VoterForm({ checkVoter }) {
                 />
             </InputGroup>
             <InputGroup className='mb-3'>
+            <InputGroup.Text className='form-col'>Gender</InputGroup.Text>
                 <Form.Select aria-label="Gender" name="gender" id="aGender" required defaultValue="F">
                     <option value="F">Female</option>
                     <option value="M">Male</option>

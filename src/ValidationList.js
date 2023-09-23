@@ -1,6 +1,6 @@
 import Table from "react-bootstrap/Table";
 import ValidationForm from "./ValidationForm";
-import { Container, Row, Col, Button, Modal } from "react-bootstrap";
+import { Container, Form, InputGroup, Row, Col, Button, Modal } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -35,19 +35,17 @@ function ValidationList (){
       setShow(true)
     };
 
-
-
-    useEffect(()=>{ 
-        async function getValidations(){
-            let myvalidations = await axios.get("https://vote.u-vote.us/admin/validation-list");
-            if(myvalidations && myvalidations.data){
-              setValidations(myvalidations.data.validations);
-            }else{
-              console.error('noting back from call to server');
-            }
-        }
-        getValidations();
-    },[])
+    async function getValidations(){
+      let myvalidations = await axios.get("http://localhost:3003/admin/validation-list");
+      
+      console.log('validations returned: ', myvalidations);
+      if(myvalidations && myvalidations.data){
+        setValidations(myvalidations.data.validations);
+        setCurrentValidation(myvalidations.data.validations[0]);
+      }else{
+        console.error('noting back from call to server');
+      }
+    }
 
     async function getIDImgs(){
 
@@ -100,7 +98,12 @@ function ValidationList (){
 
         }}>Get ID Images</Button></div>
         <ValidationForm validation={currentValidation} setValidation={setCurrentValidation}></ValidationForm>
-        <Table striped bordered hover>
+        <Row>
+          <Col lg={4}>
+            <Button  onClick={getValidations} alt="get next validation">Get next validation</Button>
+          </Col>
+        </Row>
+        {/* <Table striped bordered hover>
           <thead>
             <tr>
               <th>Phone</th>
@@ -137,7 +140,7 @@ function ValidationList (){
             }) : <></>}
           
           </tbody>
-        </Table>
+        </Table> */}
         <hr></hr>
         <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

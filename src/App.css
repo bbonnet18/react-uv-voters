@@ -134,7 +134,7 @@ body{
 
 
 .img-preview button{
-  max-width: 50%;
+
 }
 
 /** Forms **/
@@ -149,6 +149,17 @@ body{
   max-width: 80% !important;
 }
 
+.modal-dialog .modal-content{
+  max-height: 800px;
+  overflow-y: scroll;
+}
+
 .modal.show .modal-body{
   text-align: center;
+}
+
+.modal-body {
+  padding: 5px;
+  overflow-x: scroll;
+  overflow-y: scroll;
 }

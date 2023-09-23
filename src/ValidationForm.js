@@ -32,7 +32,7 @@ function ValidationForm({validation,setValidation}) {
       console.log('payload: ', payload);
 
       setLoading(true)
-      let res = await axios.post("https://vote.u-vote.us/admin/validation-list", payload);
+      let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
       form.reset();
       console.log(res);
       setResultsText("confirmed");
@@ -41,6 +41,26 @@ function ValidationForm({validation,setValidation}) {
       form.classList.add('invalid');
     }
 
+  }
+
+
+  const rejectValidation = async () => {
+
+    const form = document.getElementById('ValidationForm');
+   
+      var reasonSelect = form.querySelector('#rejectionReason');
+      var payload = {
+        reason:reasonSelect.value,
+        phone:validation.phone
+      }
+
+      setLoading(true)
+      let res = await axios.post("http://localhost:3003/admin/reject-validation", payload);
+      form.reset();
+      console.log(res);
+      setResultsText("confirmed");
+      setLoading(false)
+   
   }
 
 
@@ -81,10 +101,23 @@ function ValidationForm({validation,setValidation}) {
           <FormLabel>ID sample</FormLabel>
           <Form.Control id="idsample" name="idsample" size="lg" type="text" onChange={(e)=>{setValidation({...validation,idsample:e.target.value})}}  placeholder="idsample" value={validation.idsample}  required />
         </InputGroup>
-        <Button variant='primary' onClick={() => addValidation()}> {loading ?
+        <div>
+        <Button variant='success' onClick={() => addValidation()} disabled={loading}> {loading ?
             <Spinner animation="border" role="status">
               <span className="visually-hidden">Loading...</span>
-            </Spinner> : "Submit"}</Button>
+            </Spinner> : "Accept"}</Button>
+        </div>
+        <Form.Select aria-label="rejection reason" name="reason" id="rejectionReason" defaultValue="invalid_id">
+                    <option value="invalid_id">Invalid ID</option>
+                    <option value="picture_too_dark">Picture too dark</option>
+                    <option value="picture_poor_quality">Poor quality picture</option>
+        </Form.Select>
+         
+        <Button variant="danger" onClick={()=>{rejectValidation()}} disabled={loading}>{loading ?
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner> : "Reject"}</Button>
+        
         <Card style={{ width: '18rem' }}>
         <Card.Body>
           <Card.Title id="resCard">Results</Card.Title>
