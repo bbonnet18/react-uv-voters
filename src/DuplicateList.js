@@ -1,22 +1,34 @@
-import Table from "react-bootstrap/Table";
-
+import { Spinner, Table} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function DuplicateList ({newVoter}){
+function DuplicateList ({newVoter,setDuplicatesfound}){
    
-    var [duplicates,setDuplicates] = useState(null);
+    const [duplicates,setDuplicates] = useState(null);
+    const [loading,setLoading] = useState(false);
+
     useEffect(()=>{ 
-        console.log('trying to get duplicates', newVoter)
+     
         async function getDuplicates(){
-            duplicates = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
-            if(duplicates && duplicates.data){
-              setDuplicates(duplicates.data);
+            const duplicatesList = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
+            if(duplicatesList && duplicatesList.data){
+              if(duplicatesList.data.length === 0){
+                console.log('-------->>>>> No Dups!');
+                setDuplicatesfound(false);
+              }else{
+                console.log('-------->>>>>Definite Dups!');
+                setDuplicatesfound(true);
+              }
+              setDuplicates(duplicatesList.data);
+              setLoading(false);
             }else{
               console.error('noting back from call to server');
+              setDuplicatesfound(false);
+              setLoading(false);
             }
         }
         if(newVoter && newVoter.lastname){
+          setLoading(true);
             getDuplicates();
         }
          
@@ -24,7 +36,13 @@ function DuplicateList ({newVoter}){
     },[newVoter])
 
     return (
-        <Table striped bordered hover>
+      <>
+      {loading ?
+        (<div class="loading-holder">
+            <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </Spinner>
+        </div>) : (<Table striped bordered hover>
           <thead>
             <tr>
               <th>Phone</th>
@@ -50,9 +68,9 @@ function DuplicateList ({newVoter}){
               <td>{itm.idsample}</td>
             </tr>
             }) : <></>}
-          
           </tbody>
-        </Table>
+        </Table>)
+      }</>
       );
 }
 

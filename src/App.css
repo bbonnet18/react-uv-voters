@@ -143,6 +143,13 @@ body{
   border-color: red;
 }
 
+.loading-holder{
+  vertical-align: middle;
+  text-align: center;
+  min-height: 800px;
+
+}
+
 /** Modal **/
 
 .modal.show .modal-dialog{
@@ -162,4 +169,13 @@ body{
   padding: 5px;
   overflow-x: scroll;
   overflow-y: scroll;
+}
+
+
+.tester {
+  background-color: green;
+}
+
+.tester2{
+  background-color: blue;
 }

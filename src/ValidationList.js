@@ -1,6 +1,6 @@
 import Table from "react-bootstrap/Table";
 import ValidationForm from "./ValidationForm";
-import { Container, Form, InputGroup, Row, Col, Button, Modal } from "react-bootstrap";
+import { Container, Form, InputGroup, Row, Col, Button, Modal, Spinner } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -18,7 +18,7 @@ function ValidationList (){
         "idsample":"1111",
         "idtype":"D"
       }
-
+    const [loading,setLoading] = useState(false);
     const [currentValidation,setCurrentValidation] = useState(starterValidation);
     const [validations,setValidations] = useState();
     const [img, setImg] = useState(null);
@@ -36,27 +36,31 @@ function ValidationList (){
     };
 
     async function getValidations(){
+      setLoading(true);
       let myvalidations = await axios.get("http://localhost:3003/admin/validation-list");
       
       console.log('validations returned: ', myvalidations);
       if(myvalidations && myvalidations.data){
         setValidations(myvalidations.data.validations);
         setCurrentValidation(myvalidations.data.validations[0]);
+        setLoading(false);
+        getIDImgs();
       }else{
         console.error('noting back from call to server');
+        setLoading(false);
       }
     }
 
     async function getIDImgs(){
-
         let myImgUrls = await axios.get(`https://vote.u-vote.us/admin/id-image?phone=${currentValidation.phone}`);
         if(myImgUrls){
             setImg(myImgUrls.data.idlink);
             setSelfy(myImgUrls.data.selfylink);
         }
 
-        let imgPreviews = document.querySelectorAll('.img-preview img');
-        imgPreviews.forEach((itm)=>{
+        let imgs = document.querySelectorAll(".img-preview img");
+        imgs.forEach((itm)=>{
+          console.log('setting as showing');
           itm.classList.add('showing');
         })
 
@@ -70,6 +74,13 @@ function ValidationList (){
     return (
         <Container>
         <h3>Update Validation</h3>
+        <>
+        {loading ?
+            (<div class="loading-holder">
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </div>) : (
         <Row className="img-preview-wrapper" >
                     <Col className='img-preview ID' lg={{span:4,offset:2}}>
                       <Row className="id-img-holder"> <img id="previewImg" alt="ID" src={img} /></Row>
@@ -92,7 +103,8 @@ function ValidationList (){
                     <Col className='img-preview selfy' lg={{span:4,offset:2}}>
                     <img id="selfyImg" alt="selfy" src={selfy} />
                     </Col>
-        </Row>
+        </Row>)}
+        </>
         <div><Button onClick={async ()=>{
             getIDImgs();
 

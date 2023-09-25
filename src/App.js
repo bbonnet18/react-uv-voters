@@ -9,7 +9,7 @@ import {useState, useEffect} from "react";
 function App() {
 
   const [voter,setVoter] = useState({});
-  
+  const [duplicatesFound, setDuplicatesfound] = useState(null);
   useEffect(()=>{ 
     console.log('voter was changed --- ', voter)
    
@@ -37,10 +37,10 @@ function App() {
     >
       <Tab eventKey="voterList" title="voterList">
         <h3>Add Voter</h3>
-        <VoterForm checkVoter={setVoter}></VoterForm>
+        <VoterForm checkVoter={setVoter} duplicatesFound={duplicatesFound}></VoterForm>
         <hr></hr>
         <h3>Duplicates List</h3>
-        <DuplicateList newVoter={voter} ></DuplicateList>
+        <DuplicateList newVoter={voter} setDuplicatesfound={setDuplicatesfound} ></DuplicateList>
       </Tab>
       <Tab eventKey="validationList" title="validationList">
         <h3>Validation List</h3>
