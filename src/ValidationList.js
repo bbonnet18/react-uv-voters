@@ -19,6 +19,7 @@ function ValidationList (){
         "idtype":"D"
       }
     const [loading,setLoading] = useState(false);
+    const [imgLoading, setImgLoading] = useState(false);
     const [currentValidation,setCurrentValidation] = useState(starterValidation);
     const [validations,setValidations] = useState();
     const [img, setImg] = useState(null);
@@ -52,18 +53,13 @@ function ValidationList (){
     }
 
     async function getIDImgs(){
+        setImgLoading(true);
         let myImgUrls = await axios.get(`https://vote.u-vote.us/admin/id-image?phone=${currentValidation.phone}`);
         if(myImgUrls){
             setImg(myImgUrls.data.idlink);
             setSelfy(myImgUrls.data.selfylink);
         }
-
-        let imgs = document.querySelectorAll(".img-preview img");
-        imgs.forEach((itm)=>{
-          console.log('setting as showing');
-          itm.classList.add('showing');
-        })
-
+        setImgLoading(false);
     }
 
     useEffect(()=>{
@@ -76,14 +72,21 @@ function ValidationList (){
         <h3>Update Validation</h3>
         <>
         {loading ?
-            (<div class="loading-holder">
-                <Spinner animation="border" role="status">
+            (<div className="loading-holder">
+                <Spinner animation="border" className="img-load-spinner" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
             </div>) : (
         <Row className="img-preview-wrapper" >
-                    <Col className='img-preview ID' lg={{span:4,offset:2}}>
-                      <Row className="id-img-holder"> <img id="previewImg" alt="ID" src={img} /></Row>
+                    <Col className={imgLoading ? "img-loading img-preview ID" : "img-preview ID"} lg={{span:4,offset:2}}>
+                      <Row className="id-img-holder img"> 
+                      {imgLoading ?
+                        (<div className="loading-holder">
+                            <Spinner animation="border" className="img-load-spinner" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                        </div>):(<img id="previewImg" alt="ID" src={img} />)  }</Row>
+                    
                       <Row className="id-btn-holder">
                         <div>
                           <Button onClick={handleShow}>View Large</Button>
@@ -100,8 +103,13 @@ function ValidationList (){
                         </div>
                       </Row>
                     </Col>
-                    <Col className='img-preview selfy' lg={{span:4,offset:2}}>
-                    <img id="selfyImg" alt="selfy" src={selfy} />
+                    <Col className={imgLoading ? "img-loading img-preview selfy" : "img-preview selfy"} lg={{span:4,offset:2}}>
+                    {imgLoading ?
+                        (<div className="loading-holder">
+                            <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                        </div>):(<img id="selfyImg" alt="selfy" src={selfy} />)}
                     </Col>
         </Row>)}
         </>

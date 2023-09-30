@@ -11,9 +11,9 @@ function App() {
   const [voter,setVoter] = useState({});
   const [duplicatesFound, setDuplicatesfound] = useState(null);
   useEffect(()=>{ 
-    console.log('voter was changed --- ', voter)
-   
-},[voter])
+    console.log('voter was changed --- ', voter);
+    console.log('dups found ', duplicatesFound);
+},[voter,duplicatesFound])
   
 
   return (
@@ -37,7 +37,7 @@ function App() {
     >
       <Tab eventKey="voterList" title="voterList">
         <h3>Add Voter</h3>
-        <VoterForm checkVoter={setVoter} duplicatesFound={duplicatesFound}></VoterForm>
+        <VoterForm checkVoter={setVoter} duplicatesFound={duplicatesFound} setDuplicatesfound={setDuplicatesfound}></VoterForm>
         <hr></hr>
         <h3>Duplicates List</h3>
         <DuplicateList newVoter={voter} setDuplicatesfound={setDuplicatesfound} ></DuplicateList>

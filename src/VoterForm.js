@@ -1,10 +1,10 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import { Form, InputGroup, Spinner, Button, Toast } from "react-bootstrap";
+import { Row, Col, Form, InputGroup, Spinner, Button, Toast } from "react-bootstrap";
 import axios from 'axios';
 
 
-function VoterForm({ checkVoter,duplicatesFound }) {
+function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
 
     const starterVoter = {
         "lastname": "",
@@ -20,16 +20,20 @@ function VoterForm({ checkVoter,duplicatesFound }) {
     const [resultsText, setResultsText] = useState(null);
     const [resultsTitle, setResultsTitle] = useState(null);
     const [toastType, setToasttype] = useState("Success");
+    const [hasDups, setHasDups] = useState(true); 
+    const [dupsChecked, setDupsChecked] = useState(true);
 
     useEffect(()=>{
-        setShow(true);
-        console.log('duplicates changed');
+        console.log('duplicates changed now: ', duplicatesFound);
         if(duplicatesFound === true){
+            setHasDups(true);
             setResultsTitle('Duplicate Voter(s)!');
             setResultsText('Duplicate voter(s) found, do not add this voter.')
             setToasttype('danger');
+            setDupsChecked(false);
             setShow(true);
-        }else{
+        }else if(duplicatesFound === false){
+            setHasDups(false);
             setResultsTitle('Not a duplicate');
             setResultsText('This is a new voter, please add.')
             setToasttype('success');
@@ -40,6 +44,7 @@ function VoterForm({ checkVoter,duplicatesFound }) {
 
     // check the voter on changes to the fields
     const checkDuplicates = () => {
+        setDuplicatesfound(null);
         const form = document.getElementById('voterForm');
         const isValid = form.checkValidity();
         console.log(' checking for duplicates ')
@@ -62,6 +67,19 @@ function VoterForm({ checkVoter,duplicatesFound }) {
 
             checkVoter(payload);
         }
+    }
+
+    const reset = ()=>{
+        const form = document.getElementById('voterForm');
+        form.reset();
+        setLoading(false);
+        setShow(false);
+        setCurrentVoter(starterVoter);
+        setResultsText(null)
+        setResultsTitle(null);
+        setToasttype("Success");
+        setHasDups(true);
+        setDupsChecked(true);
     }
 
     // check fields and attempt to add
@@ -89,13 +107,16 @@ function VoterForm({ checkVoter,duplicatesFound }) {
 
             setLoading(true)
             let res = await axios.post("https://vote.u-vote.us/admin/add-voter", payload);
-            form.reset();
             console.log(res);
+            form.reset();
             setLoading(false);
+            setCurrentVoter(starterVoter);
             setResultsTitle('Voter added');
             setResultsText('The voter was added sucessfully.')
             setToasttype('success');
             setShow(true);
+            setHasDups(true);
+            setDupsChecked(true);
         } else {
             form.classList.add('invalid');
         }
@@ -106,17 +127,17 @@ function VoterForm({ checkVoter,duplicatesFound }) {
     return (
         <>
         {loading ?
-            (<div class="loading-holder">
+            (<div className="loading-holder">
                 <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
             </div>) : 
             (<Form id="voterForm">
-                <InputGroup className="mb-3">
-                    <InputGroup.Text id="aFirst">First</InputGroup.Text>
-                    <Form.Control id="firstName" name="firstname" type="text" placeholder="first name" defaultValue={currentVoter.firstname} required />
-                    <InputGroup.Text id="aLast" className='form-col'>Last</InputGroup.Text>
-                    <Form.Control id="lastName" name="lastname" size="lg" type="text" placeholder="last name" defaultValue={currentVoter.lastname} required />
+                <InputGroup className="mb-3" as={Row}>
+                    <InputGroup.Text id="aFirst" as={Col} lg={1} sm={12} >First</InputGroup.Text>
+                    <Form.Control id="firstName" as={Col} lg={5} sm={12}  name="firstname" type="text" placeholder="first name" defaultValue={currentVoter.firstname} required />
+                    <InputGroup.Text id="aLast"  as={Col} lg={1} sm={12}  className='form-col'>Last</InputGroup.Text>
+                    <Form.Control id="lastName" as={Col} lg={5} sm={12} name="lastname" size="lg" type="text" placeholder="last name" defaultValue={currentVoter.lastname} required />
                 </InputGroup>
                 <InputGroup className='mb-3'>
                     <InputGroup.Text id="aCity">City</InputGroup.Text>
@@ -187,7 +208,7 @@ function VoterForm({ checkVoter,duplicatesFound }) {
                     <Form.Check // prettier-ignore
                         type={'checkbox'}
                         id={'opt-in'}
-                        label={'Agree to receive text messages'} required
+                        label={'Voter agrees to receive text messages'} required
                     />
                 </InputGroup>
                 <InputGroup className='mb-3'>
@@ -215,9 +236,37 @@ function VoterForm({ checkVoter,duplicatesFound }) {
                 </Toast.Header>
                 <Toast.Body>{resultsText}</Toast.Body>
                 </Toast>
-                <Button variant='warning' onClick={() => checkDuplicates()}>Check Duplicates</Button>
+                <Row>
+                <Col lg={3}>
+                    <Button variant='warning' onClick={() => checkDuplicates()}>Check Duplicates</Button>
+                </Col>
+                <Col lg={3}>
+                <Row>
+                <Form.Check // prettier-ignore
+                        type={'checkbox'}
+                        id={'dupsChecked'}
+                        label={'Did you check for duplicates?'} onChange={(e)=>{
 
-                <Button variant='primary' onClick={() => addVoter()}>Submit</Button>
+                            if(e.currentTarget.checked){
+                                console.log('checked')
+                                setHasDups(false);
+                            }else{
+                                setHasDups(true);
+                            }
+                        }}
+                    disabled={dupsChecked}/>
+                </Row>
+                </Col>
+                <Col lg={3}>
+                    <Button variant='primary' onClick={() => addVoter()} disabled={hasDups}>Add Voter</Button>
+                </Col>
+                <Col lg={3}>
+                    <Button variant='danger' onClick={() => reset()} >Reset</Button>
+                </Col>
+
+                
+                </Row>
+                
             </Form>)
         }
         </>

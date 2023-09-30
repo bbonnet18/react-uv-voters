@@ -8,7 +8,8 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
     const [loading,setLoading] = useState(false);
 
     useEffect(()=>{ 
-     
+    
+
         async function getDuplicates(){
             const duplicatesList = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
             if(duplicatesList && duplicatesList.data){
@@ -28,6 +29,7 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
             }
         }
         if(newVoter && newVoter.lastname){
+          console.log("new voter found - ", newVoter);
           setLoading(true);
             getDuplicates();
         }
@@ -38,7 +40,7 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
     return (
       <>
       {loading ?
-        (<div class="loading-holder">
+        (<div className="loading-holder">
             <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
             </Spinner>

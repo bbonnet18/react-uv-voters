@@ -102,6 +102,12 @@ body{
   border-radius: 15px;
 }
 
+
+.img-loading.img-preview{
+  background-image: none;
+}
+
+
 .img-preview.ID{
   max-height: 350px;
 }
@@ -118,6 +124,9 @@ body{
   text-align: center;
 }
 
+.img-loading.img-preview.selfy{
+  background-image:none;
+}
 
 .img-preview.selfy{
   background-image: url('person-bounding-box.svg');
@@ -125,7 +134,6 @@ body{
 
 
 .img-preview img{
-  visibility: hidden;
   width:100%;
 }
 .img-preview img.showing{
@@ -136,6 +144,14 @@ body{
 .img-preview button{
 
 }
+
+
+.img-load-spinner{
+  width: 100px !important;
+  height: 100px !important;
+  margin-top:50%;
+}
+
 
 /** Forms **/
 
