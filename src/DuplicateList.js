@@ -28,6 +28,7 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
               setLoading(false);
             }
         }
+        
         if(newVoter && newVoter.lastname){
           console.log("new voter found - ", newVoter);
           setLoading(true);

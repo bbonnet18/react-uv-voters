@@ -4,19 +4,11 @@ import { Row, Col, Form, InputGroup, Spinner, Button, Toast } from "react-bootst
 import axios from 'axios';
 
 
-function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
-
-    const starterVoter = {
-        "lastname": "",
-        "firstname": "",
-        "city": "",
-        "state": "",
-        "phone": ""
-    }
+function VoterForm({ voter, setVoter, duplicatesFound, setDuplicatesfound}) {
 
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
-    const [currentVoter, setCurrentVoter] = useState(starterVoter)
+    const [currentVoter, setCurrentVoter] = useState(voter)
     const [resultsText, setResultsText] = useState(null);
     const [resultsTitle, setResultsTitle] = useState(null);
     const [toastType, setToasttype] = useState("Success");
@@ -42,12 +34,16 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
 
     },[duplicatesFound])
 
+    useEffect(()=>{
+        console.log('voter changed in form to: ', voter);
+        const newVoter = {...voter};
+        setCurrentVoter(newVoter);
+    },[voter])
     // check the voter on changes to the fields
     const checkDuplicates = () => {
         setDuplicatesfound(null);
         const form = document.getElementById('voterForm');
         const isValid = form.checkValidity();
-        console.log(' checking for duplicates ')
         if (isValid) {
             form.classList.remove('invalid');
             var formFields = form.querySelectorAll('.form-control');
@@ -65,7 +61,7 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
 
             console.log('payload: ', payload);
 
-            checkVoter(payload);
+            setVoter(payload);
         }
     }
 
@@ -74,7 +70,18 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
         form.reset();
         setLoading(false);
         setShow(false);
-        setCurrentVoter(starterVoter);
+        setCurrentVoter({
+            "age": "55",
+            "gender": "F",
+            "city": "Springfield",
+            "state": "MA",
+            "phone": "11233211234",
+            "lastname": "Johnson",
+            "firstname": "Mary",
+            "valid": "false",
+            "idtype":"D",
+            "idsample": "ijkl"
+        });
         setResultsText(null)
         setResultsTitle(null);
         setToasttype("Success");
@@ -110,7 +117,7 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
             console.log(res);
             form.reset();
             setLoading(false);
-            setCurrentVoter(starterVoter);
+            setCurrentVoter({});
             setResultsTitle('Voter added');
             setResultsText('The voter was added sucessfully.')
             setToasttype('success');
@@ -124,6 +131,60 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
     }
 
 
+    // // check fields and attempt to add
+    // const addValidation = async () => {
+
+    //     const form = document.getElementById('ValidationForm');
+    //     const isValid = form.checkValidity();
+    //     if (isValid) {
+    //       form.classList.remove('invalid');
+    //       var formFields = form.querySelectorAll('.form-control');
+    //       var genderSelect = form.querySelector('#aGender');
+    //       var stateSelect = form.querySelector('#aState');
+    //       var validCheck = form.querySelector("#Valid");
+    //       var payload = {}
+    //       for (let i = 0; i < formFields.length; i++) {
+    //         console.log('val: ', formFields[i].value);
+    //         payload[formFields[i].name] = formFields[i].value;
+    //       }
+    //       payload['gender'] = genderSelect.value;
+    //       payload['state'] = stateSelect.value; 
+    //       payload['valid'] = (validCheck.checked) ? true : false;
+    //       console.log('payload: ', payload);
+    
+    //       setLoading(true)
+    //       let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
+    //       form.reset();
+    //       console.log(res);
+    //       setResultsText("confirmed");
+    //       setLoading(false)
+    //     } else {
+    //       form.classList.add('invalid');
+    //     }
+    
+    //   }
+    
+    
+    //   const rejectValidation = async () => {
+    
+    //     const form = document.getElementById('ValidationForm');
+       
+    //       var reasonSelect = form.querySelector('#rejectionReason');
+    //       var payload = {
+    //         reason:reasonSelect.value,
+    //         phone:validation.phone
+    //       }
+    
+    //       setLoading(true)
+    //       let res = await axios.post("http://localhost:3003/admin/reject-validation", payload);
+    //       form.reset();
+    //       console.log(res);
+    //       setResultsText("confirmed");
+    //       setLoading(false)
+       
+    //   }
+
+
     return (
         <>
         {loading ?
@@ -133,18 +194,21 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
                 </Spinner>
             </div>) : 
             (<Form id="voterForm">
-                <InputGroup className="mb-3" as={Row}>
-                    <InputGroup.Text id="aFirst" as={Col} lg={1} sm={12} >First</InputGroup.Text>
-                    <Form.Control id="firstName" as={Col} lg={5} sm={12}  name="firstname" type="text" placeholder="first name" defaultValue={currentVoter.firstname} required />
-                    <InputGroup.Text id="aLast"  as={Col} lg={1} sm={12}  className='form-col'>Last</InputGroup.Text>
-                    <Form.Control id="lastName" as={Col} lg={5} sm={12} name="lastname" size="lg" type="text" placeholder="last name" defaultValue={currentVoter.lastname} required />
+                <InputGroup className="mb-3" as={Row} >
+                    <Col sm={12} lg={6}>
+                        <InputGroup.Text id="aFirst" >First</InputGroup.Text>
+                        <Form.Control id="firstName" name="firstname" type="text" onChange={(e)=>{setCurrentVoter({...currentVoter,firstname:e.target.value})}} placeholder="first name" value={currentVoter.firstname} required />
+                    </Col>
+                    <Col sm={12} lg={6}>
+                        <InputGroup.Text id="aLast" className='form-col'>Last</InputGroup.Text>
+                        <Form.Control id="lastName" name="lastname" size="lg" type="text" onChange={(e)=>{setCurrentVoter({...currentVoter,lastname:e.target.value})}}  placeholder="last name" value={currentVoter.lastname} required />
+                    </Col>
                 </InputGroup>
                 <InputGroup className='mb-3'>
                     <InputGroup.Text id="aCity">City</InputGroup.Text>
-                    <Form.Control id="city" name="city" size="lg" type="text" minLength={2} placeholder="city" defaultValue={currentVoter.city} required />
+                    <Form.Control id="city" name="city" size="lg" type="text" minLength={2} onChange={(e)=>{setCurrentVoter({...currentVoter,city:e.target.value})}}  placeholder="city" value={currentVoter.city}  required />
                     <InputGroup.Text id="aState-addon1" className='form-col' >State</InputGroup.Text>
-                    {/* <Form.Control id="state" name="state" size="lg" type="text" minLength={2} maxLength={2} placeholder="state" defaultValue={currentVoter.state} required/> */}
-                    <Form.Select aria-label="State" name="state" id="aState" required defaultValue="F">
+                    <Form.Select aria-label="State" name="state" id="aState" required onChange={(e)=>{setCurrentVoter({...currentVoter,state:e.target.value})}}  value={currentVoter.state}>
                         <option value="AL">Alabama</option>
                         <option value="AK">Alaska</option>
                         <option value="AZ">Arizona</option>
@@ -200,9 +264,9 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
                 </InputGroup>
                 <InputGroup className='mb-3'>
                     <InputGroup.Text id="aPhone" >Phone</InputGroup.Text>
-                    <Form.Control id="phone" name="phone" size="lg" type="tel" placeholder="phone" defaultValue={currentVoter.phone} required />
+                    <Form.Control id="phone" name="phone" size="lg" type="tel" onChange={(e)=>{setCurrentVoter({...currentVoter,phone:e.target.value})}}  placeholder="phone" value={currentVoter.phone} required />
                     <InputGroup.Text id="aAge" className='form-col' >Age</InputGroup.Text>
-                    <Form.Control id="age" name="age" size="lg" type="number" placeholder="age" defaultValue={currentVoter.state} required />
+                    <Form.Control id="age" name="age" size="lg" type="number"onChange={(e)=>{setCurrentVoter({...currentVoter,age:e.target.value})}}  placeholder="age"  value={currentVoter.age}  required />
                 </InputGroup>
                 <InputGroup className='mb-3'>
                     <Form.Check // prettier-ignore
@@ -213,7 +277,7 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
                 </InputGroup>
                 <InputGroup className='mb-3'>
                 <InputGroup.Text className='form-col'>Gender</InputGroup.Text>
-                    <Form.Select aria-label="Gender" name="gender" id="aGender" required defaultValue="F">
+                    <Form.Select aria-label="Gender" name="gender" id="aGender" required onChange={(e)=>{setCurrentVoter({...currentVoter,gender:e.target.value})}} value={currentVoter.gender} >
                         <option value="F">Female</option>
                         <option value="M">Male</option>
                         <option value="U">Unknown</option>
@@ -222,13 +286,13 @@ function VoterForm({ checkVoter,duplicatesFound,setDuplicatesfound}) {
                 <hr></hr>
                 <InputGroup className='mb-3'>
                     <InputGroup.Text id="aidType" className='form-col'>ID Type</InputGroup.Text>
-                    <Form.Select aria-label="id-type" name="idType" id="idType" required defaultValue="D">
+                    <Form.Select aria-label="id-type" name="idType" id="idType" required onChange={(e)=>{setCurrentVoter({...currentVoter,idtype:e.target.value})}}  value={currentVoter.idtype} >
                         <option value="D">drivers license</option>
                         <option value="P">US Passport</option>
                         <option value="U">university ID</option>
                     </Form.Select>
                     <InputGroup.Text id="aidSample" className='form-col'>ID Sample</InputGroup.Text>
-                    <Form.Control id="idsample" name="idsample" size="lg" type="text" minLength={4} maxLength={4} placeholder="last 4 characters of ID" required />
+                    <Form.Control id="idsample" name="idsample" size="lg" type="text" minLength={4} maxLength={4} onChange={(e)=>{setCurrentVoter({...currentVoter,idsample:e.target.value})}}  placeholder="last 4 characters of ID" value={currentVoter.idsample}  required />
                 </InputGroup>
                 <Toast onClose={() => setShow(false)} bg={toastType} show={show} delay={3000} autohide>
                 <Toast.Header>

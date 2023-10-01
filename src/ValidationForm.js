@@ -68,16 +68,16 @@ function ValidationForm({validation,setValidation}) {
         <Form id="ValidationForm">
         <InputGroup className="mb-3">
           <InputGroup.Text id="aFirst">First</InputGroup.Text>
-          <Form.Control id="firstName" name="firstname" size="lg" type="text" placeholder="first name" onChange={()=>{}} value={validation.firstname} required disabled />
+          <Form.Control id="firstName" name="firstname" size="lg" type="text" placeholder="first name" onChange={(e)=>{setValidation({...validation,firstname:e.target.value})}} value={validation.firstname} required  />
           <InputGroup.Text id="aLast" className='form-col'>Last</InputGroup.Text>
-          <Form.Control id="lastName" name="lastname" size="lg" type="text" placeholder="last name" onChange={()=>{}} value={validation.lastname} required disabled />
+          <Form.Control id="lastName" name="lastname" size="lg" type="text" placeholder="last name" onChange={(e)=>{setValidation({...validation,lastname:e.target.value})}} value={validation.lastname} required  />
         </InputGroup>
         <InputGroup className='mb-3'>
           <InputGroup.Text id="aCity">City</InputGroup.Text>
-          <Form.Control id="city" name="city" size="lg" type="text" minLength={2} placeholder="city" onChange={()=>{}} value={validation.city} required disabled/>
+          <Form.Control id="city" name="city" size="lg" type="text" minLength={2} placeholder="city" onChange={(e)=>{setValidation({...validation,city:e.target.value})}} value={validation.city} required />
           <InputGroup.Text id="aState-addon1" className='form-col' >State</InputGroup.Text>
           {/* <Form.Control id="state" name="state" size="lg" type="text" minLength={2} maxLength={2} placeholder="state" defaultValue={currentValidation.state} required/> */}
-          <Form.Control aria-label="State" name="state" id="aState" type="text"  onChange={()=>{}}  required value={validation.state} disabled/>
+          <Form.Control aria-label="State" name="state" id="aState" type="text"  required value={validation.state} onChange={(e)=>{setValidation({...validation,state:e.target.value})}}/>
             
         </InputGroup>
         <InputGroup className='mb-3'>
@@ -98,6 +98,12 @@ function ValidationForm({validation,setValidation}) {
           />
         </InputGroup>
         <InputGroup className='mb-3'>
+        <InputGroup.Text id="aidType" className='form-col'>ID Type</InputGroup.Text>
+                    <Form.Select aria-label="id-type" name="idType" id="idType" required defaultValue="D">
+                        <option value="D">drivers license</option>
+                        <option value="P">US Passport</option>
+                        <option value="U">university ID</option>
+                    </Form.Select>
           <FormLabel>ID sample</FormLabel>
           <Form.Control id="idsample" name="idsample" size="lg" type="text" onChange={(e)=>{setValidation({...validation,idsample:e.target.value})}}  placeholder="idsample" value={validation.idsample}  required />
         </InputGroup>
