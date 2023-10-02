@@ -21,10 +21,12 @@ function App() {
     "idsample": "ijkl"
 });
   const [duplicatesFound, setDuplicatesfound] = useState(null);
-//   useEffect(()=>{ 
-//     console.log('voter was changed --- ', voter);
-//     console.log('dups found ', duplicatesFound);
-// },[voter,duplicatesFound])
+  const [key, setKey] = useState('voterList');
+
+
+
+   
+
 
 
   return (
@@ -41,10 +43,10 @@ function App() {
           <div >U-Vote Admin</div>
         </Col>
       </Row>
-    <VoterForm setVoter={setVoter} voter={voter} duplicatesFound={duplicatesFound} setDuplicatesfound={setDuplicatesfound}></VoterForm>
+    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} duplicatesFound={duplicatesFound} setDuplicatesfound={setDuplicatesfound}></VoterForm>
     <Tabs
-      defaultActiveKey="voterList"
-      id="uncontrolled-tab-example"
+      activeKey={key}
+      onSelect={(k) => {console.log('k is ',k); setKey(k);}}
       className="mb-3"
     >
       <Tab eventKey="voterList" title="voterList">

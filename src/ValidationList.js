@@ -46,6 +46,10 @@ function ValidationList ({setVoter, voter}){
         setImgLoading(false);
     }
 
+    
+
+
+
 
     return (
         <Container>

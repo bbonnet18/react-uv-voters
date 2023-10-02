@@ -4,7 +4,7 @@ import { Row, Col, Form, InputGroup, Spinner, Button, Toast } from "react-bootst
 import axios from 'axios';
 
 
-function VoterForm({ voter, setVoter, duplicatesFound, setDuplicatesfound}) {
+function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfound}) {
 
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
@@ -39,6 +39,10 @@ function VoterForm({ voter, setVoter, duplicatesFound, setDuplicatesfound}) {
         const newVoter = {...voter};
         setCurrentVoter(newVoter);
     },[voter])
+
+    useEffect(()=>{
+        console.log('key changed - ',tabKey)
+    },[tabKey])
     // check the voter on changes to the fields
     const checkDuplicates = () => {
         setDuplicatesfound(null);
@@ -130,59 +134,58 @@ function VoterForm({ voter, setVoter, duplicatesFound, setDuplicatesfound}) {
 
     }
 
+     // check fields and attempt to add
+     const addValidation = async () => {
 
-    // // check fields and attempt to add
-    // const addValidation = async () => {
+        const form = document.getElementById('voterForm');
+        const isValid = form.checkValidity();
+        if (isValid) {
+          form.classList.remove('invalid');
+          var formFields = form.querySelectorAll('.form-control');
+          var genderSelect = form.querySelector('#aGender');
+          var stateSelect = form.querySelector('#aState');
+          var payload = {}
+          for (let i = 0; i < formFields.length; i++) {
+            console.log('val: ', formFields[i].value);
+            payload[formFields[i].name] = formFields[i].value;
+          }
+          payload['gender'] = genderSelect.value;
+          payload['state'] = stateSelect.value; 
+          payload['valid'] =  true;
+          console.log('payload: ', payload);
+    
+          setLoading(true)
+          let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
+          form.reset();
+          console.log(res);
+          setLoading(false)
+        } else {
+          form.classList.add('invalid');
+        }
+    
+      }
+    
+    
+      const rejectValidation = async () => {
+    
+        const form = document.getElementById('voterForm');
+       
+          var reasonSelect = form.querySelector('#rejectionReason');
+          var payload = {
+            reason:reasonSelect.value,
+            phone:currentVoter.phone
+          }
+    
+          setLoading(true)
+          let res = await axios.post("http://localhost:3003/admin/reject-validation", payload);
+          form.reset();
+          console.log(res);
+          setResultsText("confirmed");
+          setLoading(false)
+       
+      }
 
-    //     const form = document.getElementById('ValidationForm');
-    //     const isValid = form.checkValidity();
-    //     if (isValid) {
-    //       form.classList.remove('invalid');
-    //       var formFields = form.querySelectorAll('.form-control');
-    //       var genderSelect = form.querySelector('#aGender');
-    //       var stateSelect = form.querySelector('#aState');
-    //       var validCheck = form.querySelector("#Valid");
-    //       var payload = {}
-    //       for (let i = 0; i < formFields.length; i++) {
-    //         console.log('val: ', formFields[i].value);
-    //         payload[formFields[i].name] = formFields[i].value;
-    //       }
-    //       payload['gender'] = genderSelect.value;
-    //       payload['state'] = stateSelect.value; 
-    //       payload['valid'] = (validCheck.checked) ? true : false;
-    //       console.log('payload: ', payload);
-    
-    //       setLoading(true)
-    //       let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
-    //       form.reset();
-    //       console.log(res);
-    //       setResultsText("confirmed");
-    //       setLoading(false)
-    //     } else {
-    //       form.classList.add('invalid');
-    //     }
-    
-    //   }
-    
-    
-    //   const rejectValidation = async () => {
-    
-    //     const form = document.getElementById('ValidationForm');
-       
-    //       var reasonSelect = form.querySelector('#rejectionReason');
-    //       var payload = {
-    //         reason:reasonSelect.value,
-    //         phone:validation.phone
-    //       }
-    
-    //       setLoading(true)
-    //       let res = await axios.post("http://localhost:3003/admin/reject-validation", payload);
-    //       form.reset();
-    //       console.log(res);
-    //       setResultsText("confirmed");
-    //       setLoading(false)
-       
-    //   }
+
 
 
     return (
@@ -327,8 +330,6 @@ function VoterForm({ voter, setVoter, duplicatesFound, setDuplicatesfound}) {
                 <Col lg={3}>
                     <Button variant='danger' onClick={() => reset()} >Reset</Button>
                 </Col>
-
-                
                 </Row>
                 
             </Form>)
