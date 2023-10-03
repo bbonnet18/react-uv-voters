@@ -9,21 +9,35 @@ import {useState, useEffect} from "react";
 function App() {
 
   const [voter,setVoter] = useState({
-    "age": "55",
-    "gender": "F",
-    "city": "Springfield",
-    "state": "MA",
-    "phone": "11233211234",
-    "lastname": "Johnson",
-    "firstname": "Mary",
-    "valid": "false",
-    "idtype":"D",
-    "idsample": "ijkl"
+    "age": "",
+    "gender": "",
+    "city": "",
+    "state": "",
+    "phone": "",
+    "lastname": "",
+    "firstname": "",
+    "valid": "",
+    "idtype":"",
+    "idsample": ""
 });
   const [duplicatesFound, setDuplicatesfound] = useState(null);
   const [key, setKey] = useState('voterList');
 
 
+  useEffect(()=>{
+    setVoter({
+      "age": "",
+      "gender": "",
+      "city": "",
+      "state": "",
+      "phone": "",
+      "lastname": "",
+      "firstname": "",
+      "valid": "",
+      "idtype":"",
+      "idsample": ""
+  });
+  },[key])
 
    
 

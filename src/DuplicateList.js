@@ -12,27 +12,32 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
 
         async function getDuplicates(){
             const duplicatesList = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
-            if(duplicatesList && duplicatesList.data){
-              if(duplicatesList.data.length === 0){
+            
+            const duplicatesArr = JSON.parse(duplicatesList.data);
+            
+            if(duplicatesArr && duplicatesArr.length){
+              if(duplicatesArr.length === 0){
                 console.log('-------->>>>> No Dups!');
                 setDuplicatesfound(false);
               }else{
                 console.log('-------->>>>>Definite Dups!');
                 setDuplicatesfound(true);
               }
-              setDuplicates(duplicatesList.data);
+              setDuplicates(duplicatesArr);
               setLoading(false);
             }else{
-              console.error('noting back from call to server');
               setDuplicatesfound(false);
               setLoading(false);
             }
         }
-        
+
         if(newVoter && newVoter.lastname){
           console.log("new voter found - ", newVoter);
           setLoading(true);
             getDuplicates();
+        }else{
+          setLoading(false);
+          setDuplicates(null);
         }
          
         

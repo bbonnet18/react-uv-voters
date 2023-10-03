@@ -13,6 +13,17 @@ function ValidationList ({setVoter, voter}){
     const [selfy, setSelfy] = useState(null);
     const [show, setShow] = useState(false);
     const [imgrotate,setImgrotate] = useState(0);
+
+    useEffect(()=>{ 
+      // remove the loaded images
+      if(voter && voter.lastname == ""){
+        setImg("");
+        setSelfy("");
+      }
+  },[voter])
+
+
+
     const handleClose = () => {
       setModalsrc(null);
       setShow(false);
@@ -30,19 +41,22 @@ function ValidationList ({setVoter, voter}){
       if(myvalidations && myvalidations.data){ 
         setVoter(myvalidations.data.validations[0]);
         setLoading(false);
-        getIDImgs();
+        getIDImgs(myvalidations.data.validations[0]);
       }else{
         setLoading(false);
       }
     }
 
-    async function getIDImgs(){
+    async function getIDImgs(validation){
         setImgLoading(true);
-        let myImgUrls = await axios.get(`https://vote.u-vote.us/admin/id-image?phone=${voter.phone}`);
-        if(myImgUrls){
-            setImg(myImgUrls.data.idlink);
-            setSelfy(myImgUrls.data.selfylink);
+        if(validation && validation.phone){
+          let myImgUrls = await axios.get(`http://localhost:3003/admin/id-image?phone=${validation.phone}`);
+          if(myImgUrls){
+              setImg(myImgUrls.data.idlink);
+              setSelfy(myImgUrls.data.selfylink);
+          }
         }
+        
         setImgLoading(false);
     }
 
