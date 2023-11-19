@@ -2,8 +2,9 @@
 import { Container, Form, InputGroup, Row, Col, Button, Modal, Spinner } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import config from "./config";
 
-function ValidationList ({setVoter, voter}){
+function ValidationList ({setVoter, voter, setHasValidations}){
     
 
     const [loading,setLoading] = useState(false);
@@ -35,14 +36,18 @@ function ValidationList ({setVoter, voter}){
 
     async function getValidations(){
       setLoading(true);
-      let myvalidations = await axios.get("http://localhost:3003/admin/validation-list");
+      let myvalidations = await axios.get(`${config.apiBaseUrl}/admin/validation-list`,{
+        withCredentials:true
+      });
       
       console.log('validations returned: ', myvalidations);
-      if(myvalidations && myvalidations.data){ 
+      if(myvalidations && myvalidations.data && myvalidations.data.validations && myvalidations.data.validations.length >0){ 
         setVoter(myvalidations.data.validations[0]);
         setLoading(false);
         getIDImgs(myvalidations.data.validations[0]);
+        setHasValidations(true);
       }else{
+        setHasValidations(false);
         setLoading(false);
       }
     }
@@ -50,7 +55,9 @@ function ValidationList ({setVoter, voter}){
     async function getIDImgs(validation){
         setImgLoading(true);
         if(validation && validation.phone){
-          let myImgUrls = await axios.get(`http://localhost:3003/admin/id-image?phone=${validation.phone}`);
+          let myImgUrls = await axios.get(`${config.apiBaseUrl}/admin/id-image?phone=${validation.phone}`,{
+            withCredentials:true
+          });
           if(myImgUrls){
               setImg(myImgUrls.data.idlink);
               setSelfy(myImgUrls.data.selfylink);

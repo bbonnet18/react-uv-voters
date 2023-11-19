@@ -1,6 +1,7 @@
 import { Spinner, Table} from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import config from './config';
 
 function DuplicateList ({newVoter,setDuplicatesfound}){
    
@@ -11,7 +12,9 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
     
 
         async function getDuplicates(){
-            const duplicatesList = await axios.post("http://localhost:3003/admin/check-duplicates",newVoter);
+            const duplicatesList = await axios.post(`${config.apiBaseUrl}/admin/check-duplicates`,newVoter,{
+              withCredentials:true
+            });
             
             const duplicatesArr = JSON.parse(duplicatesList.data);
             

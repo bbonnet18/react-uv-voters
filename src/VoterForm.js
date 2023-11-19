@@ -1,10 +1,11 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import { Row, Col, Form, InputGroup, Spinner, Button, Toast } from "react-bootstrap";
+import { Row, Col, Form, InputGroup, Spinner, Button, Toast, ToastContainer } from "react-bootstrap";
 import axios from 'axios';
+import config from './config';
 
 
-function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfound }) {
+function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfound, hasValidations }) {
 
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
@@ -33,6 +34,20 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
         }
 
     }, [duplicatesFound])
+
+    useEffect(()=>{
+        if(hasValidations){
+            setResultsTitle('New validation');
+            setResultsText('New validation, please confirm identity.')
+            setToasttype('success');
+            setShow(true);
+        }else{
+            setResultsTitle('No more validations found!');
+            setResultsText('There are no more validations at this time.')
+            setToasttype('danger');
+            setShow(true);
+        }
+    },[hasValidations]);
 
     useEffect(() => {
         console.log('voter changed in form to: ', voter);
@@ -72,7 +87,9 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
 
     const reset = () => {
         const form = document.getElementById('voterForm');
-        form.reset();
+        if(form){
+            form.reset();
+        }
         setLoading(false);
         setShow(false);
         setCurrentVoter({
@@ -118,7 +135,9 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
             console.log('payload: ', payload);
 
             setLoading(true)
-            let res = await axios.post("https://vote.u-vote.us/admin/add-voter", payload);
+            let res = await axios.post(`${config.apiBaseUrl}/admin/add-voter`, payload, {
+                withCredentials:true
+              });
             console.log(res);
             setLoading(false);
             reset();
@@ -144,6 +163,7 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
           var formFields = form.querySelectorAll('.form-control');
           var genderSelect = form.querySelector('#aGender');
           var stateSelect = form.querySelector('#aState');
+          var idSelect = form.querySelector('#idType');
           var payload = {}
           for (let i = 0; i < formFields.length; i++) {
             console.log('val: ', formFields[i].value);
@@ -152,10 +172,13 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
           payload['gender'] = genderSelect.value;
           payload['state'] = stateSelect.value; 
           payload['valid'] =  true;
+          payload['idtype'] = idSelect.value;
           console.log('payload: ', payload);
 
           setLoading(true)
-          let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
+          let res = await axios.post(`${config.apiBaseUrl}/admin/validation-list`, payload,{
+            withCredentials:true
+          });
           setResultsTitle('Voter validated');
           setResultsText('The voter will receive a text message to validate.')
           setToasttype('success');
@@ -169,6 +192,33 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
 
       }
 
+      // visual approval good, now take the conditional label off record
+     const visuallyValidated = async () => {
+
+        const form = document.getElementById('voterForm');
+        const isValid = form.checkValidity();
+        if (isValid) {
+          form.classList.remove('invalid');
+         
+            var payload = currentVoter;
+            payload.idsample = "okgo";
+
+          setLoading(true)
+          let res = await axios.post(`${config.apiBaseUrl}/admin/visually-validated`, payload,{
+            withCredentials:true
+          });
+          setResultsTitle('Voter visually validated');
+          setToasttype('success');
+          setShow(true);
+          reset();
+          console.log(res);
+          setLoading(false)
+        } else {
+          form.classList.add('invalid');
+        }
+      }
+
+
 
       const rejectValidation = async () => {
 
@@ -181,7 +231,9 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
           }
 
           setLoading(true)
-          let res = await axios.post("http://localhost:3003/admin/reject-validation", payload);
+          let res = await axios.post(`${config.apiBaseUrl}/admin/reject-validation`, payload, {
+            withCredentials:true
+          });
           setResultsTitle('Voter rejected');
           setResultsText('The voter will receive a text message with the rejection reason.')
           setToasttype('success');
@@ -193,8 +245,6 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
       }
 
 
-
-
     return (
         <>
             {loading ?
@@ -204,6 +254,15 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
                     </Spinner>
                 </div>) :
                 (<Form id="voterForm">
+                    <ToastContainer className="p-3"
+                     position={'middle-center'}>
+                     <Toast onClose={() => setShow(false)} bg={toastType} show={show} delay={3000} autohide>
+                        <Toast.Header>
+                            <strong className="me-auto">{resultsTitle}</strong>
+                        </Toast.Header>
+                        <Toast.Body>{resultsText}</Toast.Body>
+                    </Toast>
+                    </ToastContainer>
                     <InputGroup className="mb-3" as={Row} >
                         <Col sm={12} lg={6}>
                             <InputGroup.Text id="aFirst" >First</InputGroup.Text>
@@ -274,7 +333,11 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
                     </InputGroup>
                     <InputGroup className='mb-3'>
                         <InputGroup.Text id="aPhone" >Phone</InputGroup.Text>
-                        <Form.Control id="phone" name="phone" size="lg" type="tel" onChange={(e) => { setCurrentVoter({ ...currentVoter, phone: e.target.value }) }} placeholder="phone" value={currentVoter.phone} required />
+                        <Form.Control id="phone" name="phone" size="lg"  type="tel" pattern="[0-9]{10}" maxLength={10}  onChange={(e) => { 
+                            setCurrentVoter({ ...currentVoter, phone: e.target.value }) 
+                            
+                            
+                            }} placeholder="phone" value={currentVoter.phone} required />
                         <InputGroup.Text id="aAge" className='form-col' >Age</InputGroup.Text>
                         <Form.Control id="age" name="age" size="lg" type="number" onChange={(e) => { setCurrentVoter({ ...currentVoter, age: e.target.value }) }} placeholder="age" value={currentVoter.age} required />
                     </InputGroup>
@@ -306,17 +369,18 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
                             <option value="D">drivers license</option>
                             <option value="P">US Passport</option>
                             <option value="U">university ID</option>
+                            <option value="C">conditional</option>
                         </Form.Select>
                         <InputGroup.Text id="aidSample" className='form-col'>ID Sample</InputGroup.Text>
                         <Form.Control id="idsample" name="idsample" size="lg" type="text" minLength={4} maxLength={4} onChange={(e) => { setCurrentVoter({ ...currentVoter, idsample: e.target.value }) }} placeholder="last 4 characters of ID" value={currentVoter.idsample} required />
                     </InputGroup>
-                    <Toast onClose={() => setShow(false)} bg={toastType} show={show} delay={3000} autohide>
-                        <Toast.Header>
-                            <strong className="me-auto">{resultsTitle}</strong>
-                        </Toast.Header>
-                        <Toast.Body>{resultsText}</Toast.Body>
-                    </Toast>
-
+                    { currentVoter.idtype === "C" ? (
+                         <Row>
+                         <Col lg={12}>
+                             THIS IS A CONDITIONAL VALIDATION
+                         </Col>
+                     </Row>
+                    ) : (<></>)}
                     {
                         tabKey === 'voterList' ? (<Row><Col lg={3}>
                             <Button variant='warning' onClick={() => checkDuplicates()}>Check Duplicates</Button>
@@ -365,6 +429,12 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
                                     </Row>
                                 </Col>
                                 <Col lg={3}>
+                                    {currentVoter.idtype === "C" ? ( <Row>
+                                        <Button variant='success' onClick={() => visuallyValidated()}> {loading ?
+                                            <Spinner animation="border" role="status">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </Spinner> : "visual validation"}</Button>
+                                    </Row>):(<></>)}
                                     <Row>
                                         <Button variant='success' onClick={() => addValidation()} disabled={hasDups}> {loading ?
                                             <Spinner animation="border" role="status">

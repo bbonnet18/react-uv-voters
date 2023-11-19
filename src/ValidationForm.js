@@ -32,7 +32,9 @@ function ValidationForm({validation,setValidation}) {
       console.log('payload: ', payload);
 
       setLoading(true)
-      let res = await axios.post("http://localhost:3003/admin/validation-list", payload);
+      let res = await axios.post("http://localhost:3003/admin/validation-list", payload, {
+        withCredentials:true
+      });
       form.reset();
       console.log(res);
       setResultsText("confirmed");
@@ -55,7 +57,9 @@ function ValidationForm({validation,setValidation}) {
       }
 
       setLoading(true)
-      let res = await axios.post("http://localhost:3003/admin/reject-validation", payload);
+      let res = await axios.post("http://localhost:3003/admin/reject-validation", payload, {
+        withCredentials:true
+      });
       form.reset();
       console.log(res);
       setResultsText("confirmed");
