@@ -3,6 +3,7 @@ import { Container, Form, InputGroup, Row, Col, Button, Modal, Spinner } from "r
 import { useState, useEffect } from "react";
 import axios from "axios";
 import config from "./config";
+import he from "he";
 
 function ValidationList ({setVoter, voter, setHasValidations}){
     
@@ -41,10 +42,11 @@ function ValidationList ({setVoter, voter, setHasValidations}){
       });
       
       console.log('validations returned: ', myvalidations);
-      if(myvalidations && myvalidations.data && myvalidations.data.validations && myvalidations.data.validations.length >0){ 
-        setVoter(myvalidations.data.validations[0]);
+      if(myvalidations && myvalidations.data && myvalidations.data){ 
+        myvalidations.data.DOB = he.decode(myvalidations.data.DOB);
+        setVoter(myvalidations.data);
         setLoading(false);
-        getIDImgs(myvalidations.data.validations[0]);
+        getIDImgs(myvalidations.data);
         setHasValidations(true);
       }else{
         setHasValidations(false);
@@ -83,6 +85,14 @@ function ValidationList ({setVoter, voter, setHasValidations}){
                 </Spinner>
             </div>) : (
         <Row className="img-preview-wrapper" >
+                     <Col className={imgLoading ? "img-loading img-preview selfy" : "img-preview selfy"} lg={{span:4,offset:2}}>
+                    {imgLoading ?
+                        (<div className="loading-holder">
+                            <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                        </div>):(<img id="selfyImg" alt="selfy" src={selfy} />)}
+                    </Col>
                     <Col className={imgLoading ? "img-loading img-preview ID" : "img-preview ID"} lg={{span:4,offset:2}}>
                       <Row className="id-img-holder img"> 
                       {imgLoading ?
@@ -107,14 +117,6 @@ function ValidationList ({setVoter, voter, setHasValidations}){
                           }}>Rotate</Button>
                         </div>
                       </Row>
-                    </Col>
-                    <Col className={imgLoading ? "img-loading img-preview selfy" : "img-preview selfy"} lg={{span:4,offset:2}}>
-                    {imgLoading ?
-                        (<div className="loading-holder">
-                            <Spinner animation="border" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </Spinner>
-                        </div>):(<img id="selfyImg" alt="selfy" src={selfy} />)}
                     </Col>
         </Row>)}
         </>

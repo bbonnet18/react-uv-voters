@@ -10,8 +10,8 @@ import Login from "./Login";
 function Manage({user, setUser}) {
 
   const [voter,setVoter] = useState({
-    "age": "",
-    "address":"",
+    "DOB": "",
+    "address1":"",
     "gender": "",
     "city": "",
     "state": "",
@@ -30,8 +30,8 @@ function Manage({user, setUser}) {
 
   useEffect(()=>{
     setVoter({
-      "age": "",
-      "address":"",
+      "DOB": "",
+      "address1":"",
       "gender": "",
       "city": "",
       "state": "",
@@ -73,14 +73,13 @@ function Manage({user, setUser}) {
     >
       <Tab eventKey="voterList" title="voterList">
         <h3>Add Voter</h3>
-        <DuplicateList newVoter={voter} setDuplicatesfound={setDuplicatesfound} ></DuplicateList>
       </Tab>
       <Tab eventKey="validationList" title="validationList">
         <h3>Validation List</h3>
         <ValidationList voter={voter} setVoter={setVoter} setHasValidations={setHasValidations} ></ValidationList>
       </Tab>
     </Tabs>
-    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} duplicatesFound={duplicatesFound} setDuplicatesfound={setDuplicatesfound} hasValidations={hasValidations}></VoterForm>
+    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations}></VoterForm>
    
     </Container>
 
