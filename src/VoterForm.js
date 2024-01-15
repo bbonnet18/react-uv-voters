@@ -68,7 +68,6 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
             form.classList.remove('invalid');
             var formFields = form.querySelectorAll('.form-control');
             var genderSelect = form.querySelector('#aGender');
-            var stateSelect = form.querySelector('#aState');
 
             var payload = {}
             for (let i = 0; i < formFields.length; i++) {
@@ -76,7 +75,6 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
                 payload[formFields[i].name] = formFields[i].value;
             }
             payload['gender'] = genderSelect.value;
-            payload['state'] = stateSelect.value;
 
 
             console.log('payload: ', payload);
@@ -94,6 +92,7 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
         setShow(false);
         setCurrentVoter({
             "age": "",
+            "address":"",
             "gender": "",
             "city": "",
             "state": "",
@@ -102,7 +101,8 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
             "firstname": "",
             "valid": "",
             "idtype": "",
-            "idsample": ""
+            "idsample": "",
+            "zipcode":""
         });
         setResultsText(null)
         setResultsTitle(null);
@@ -120,8 +120,7 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
         if (isValid) {
             form.classList.remove('invalid');
             var formFields = form.querySelectorAll('.form-control');
-            var genderSelect = form.querySelector('#aGender');
-            var stateSelect = form.querySelector('#aState');
+            var genderSelect = form.querySelector('#aGender')
             var idSelect = form.querySelector('#idType');
             var payload = {}
             for (let i = 0; i < formFields.length; i++) {
@@ -129,7 +128,6 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
                 payload[formFields[i].name] = formFields[i].value;
             }
             payload['gender'] = genderSelect.value;
-            payload['state'] = stateSelect.value;
             payload['idtype'] = idSelect.value;
 
             console.log('payload: ', payload);
@@ -162,7 +160,6 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
           form.classList.remove('invalid');
           var formFields = form.querySelectorAll('.form-control');
           var genderSelect = form.querySelector('#aGender');
-          var stateSelect = form.querySelector('#aState');
           var idSelect = form.querySelector('#idType');
           var payload = {}
           for (let i = 0; i < formFields.length; i++) {
@@ -170,7 +167,6 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
             payload[formFields[i].name] = formFields[i].value;
           }
           payload['gender'] = genderSelect.value;
-          payload['state'] = stateSelect.value; 
           payload['valid'] =  true;
           payload['idtype'] = idSelect.value;
           console.log('payload: ', payload);
@@ -274,62 +270,14 @@ function VoterForm({ tabKey, voter, setVoter, duplicatesFound, setDuplicatesfoun
                         </Col>
                     </InputGroup>
                     <InputGroup className='mb-3'>
+                        <InputGroup.Text id="aAddress">Address</InputGroup.Text>
+                        <Form.Control id="address" name="address" size="lg" type="text" onChange={(e) => { setCurrentVoter({ ...currentVoter, address: e.target.value }) }} placeholder="address" value={currentVoter.address} required />
                         <InputGroup.Text id="aCity">City</InputGroup.Text>
                         <Form.Control id="city" name="city" size="lg" type="text" minLength={2} onChange={(e) => { setCurrentVoter({ ...currentVoter, city: e.target.value }) }} placeholder="city" value={currentVoter.city} required />
                         <InputGroup.Text id="aState-addon1" className='form-col' >State</InputGroup.Text>
-                        <Form.Select aria-label="State" name="state" id="aState" required onChange={(e) => { setCurrentVoter({ ...currentVoter, state: e.target.value }) }} value={currentVoter.state}>
-                            <option value="AL">Alabama</option>
-                            <option value="AK">Alaska</option>
-                            <option value="AZ">Arizona</option>
-                            <option value="AR">Arkansas</option>
-                            <option value="CA">California</option>
-                            <option value="CO">Colorado</option>
-                            <option value="CT">Connecticut</option>
-                            <option value="DE">Delaware</option>
-                            <option value="DC">District Of Columbia</option>
-                            <option value="FL">Florida</option>
-                            <option value="GA">Georgia</option>
-                            <option value="HI">Hawaii</option>
-                            <option value="ID">Idaho</option>
-                            <option value="IL">Illinois</option>
-                            <option value="IN">Indiana</option>
-                            <option value="IA">Iowa</option>
-                            <option value="KS">Kansas</option>
-                            <option value="KY">Kentucky</option>
-                            <option value="LA">Louisiana</option>
-                            <option value="ME">Maine</option>
-                            <option value="MD">Maryland</option>
-                            <option value="MA">Massachusetts</option>
-                            <option value="MI">Michigan</option>
-                            <option value="MN">Minnesota</option>
-                            <option value="MS">Mississippi</option>
-                            <option value="MO">Missouri</option>
-                            <option value="MT">Montana</option>
-                            <option value="NE">Nebraska</option>
-                            <option value="NV">Nevada</option>
-                            <option value="NH">New Hampshire</option>
-                            <option value="NJ">New Jersey</option>
-                            <option value="NM">New Mexico</option>
-                            <option value="NY">New York</option>
-                            <option value="NC">North Carolina</option>
-                            <option value="ND">North Dakota</option>
-                            <option value="OH">Ohio</option>
-                            <option value="OK">Oklahoma</option>
-                            <option value="OR">Oregon</option>
-                            <option value="PA">Pennsylvania</option>
-                            <option value="RI">Rhode Island</option>
-                            <option value="SC">South Carolina</option>
-                            <option value="SD">South Dakota</option>
-                            <option value="TN">Tennessee</option>
-                            <option value="TX">Texas</option>
-                            <option value="UT">Utah</option>
-                            <option value="VT">Vermont</option>
-                            <option value="VA">Virginia</option>
-                            <option value="WA">Washington</option>
-                            <option value="WV">West Virginia</option>
-                            <option value="WI">Wisconsin</option>
-                            <option value="WY">Wyoming</option>
-                        </Form.Select>
+                        <Form.Control aria-label="State" type="text" name="state" id="aState" onChange={(e) => { setCurrentVoter({ ...currentVoter, state: e.target.value }) }} value={currentVoter.state} required />
+                        <InputGroup.Text id="aZipcode">Zipcode</InputGroup.Text>
+                        <Form.Control id="zipcode" name="zipcode" size="lg" type="text" minLength={5} onChange={(e) => { setCurrentVoter({ ...currentVoter, zipcode: e.target.value }) }} placeholder="zipcode" value={currentVoter.zipcode} required />
                     </InputGroup>
                     <InputGroup className='mb-3'>
                         <InputGroup.Text id="aPhone" >Phone</InputGroup.Text>

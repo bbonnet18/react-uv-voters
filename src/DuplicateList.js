@@ -16,7 +16,7 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
               withCredentials:true
             });
             
-            const duplicatesArr = JSON.parse(duplicatesList.data);
+            const duplicatesArr = duplicatesList.data;
             
             if(duplicatesArr && duplicatesArr.length){
               if(duplicatesArr.length === 0){
@@ -59,9 +59,11 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
               <th>Phone</th>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Age</th>
+              <th>Address</th>
               <th>State</th>
               <th>City</th>
+              <th>Zipcode</th>
+              <th>Age</th>
               <th>ID Type</th>
               <th>ID Sample</th>
             </tr>
@@ -72,9 +74,11 @@ function DuplicateList ({newVoter,setDuplicatesfound}){
               <td>{itm.phone}</td>
               <td>{itm.firstname}</td>
               <td>{itm.lastname}</td>
+              <td>{itm.address}</td>
               <td>{itm.age}</td>
               <td>{itm.state}</td>
               <td>{itm.city}</td>
+              <td>{itm.zipcode}</td>
               <td>{itm.idtype}</td>
               <td>{itm.idsample}</td>
             </tr>

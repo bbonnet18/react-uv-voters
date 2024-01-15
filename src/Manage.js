@@ -11,9 +11,11 @@ function Manage({user, setUser}) {
 
   const [voter,setVoter] = useState({
     "age": "",
+    "address":"",
     "gender": "",
     "city": "",
     "state": "",
+    "zipcode":"",
     "phone": "",
     "lastname": "",
     "firstname": "",
@@ -29,9 +31,11 @@ function Manage({user, setUser}) {
   useEffect(()=>{
     setVoter({
       "age": "",
+      "address":"",
       "gender": "",
       "city": "",
       "state": "",
+      "zipcode":"",
       "phone": "",
       "lastname": "",
       "firstname": "",
