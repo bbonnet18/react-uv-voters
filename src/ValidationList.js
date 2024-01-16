@@ -5,7 +5,7 @@ import axios from "axios";
 import config from "./config";
 import he from "he";
 
-function ValidationList ({setVoter, voter, setHasValidations}){
+function ValidationList ({setVoter, voter, setHasValidations, completed}){
     
 
     const [loading,setLoading] = useState(false);
@@ -18,11 +18,12 @@ function ValidationList ({setVoter, voter, setHasValidations}){
 
     useEffect(()=>{ 
       // remove the loaded images
-      if(voter && voter.lastname == ""){
+      if(completed === true){
         setImg("");
         setSelfy("");
       }
-  },[voter])
+  },[completed])
+
 
 
 

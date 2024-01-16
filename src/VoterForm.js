@@ -5,7 +5,7 @@ import axios from 'axios';
 import config from './config';
 
 
-function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
+function VoterForm({ tabKey, voter, setCompleted }) {
 
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
@@ -19,6 +19,7 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
         console.log('voter changed in form to: ', voter);
         const newVoter = { ...voter };
         setCurrentVoter(newVoter);
+
     }, [voter])
 
     useEffect(() => {
@@ -47,11 +48,13 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
             "valid": "",
             "idtype": "",
             "idsample": "",
-            "zipcode":""
+            "zipcode":"",
+            "keyStr":""
         });
         setResultsText(null)
         setResultsTitle(null);
         setToasttype("Success");
+        setCompleted(true);// to remove the images
     }
 
     // check fields and attempt to add
@@ -93,7 +96,7 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
     }
 
     //  // check fields and attempt to add
-     const addValidation = async () => {
+     const addValidation = async (vType) => {
 
         const form = document.getElementById('voterForm');
         const isValid = form.checkValidity();
@@ -110,6 +113,11 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
           payload['gender'] = genderSelect.value;
           payload['valid'] =  true;
           payload['idtype'] = idSelect.value;
+          payload['keyStr'] = currentVoter.keyStr;
+          if(vType === "visual"){
+            payload['idsample'] = "OKGO";
+            payload['idtype'] = "C"
+          }
           console.log('payload: ', payload);
 
           setLoading(true)
@@ -121,41 +129,12 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
           setToasttype('success');
           setShow(true);
           reset();
-          console.log(res);
           setLoading(false)
         } else {
           form.classList.add('invalid');
         }
 
       }
-
-      // visual approval good, now take the conditional label off record
-     const visuallyValidated = async () => {
-
-        const form = document.getElementById('voterForm');
-        const isValid = form.checkValidity();
-        if (isValid) {
-          form.classList.remove('invalid');
-         
-            var payload = currentVoter;
-            payload.idsample = "okgo";
-
-          setLoading(true)
-          let res = await axios.post(`${config.apiBaseUrl}/admin/visually-validated`, payload,{
-            withCredentials:true
-          });
-          setResultsTitle('Voter visually validated');
-          setToasttype('success');
-          setShow(true);
-          reset();
-          console.log(res);
-          setLoading(false)
-        } else {
-          form.classList.add('invalid');
-        }
-      }
-
-
 
       const rejectValidation = async () => {
 
@@ -202,7 +181,7 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
                     </ToastContainer>
                     <hr></hr>
                     <InputGroup className='mb-3' as={Row}>
-                        <Col sm={12} lg={6}>
+                        <Col sm={12} lg={6}>    
                         <Form.Label id="aidType" className='form-col'>ID Type</Form.Label>
                         <Form.Select size="lg" aria-label="id-type" name="idType" id="idType" required onChange={(e) => { setCurrentVoter({ ...currentVoter, idtype: e.target.value }) }} value={currentVoter.idtype} >
                             <option value="D">drivers license</option>
@@ -233,7 +212,7 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
                         </Col>
                         <Col sm={12} lg={6}>
                         <Form.Label id="aAddress1">Address2</Form.Label>
-                        <Form.Control id="address2" name="address2" size="lg" type="text" onChange={(e) => { setCurrentVoter({ ...currentVoter, address2: e.target.value }) }} placeholder="address" value={currentVoter.address2} required />
+                        <Form.Control id="address2" name="address2" size="lg" type="text" onChange={(e) => { setCurrentVoter({ ...currentVoter, address2: e.target.value }) }} placeholder="address" value={currentVoter.address2} />
                         </Col>
                         <Col sm={12} lg={6}>
                         <Form.Label id="aCity">City</Form.Label>
@@ -338,7 +317,7 @@ function VoterForm({ tabKey, voter, setVoter, hasValidations }) {
                                 </Col>
                                 <Col lg={3}>
                                     {currentVoter.idtype === "C" ? ( <Row>
-                                        <Button variant='success' onClick={() => visuallyValidated()}> {loading ?
+                                        <Button variant='success' onClick={() => addValidation("visual")}> {loading ?
                                             <Spinner animation="border" role="status">
                                                 <span className="visually-hidden">Loading...</span>
                                             </Spinner> : "visual validation"}</Button>

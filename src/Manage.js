@@ -1,6 +1,5 @@
 import './App.css';
 import { Container, Tabs, Tab, Row, Col } from "react-bootstrap";
-import DuplicateList from './DuplicateList';
 import ValidationList from './ValidationList';
 import VoterForm from './VoterForm';
 import {useState, useEffect} from "react";
@@ -21,11 +20,12 @@ function Manage({user, setUser}) {
     "firstname": "",
     "valid": "",
     "idtype":"",
+    "keyStr":"",
     "idsample": ""
 });
-  const [duplicatesFound, setDuplicatesfound] = useState(null);
   const [hasValidations, setHasValidations] = useState(null);
   const [key, setKey] = useState('voterList');
+  const [completed,setCompleted] = useState(true); 
 
 
   useEffect(()=>{
@@ -41,7 +41,8 @@ function Manage({user, setUser}) {
       "firstname": "",
       "valid": "",
       "idtype":"",
-      "idsample": ""
+      "idsample": "",
+      "keyStr": ""
   });
   },[key])
 
@@ -79,7 +80,7 @@ function Manage({user, setUser}) {
         <ValidationList voter={voter} setVoter={setVoter} setHasValidations={setHasValidations} ></ValidationList>
       </Tab>
     </Tabs>
-    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations}></VoterForm>
+    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations} setCompleted={setCompleted}></VoterForm>
    
     </Container>
 
