@@ -26,6 +26,7 @@ function Manage({user, setUser}) {
   const [hasValidations, setHasValidations] = useState(null);
   const [key, setKey] = useState('voterList');
   const [completed,setCompleted] = useState(true); 
+  const [receiptHandle,setReceiptHandle] = useState("");// used to remove messages that have been actioned
 
 
   useEffect(()=>{
@@ -67,20 +68,9 @@ function Manage({user, setUser}) {
            <Login user={user}></Login>
         </Col>
       </Row>
-      <Tabs
-      activeKey={key}
-      onSelect={(k) => {console.log('k is ',k); setKey(k);}}
-      className="mb-3"
-    >
-      <Tab eventKey="voterList" title="voterList">
-        <h3>Add Voter</h3>
-      </Tab>
-      <Tab eventKey="validationList" title="validationList">
         <h3>Validation List</h3>
-        <ValidationList voter={voter} setVoter={setVoter} setHasValidations={setHasValidations} ></ValidationList>
-      </Tab>
-    </Tabs>
-    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations} setCompleted={setCompleted}></VoterForm>
+        <ValidationList voter={voter} setVoter={setVoter} setHasValidations={setHasValidations} setReceiptHandle={setReceiptHandle}  ></ValidationList>
+    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations} setCompleted={setCompleted} receiptHandle={receiptHandle}></VoterForm>
    
     </Container>
 

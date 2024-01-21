@@ -5,7 +5,7 @@ import axios from "axios";
 import config from "./config";
 import he from "he";
 
-function ValidationList ({setVoter, voter, setHasValidations, completed}){
+function ValidationList ({setVoter, setReceiptHandle, setHasValidations, completed}){
     
 
     const [loading,setLoading] = useState(false);
@@ -43,14 +43,16 @@ function ValidationList ({setVoter, voter, setHasValidations, completed}){
       });
       
       console.log('validations returned: ', myvalidations);
-      if(myvalidations && myvalidations.data && myvalidations.data){ 
-        myvalidations.data.DOB = he.decode(myvalidations.data.DOB);
-        setVoter(myvalidations.data);
+      if(myvalidations && myvalidations.data && myvalidations.data.voter){ 
+        myvalidations.data.voter.DOB = he.decode(myvalidations.data.voter.DOB);
+        setVoter(myvalidations.data.voter);
+        setReceiptHandle(myvalidations.data.receiptHandle);
         setLoading(false);
-        getIDImgs(myvalidations.data);
+        getIDImgs(myvalidations.data.voter);
         setHasValidations(true);
       }else{
         setHasValidations(false);
+        setReceiptHandle("");
         setLoading(false);
       }
     }
