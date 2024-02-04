@@ -1,3 +1,7 @@
+#actions .row{
+  margin-right: auto;
+}
+
 .App {
   text-align: center;
 }
@@ -43,6 +47,10 @@ body{
   to {
     transform: rotate(360deg);
   }
+}
+
+form{
+  padding-bottom: 10px;
 }
 
 .form-col{

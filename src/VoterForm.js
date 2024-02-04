@@ -86,9 +86,14 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
             voter.receiptHandle = receiptHandle;
 
             setLoading(true)
-            let res = await axios.post(`${config.apiBaseUrl}/admin/validation-list`, voter, {
-                withCredentials: true
-            });
+            try{
+
+                let res = await axios.post(`${config.apiBaseUrl}/admin/validation-list`, voter, {
+                    withCredentials: true
+                });
+            }catch(err){
+                console.error('error ', err);
+            }
             setResultsTitle('Voter validated');
             setResultsText('The voter will receive a text message to validate.')
             setToasttype('success');
@@ -114,9 +119,14 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
         }
 
         setLoading(true)
-        let res = await axios.post(`${config.apiBaseUrl}/admin/reject-validation`, payload, {
-            withCredentials: true
-        });
+        try{
+            let res = await axios.post(`${config.apiBaseUrl}/admin/reject-validation`, payload, {
+                withCredentials: true
+            });
+        }catch(err){
+            console.error('error: ',err)
+        }
+      
         setResultsTitle('Voter rejected');
         setResultsText('The voter will receive a text message with the rejection reason.')
         setToasttype('success');
@@ -212,7 +222,7 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
                         <Form.Check // prettier-ignore
                             type={'checkbox'}
                             id={'opt-in'}
-                            label={'Voter agrees to receive text messages'} required
+                            label={'Voter agrees to receive text messages'} checked={true} required
                         />
                     </InputGroup>) : (<InputGroup className='mb-3'>
                         <Form.Check // prettier-ignore
@@ -230,13 +240,9 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
                         </Form.Select>
                     </InputGroup>
 
-                    <Row>
-
-                        <Col lg={3}>
-                            <Button variant='danger' onClick={() => reset()} >Reset</Button>
-                        </Col>
-
-                        <Col lg={3}>
+                    <InputGroup  className='mb-3'>
+                        
+                        <Col id="actions" lg={{span:3,offset:9}} xs={{span:6,offset:6}}>
                             <Row className='mb-1'> 
                                 <Button variant='success' onClick={() => addValidation("visual")}> {loading ?
                                     <Spinner animation="border" role="status">
@@ -263,7 +269,7 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
                                     </Spinner> : "Reject"}</Button>
                             </Row>
                         </Col>
-                    </Row>
+                    </InputGroup>
                 </Form>)
             }
         </>

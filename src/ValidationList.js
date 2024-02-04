@@ -36,6 +36,7 @@ function ValidationList ({setVoter, setReceiptHandle, setHasValidations, complet
       setShow(true)
     };
 
+
     async function getValidations(){
       setLoading(true);
       let myvalidations = await axios.get(`${config.apiBaseUrl}/admin/validation-list`,{
