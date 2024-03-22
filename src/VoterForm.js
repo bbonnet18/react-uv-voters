@@ -132,7 +132,6 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
         setToasttype('success');
         reset();
         setShow(true);
-        console.log(res);
         setLoading(false)
 
     }
