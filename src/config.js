@@ -4,7 +4,6 @@ export default {
     // voteAppBaseUrl:"http://localhost:3001",
     // apiBaseUrl:"http://localhost:3003"
     manageAppBaseUrl:"https://manage.u-vote.us",    
-    voteAppBaseUrl:"https://www.u-vote.us",
     apiBaseUrl:"https://www.u-vote.us"
 
 }
