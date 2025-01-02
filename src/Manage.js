@@ -1,9 +1,11 @@
 import './App.css';
-import { Container, Tabs, Tab, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col } from "react-bootstrap";
 import ValidationList from './ValidationList';
 import VoterForm from './VoterForm';
 import {useState, useEffect} from "react";
-import Login from "./Login";
+import { useNavigate } from 'react-router-dom';
+import Login from "./Login"; 
+
 
 
 function Manage({user, setUser}) {
@@ -27,6 +29,8 @@ function Manage({user, setUser}) {
   const [key, setKey] = useState('voterList');
   const [completed,setCompleted] = useState(true); 
   const [receiptHandle,setReceiptHandle] = useState("");// used to remove messages that have been actioned
+  const nav = useNavigate();
+
 
 
   useEffect(()=>{
@@ -48,11 +52,17 @@ function Manage({user, setUser}) {
   },[key])
 
   
-
+  const goNew = (evt)=>{
+    console.log('clicked it');
+    nav('visual');
+  }
 
 
   return (
     <Container> 
+      <Row>
+        <Col lg={3}><Button onClick={()=>goNew()}>New Live Voter</Button></Col>
+      </Row>
       <Row className='header'>
         <Col lg={9}>
         <img

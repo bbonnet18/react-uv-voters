@@ -5,6 +5,7 @@ import {useState, useEffect} from "react";
 import axios from 'axios';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import config from './config';
+import NewVoterForm from './NewVoterForm';
 
 export default function App() {
 
@@ -48,6 +49,7 @@ export default function App() {
         <Route path={user && user.email ? '/' : '/manage'} element={<Manage user={user} setUser={setUser} />}>
           <Route index element={<Manage  user={user} setUser={setUser} />} />
         </Route>
+        <Route path={'/visual'} element={<NewVoterForm />}></Route>
         <Route path={user && user.email ? '/logout' : '/'}  element={<LoginComp  user={user} setUser={setUser} />} />
       </Routes>
     </BrowserRouter>

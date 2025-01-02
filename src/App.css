@@ -171,6 +171,10 @@ form{
 
 }
 
+.loading-spinner{
+  background-color: red;
+}
+
 /** Modal **/
 
 .modal.show .modal-dialog{
@@ -192,6 +196,9 @@ form{
   overflow-y: scroll;
 }
 
+.new-voter{
+  background-color: gray;
+}
 
 .tester {
   background-color: green;
