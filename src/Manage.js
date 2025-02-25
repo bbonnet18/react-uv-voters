@@ -8,7 +8,7 @@ import Login from "./Login";
 
 
 
-function Manage({user, setUser}) {
+function Manage({user}) {
 
   const [voter,setVoter] = useState({
     "DOB": "",

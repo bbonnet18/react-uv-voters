@@ -22,6 +22,10 @@ body{
   background-color: darkslategrey !important;
 }
 
+.btn{
+  border-radius: 0px !important;
+}
+
 .container{
   background-color: whitesmoke
 }
@@ -198,6 +202,10 @@ form{
 
 .new-voter{
   background-color: gray;
+}
+
+.new-voter.container-md{
+  background-color: beige;
 }
 
 .tester {

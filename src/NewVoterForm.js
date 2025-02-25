@@ -158,21 +158,15 @@ function NewVoterForm() {
           setShowError(false);
           setErrorMsg("");
           setLoading(false);
-          //navigate('/confirm')
+          navigate('/');
         } else {
+          setLoading(false);
           setShowError(true);
           setErrorMsg(res.data.reason);
-          setLoading(false);
         }
 
       } catch (err) {
         setLoading(false);
-        // navigate('/registration-error', {
-        //   state: {
-        //     message: "Error with the registration",
-        //     error: err.response.data.reason
-        //   }
-        // })
         setShowError(true);
         setErrorMsg(err.response.data.reason);
 

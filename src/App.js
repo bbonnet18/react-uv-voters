@@ -50,7 +50,7 @@ export default function App() {
           <Route index element={<Manage  user={user} setUser={setUser} />} />
         </Route>
         <Route path={'/visual'} element={<NewVoterForm />}></Route>
-        <Route path={user && user.email ? '/logout' : '/'}  element={<LoginComp  user={user} setUser={setUser} />} />
+        <Route path={user && user.email ? '/logout' : '/'}  element={<LoginComp  user={user} />} />
       </Routes>
     </BrowserRouter>
    

@@ -11,7 +11,7 @@ export default function LoginComp({user,setUser}) {
 
         <Container>
             <Row>
-                <p>This is the login route</p>
+                <p>Login to U-Vote Admin</p>
                 
                { user && user.email ? ( <a href={`${config.apiBaseUrl}/logout`} rel="noreferer" >Logout</a>) : ( <a href={`${config.apiBaseUrl}/login`} rel="noreferer" >Login</a>)}
             </Row>
