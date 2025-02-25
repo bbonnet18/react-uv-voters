@@ -17,16 +17,16 @@ export default function App() {
     async function checkUser(){
 
       try{
-        const loggedInUser = await axios.get(`${config.apiBaseUrl}/user`,{
-        withCredentials:true
-      });
+          const loggedInUser = await axios.get(`${config.apiBaseUrl}/user`,{
+          withCredentials:true
+        });
 
         if(loggedInUser && loggedInUser.data){
           setUser(loggedInUser.data);
         }
 
       }catch(err){
-        
+        console.error('err: ', err)
       }
       
       
@@ -46,7 +46,7 @@ export default function App() {
 
     <BrowserRouter>
       <Routes>
-        <Route path={user && user.email ? '/' : '/manage'} element={<Manage user={user} setUser={setUser} />}>
+        <Route path={'/'} >
           <Route index element={<Manage  user={user} setUser={setUser} />} />
         </Route>
         <Route path={'/visual'} element={<NewVoterForm />}></Route>
