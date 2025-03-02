@@ -30,17 +30,17 @@ export default function App() {
             <Link to="/login">Login</Link>
           </li>
         </ul>
-      <Login user={user} />
+      <Login user={user} setUser={setUser} />
     </div>
     <div>
     <Routes>
         <Route path={'/'} element={<LoginComp loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}>
         
         </Route>
-      <Route path={'/home'} element={<Manage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} >
+      <Route path={'/home'} element={<Manage user={user} setUser={setUser} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} >
         
       </Route>
-      <Route path={'/visual'} element={<NewVoterForm/>}>
+      <Route path={'/visual'} element={<NewVoterForm />}>
         
       </Route>
      

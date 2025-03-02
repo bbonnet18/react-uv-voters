@@ -2,11 +2,13 @@ import './App.css';
 import { Container, Button, Row, Col, Nav } from "react-bootstrap";
 import ValidationList from './ValidationList';
 import VoterForm from './VoterForm';
+import axios from 'axios';
+import config from './config';
 import { useState, useEffect } from "react";
 
 
 
-function Manage({ user }) {
+function Manage({ user,setUser }) {
 
   const [voter, setVoter] = useState({
     "DOB": "",
@@ -47,6 +49,34 @@ function Manage({ user }) {
       "keyStr": ""
     });
   }, [key])
+
+
+  useEffect(() => {
+    let mounted = true;
+
+    if(mounted && user === null){
+        checkUser();
+    }
+    return () => {
+      mounted = false;  
+    }
+  })
+
+  async function checkUser() {
+
+    try {
+      const loggedInUser = await axios.get(`${config.apiBaseUrl}/user`, {
+        withCredentials: true
+      });
+
+      if (loggedInUser && loggedInUser.data) {
+        setUser(loggedInUser.data);
+      }
+
+    } catch (err) {
+      console.log('unable to retrieve user');
+    }
+  }
 
   return (
     <Container>

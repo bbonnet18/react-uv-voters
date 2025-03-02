@@ -13,6 +13,7 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
     const [resultsText, setResultsText] = useState(null);
     const [resultsTitle, setResultsTitle] = useState(null);
     const [toastType, setToasttype] = useState("Success");
+    const [textsChecked, setTextsChecked] = useState(false);
 
 
     useEffect(() => {
@@ -221,7 +222,7 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
                         <Form.Check // prettier-ignore
                             type={'checkbox'}
                             id={'opt-in'}
-                            label={'Voter agrees to receive text messages'} checked={true} required
+                            label={'Voter agrees to receive text messages'} checked={textsChecked} onChange={(e) => {setTextsChecked(e.currentTarget.value)}} required
                         />
                     </InputGroup>) : (<InputGroup className='mb-3'>
                         <Form.Check // prettier-ignore

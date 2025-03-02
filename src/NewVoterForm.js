@@ -158,7 +158,7 @@ function NewVoterForm() {
           setShowError(false);
           setErrorMsg("");
           setLoading(false);
-          navigate('/');
+          navigate('/home');
         } else {
           setLoading(false);
           setShowError(true);
@@ -178,9 +178,6 @@ function NewVoterForm() {
   }
   return (
     <Container fluid="md" className='new-voter'>
-        <Row>
-            <Col lg={3}><Button onClick={()=>{navigate('/')}}>Validate</Button></Col>
-        </Row>
       {loading ? (<Spinner></Spinner>) : (
         <>
           <h2>Visual Validation</h2>
