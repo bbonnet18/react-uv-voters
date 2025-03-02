@@ -1,87 +1,74 @@
 import './App.css';
-import { Container, Button, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col, Nav } from "react-bootstrap";
 import ValidationList from './ValidationList';
 import VoterForm from './VoterForm';
-import {useState, useEffect} from "react";
-import { useNavigate } from 'react-router-dom';
-import Login from "./Login"; 
+import { useState, useEffect } from "react";
 
 
 
-function Manage({user}) {
+function Manage({ user }) {
 
-  const [voter,setVoter] = useState({
+  const [voter, setVoter] = useState({
     "DOB": "",
-    "address1":"",
+    "address1": "",
     "gender": "",
     "city": "",
     "state": "",
-    "zipcode":"",
+    "zipcode": "",
     "phone": "",
     "lastname": "",
     "firstname": "",
     "valid": "",
-    "idtype":"",
-    "keyStr":"",
+    "idtype": "",
+    "keyStr": "",
     "idsample": ""
-});
+  });
   const [hasValidations, setHasValidations] = useState(null);
   const [key, setKey] = useState('voterList');
-  const [completed,setCompleted] = useState(true); 
-  const [receiptHandle,setReceiptHandle] = useState("");// used to remove messages that have been actioned
-  const nav = useNavigate();
+  const [completed, setCompleted] = useState(true);
+  const [receiptHandle, setReceiptHandle] = useState("");// used to remove messages that have been actioned
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
     setVoter({
       "DOB": "",
-      "address1":"",
+      "address1": "",
       "gender": "",
       "city": "",
       "state": "",
-      "zipcode":"",
+      "zipcode": "",
       "phone": "",
       "lastname": "",
       "firstname": "",
       "valid": "",
-      "idtype":"",
+      "idtype": "",
       "idsample": "",
       "keyStr": ""
-  });
-  },[key])
-
-  
-  const goNew = (evt)=>{
-    console.log('clicked it');
-    nav('visual');
-  }
-
+    });
+  }, [key])
 
   return (
-    <Container> 
-      <Row>
-        <Col lg={3}><Button onClick={()=>goNew()}>New Live Voter</Button></Col>
-      </Row>
+    <Container>
       <Row className='header'>
         <Col lg={9}>
-        <img
-              src="/vote_draft_icon.png"
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-              alt="U-Vote"
-            />
+          <img
+            src="/vote_draft_icon.png"
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+            alt="U-Vote"
+          />
           <div >U-Vote Admin</div>
         </Col>
         <Col lg={3}>
-           <Login user={user}></Login>
+          {/* <Login user={user}></Login> */}
         </Col>
       </Row>
-        <h3>Validation List</h3>
-        <ValidationList voter={voter} setVoter={setVoter} setHasValidations={setHasValidations} setReceiptHandle={setReceiptHandle}  ></ValidationList>
-    <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations} setCompleted={setCompleted} receiptHandle={receiptHandle}></VoterForm>
-   
+      <h3>Validation List</h3>
+      <ValidationList voter={voter} setVoter={setVoter} setHasValidations={setHasValidations} setReceiptHandle={setReceiptHandle}  ></ValidationList>
+      <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations} setCompleted={setCompleted} receiptHandle={receiptHandle}></VoterForm>
+
     </Container>
 
 
