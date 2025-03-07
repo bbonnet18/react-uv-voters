@@ -1,12 +1,14 @@
 import './App.css';
 import axios from 'axios';
 import config from './config';
-import { Alert, Col, Row, Form, Button, Container, Spinner } from "react-bootstrap";
-import { useState, useRef, useEffect } from 'react';
+import { Alert, Col, Row, Form, Button, Container, Spinner, Toast, ToastContainer } from "react-bootstrap";
+import { useState, useRef, useEffect, useContext } from 'react';
+import { UserContext } from './userContext';
 import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from "react-google-recaptcha";
 
 function NewVoterForm() {
+
 
   const starterVoter = {
     "lastname": "",
@@ -36,6 +38,7 @@ function NewVoterForm() {
 
   // const [registered, setRegistered] = useState(false);//to represent that the voter has not registered
   const navigate = useNavigate();
+  const {completed,setCompleted} = useContext(UserContext);
   // for captcha
   const recaptchaRef = useRef(null);
 
@@ -158,7 +161,7 @@ function NewVoterForm() {
           setShowError(false);
           setErrorMsg("");
           setLoading(false);
-          navigate('/home');
+          setCompleted(true);
         } else {
           setLoading(false);
           setShowError(true);
@@ -180,8 +183,8 @@ function NewVoterForm() {
     <Container fluid="md" className='new-voter'>
       {loading ? (<Spinner></Spinner>) : (
         <>
-          <h2>Visual Validation</h2>
-          <div className='limit-notice'><p>Validate a voter by visually checking their ID and entering their information. </p></div>
+          <h2>In-Person Registration</h2>
+          <div className='limit-notice'><p>We check your ID and register you. You receive your voter key through a text message. </p></div>
           <hr className='separator'></hr>
 
           <Form id="registerForm">
@@ -380,7 +383,21 @@ function NewVoterForm() {
               </Col>
 
             </Row>
-           
+            {completed ? (<Row>
+              <ToastContainer position='middle-center'>
+            <Toast bg='success' onClose={() => {
+               setCompleted(false);
+               navigate('/home');
+            }} show={completed} delay={3000} autohide>
+              <Toast.Header>
+                <strong className="me-auto">Success</strong>
+                <small>Completed Registration</small>
+              </Toast.Header>
+              <Toast.Body>Registration complete. You should receive a text message soon!</Toast.Body>
+            </Toast>
+            </ToastContainer>
+          </Row>
+          ) : (<></>)}
             <Row>
             { showError ? (<Alert variant='danger'>{errorMsg}</Alert>) : (<></>)}
             </Row>

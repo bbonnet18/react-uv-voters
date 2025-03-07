@@ -1,14 +1,16 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "./userContext";
 import axios from 'axios';
 import config from './config';
 import getCookie from './getCookie';
 
 
-export default function LoginComp({ setLoggedIn }) {
+export default function LoginComp() {
 
+    const {user,setUser} = useContext(UserContext);
     const loc = useLocation();
     const nav = useNavigate();
     useEffect(()=>{
@@ -22,13 +24,40 @@ export default function LoginComp({ setLoggedIn }) {
 
       });
 
-    function checkAuthCookie (){
-    const authCookie = getCookie('bToken');
+    async function checkAuthCookie (){
+        const authCookie = getCookie('bToken');
+
         if(authCookie){
-            setLoggedIn(true);
-            nav('/home');
+             await checkUser();
         }
     }
+
+
+    async function checkUser() {
+    
+        try {
+    
+          const authCookie = getCookie("bToken") || "";
+    
+          const reqOpts = {
+            headers: {
+              "Authorization": `Bearer ${authCookie}`
+            },
+            withCredentials: true
+          }
+    
+          const loggedInUser = await axios.get(`${config.apiBaseUrl}/user`, reqOpts);
+    
+          if (loggedInUser && loggedInUser.data.email) {
+            setUser(loggedInUser.data);
+            nav('/home')
+          }
+    
+        } catch (err) {
+          console.log('unable to retrieve user');
+        }
+      }
+
    
     return (
 

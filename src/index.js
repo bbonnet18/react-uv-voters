@@ -1,15 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import AppWrapper from './AppWrapper';
+import { createBrowserRouter, RouterProvider, Route, createRoutesFromElements } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import LoginComp from "./LoginComp";
+import Manage from "./Manage";
+import NewVoterForm from "./NewVoterForm"
+
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<AppWrapper />}>
+      <Route path={'/'} element={<LoginComp  />} />
+      <Route path={'/home'} element={<Manage />} />
+      <Route path={'/visual'} element={<NewVoterForm />} />
+    </Route>
+  )
+)
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router}></RouterProvider>
   </React.StrictMode>
 );
 

@@ -1,24 +1,26 @@
-import axios from "axios";
-import {useState, useEffect} from "react";
-import { NavLink } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
-import config from './config';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { UserContext } from './userContext';
+import { useContext } from 'react';
 
-export default function Login({ user, setUser}) {
+
+export default function Login() {
     
+    const {user,setUser} = useContext(UserContext);
+
+    const nav = useNavigate();
 
     const logout = () => {
         
         document.cookie = "bToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
         setUser(false);
-        document.location = `${config.apiBaseUrl}/logout`;
+        nav('/')
         
     }
 
     return (
         <div>
-            <div>hello {user?.email}</div>
-        <div>{(user && user?.email ) ? (<a onClick={()=>{logout();}} >Logout</a>):(<NavLink to="/">Login</NavLink>)}</div>
+            <div>{user?.email}</div>
+        <div>{(user && user?.email ) ? (<a className="logout" onClick={()=>{logout();}} >Logout</a>):(<NavLink to="/">Login</NavLink>)}</div>
         </div>
         
     );

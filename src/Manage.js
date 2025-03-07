@@ -2,13 +2,12 @@ import './App.css';
 import { Container, Button, Row, Col, Nav } from "react-bootstrap";
 import ValidationList from './ValidationList';
 import VoterForm from './VoterForm';
-import axios from 'axios';
-import config from './config';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 
 
 
-function Manage({ user,setUser }) {
+function Manage() {
 
   const [voter, setVoter] = useState({
     "DOB": "",
@@ -29,7 +28,7 @@ function Manage({ user,setUser }) {
   const [key, setKey] = useState('voterList');
   const [completed, setCompleted] = useState(true);
   const [receiptHandle, setReceiptHandle] = useState("");// used to remove messages that have been actioned
-
+  const nav = useNavigate();
 
 
   useEffect(() => {
@@ -51,32 +50,40 @@ function Manage({ user,setUser }) {
   }, [key])
 
 
-  useEffect(() => {
-    let mounted = true;
+  // useEffect(() => {
+  //   let mounted = true;
 
-    if(mounted && user === null){
-        checkUser();
-    }
-    return () => {
-      mounted = false;  
-    }
-  })
+  //   if(mounted && user === null){
+  //       checkUser();
+  //   }
+  //   return () => {
+  //     mounted = false;  
+  //   }
+  // },[user])
 
-  async function checkUser() {
+  // async function checkUser() {
 
-    try {
-      const loggedInUser = await axios.get(`${config.apiBaseUrl}/user`, {
-        withCredentials: true
-      });
+  //   try {
 
-      if (loggedInUser && loggedInUser.data) {
-        setUser(loggedInUser.data);
-      }
+  //     const authCookie = getCookie("bToken") || "";
 
-    } catch (err) {
-      console.log('unable to retrieve user');
-    }
-  }
+  //     const reqOpts = {
+  //       headers:{
+  //         "Authorization": `Bearer ${authCookie}`
+  //       },
+  //       withCredentials: true
+  //     }
+
+  //     const loggedInUser = await axios.get(`${config.apiBaseUrl}/user`, reqOpts);
+
+  //     if (loggedInUser && loggedInUser.data.email) {
+  //       setUser(loggedInUser.data);
+  //     }
+
+  //   } catch (err) {
+  //     console.log('unable to retrieve user');
+  //   }
+  // }
 
   return (
     <Container>
