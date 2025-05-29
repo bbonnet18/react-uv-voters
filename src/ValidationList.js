@@ -130,7 +130,7 @@ function ValidationList ({setVoter, setReceiptHandle, setHasValidations, complet
           </Col>
         </Row>
         <hr></hr>
-        <Modal show={show} onHide={handleClose}>
+        <Modal className="check-modal" show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Enlarged ID Image</Modal.Title>
         </Modal.Header>

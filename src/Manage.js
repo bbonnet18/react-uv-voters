@@ -105,7 +105,6 @@ function Manage() {
       <h3>Validation List</h3>
       <ValidationList voter={voter} setVoter={setVoter} setHasValidations={setHasValidations} setReceiptHandle={setReceiptHandle}  ></ValidationList>
       <VoterForm tabKey={key} setVoter={setVoter} voter={voter} hasValidations={hasValidations} setCompleted={setCompleted} receiptHandle={receiptHandle}></VoterForm>
-
     </Container>
 
 

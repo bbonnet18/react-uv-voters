@@ -1,7 +1,7 @@
 
 import { useEffect, useContext } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { UserContext } from "./userContext";
 import axios from 'axios';
 import config from './config';
@@ -11,18 +11,31 @@ import getCookie from './getCookie';
 export default function LoginComp() {
 
     const {user,setUser} = useContext(UserContext);
+    const [params] = useSearchParams();
     const loc = useLocation();
     const nav = useNavigate();
+
     useEffect(()=>{
         let mounted = true;
 
         if(mounted){
-            checkAuthCookie();
+
+            //checkAuthCookie();
+
+            let status = params.get('status');
+            console.log('status: ',status)
+            if(status==="success"){
+                setUser({email:"test@testuser.test"});
+                nav('/home');
+            }
         }
 
         return () => mounted = false; 
 
       });
+
+
+    
 
     async function checkAuthCookie (){
         const authCookie = getCookie('bToken');

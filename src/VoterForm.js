@@ -61,7 +61,7 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
 
 
     //  // check fields and attempt to add
-    const addValidation = async (vType) => {
+    const addValidation = async () => {
 
         const form = document.getElementById('voterForm');
         const isValid = form.checkValidity();
@@ -79,11 +79,6 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
             voter['valid'] = true;
             voter['idtype'] = idSelect.value;
             voter['keyStr'] = currentVoter.keyStr;
-            if (vType === "visual") {
-                voter['idsample'] = "OKGO";
-                voter['idtype'] = "C"
-            }
-
             voter.receiptHandle = receiptHandle;
 
             setLoading(true)
@@ -243,12 +238,6 @@ function VoterForm({ tabKey, voter, setCompleted, receiptHandle }) {
                     <InputGroup  className='mb-3'>
                         
                         <Col id="actions" lg={{span:3,offset:9}} xs={{span:6,offset:6}}>
-                            <Row className='mb-1'> 
-                                <Button variant='success' onClick={() => addValidation("visual")}> {loading ?
-                                    <Spinner animation="border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </Spinner> : "visual validation"}</Button>
-                            </Row>
                             <Row>
                                 <Button variant='success' onClick={() => addValidation()} disabled={false}> {loading ?
                                     <Spinner animation="border" role="status">

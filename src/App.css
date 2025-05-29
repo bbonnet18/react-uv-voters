@@ -154,12 +154,6 @@ form{
   visibility: visible;
 }
 
-
-.img-preview button{
-
-}
-
-
 .img-load-spinner{
   width: 100px !important;
   height: 100px !important;
@@ -188,24 +182,24 @@ form{
 
 /** Modal **/
 
-.modal.show .modal-dialog{
+.check-modal{
   max-width: 80% !important;
 }
 
-.modal-dialog .modal-content{
+.check-modal .modal-dialog .modal-content{
   max-height: 800px;
   overflow-y: scroll;
 }
 
-.modal.show .modal-body{
+.check-modal.modal.show .modal-body{
   text-align: center;
 }
-
+/* 
 .modal-body {
   padding: 5px;
   overflow-x: scroll;
   overflow-y: scroll;
-}
+} */
 
 .nav{
   display: inline-block;
@@ -224,14 +218,11 @@ form{
   background-color: beige;
 }
 
+
 .tester {
   background-color: green;
 }
 
 .tester2{
   background-color: blue;
-}
-
-.toast{
-  
 }
