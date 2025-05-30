@@ -48,6 +48,10 @@ body{
   display:inline-block;
   margin-right: 20px; 
 }
+.conduit-section{
+  border-bottom:2px solid #ccc;
+  padding-top: 10px;
+}
 .create-input {
   width:80%;
 }

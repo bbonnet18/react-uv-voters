@@ -12,7 +12,9 @@ function Conduit(){
     const [topic,setTopic] = useState();
     const [comments,setComments] = useState([]);
     const [loading,setLoading] = useState(false); 
+    const [showGroups, setShowGroups] = useState(true)
     const [showTopics, setShowTopics] = useState(false);
+    const [showComments,setShowComments] = useState(false);
 
 useEffect(()=>{
     const retrieveTopics = async () => { 
@@ -33,6 +35,7 @@ const getGroups = async()=>{
     setGroup();
     setTopics([]);
     setComments([]);
+    setShowTopics(false);
 
     try{
         
@@ -45,6 +48,7 @@ const getGroups = async()=>{
         }else{
             setGroups([]);
         }
+        setShowGroups(true)
     }catch(err){
 
     }
@@ -66,16 +70,39 @@ const getTopics = async(groupId) => {
     }else{
         setTopics([]);
     }
+    setShowTopics(true);
 }
 
 //create a topic
-const creatTopic = async(groupId,topicId,topic) => {
+const createTopic = async(groupId,topicId,topic) => {
+    let payload = {
+        groupId:groupId,
+        topicId:topicId,
+        topic
+    }
+    let res = await axios.post(`${config.apiBaseUrl}/conduit/create-topic`,payload,{
+        withCredentials:true
+    });
 
+    if(res && res.status === 200){
+        await getTopics(group.gsid);
+    }
 }
 
 // can deactivate a group with this 
 const updateTopic = async(groupId,topicId,active)=>{
+    let payload = {
+        groupId:groupId,
+        topicId:topicId,
+        active:active
+    }
+    let res = await axios.post(`${config.apiBaseUrl}/conduit/update-topic`,payload,{
+        withCredentials:true
+    });
 
+    if(res && res.status === 200){
+       await getTopics(group.gsid);
+    }
 }
 
 
@@ -94,6 +121,7 @@ const getComments = async(groupId,topicId,active) => {
     }else{
         setComments([]);
     }
+    setShowComments(true);
 }
 // get topics within a group 
 const updateComment = async(groupId,topicId,voterName,active) => {
@@ -105,43 +133,77 @@ return (
         <h3>Conduit</h3>
         <Button variant='primary' onClick={async (e)=>{await getGroups()}}>Reset</Button>
         <p>Select a group and a topic to view comments and approve or reject.</p>
+        <section className="conduit-section">
+        <div className='conduit-selection'><a onClick={(e) => setShowGroups(!showGroups)}>Show Groups</a></div>
+        {showGroups ? (
+            <ul>
+            {groups.map((itm, ind)=>{
+                return (<li key={ind} className='conduit-group'>{itm.title} | <Button variant='primary' onClick={(e)=>{
+                    let group  = itm
+                    setTopic();
+                    setGroup(group);
+                    setShowGroups(false);
+                }}>Select</Button></li>)
+            })}
+            </ul>
+        ):(<></>)}
         <div>Group: {group ? (group.name) : <></>} | Topic: {topic ? (topic.topic):""}</div>
-        <ul>
-        {groups.map((itm)=>{
-            return (<li className='conduit-group'>{itm.title} | <Button variant='primary' onClick={(e)=>{
-                let group  = itm
-                setTopic();
-                setGroup(group)
-            }}>Select</Button></li>)
-        })}
-        </ul>
-
-        {topics && topics.length ? (
+        </section>
+        <section className="conduit-section">
+   
             <div>
                 <h3>Topics</h3>
             <div><a onClick={(e) => setShowTopics(!showTopics)}>Show Topics</a></div>
-            <div><input type="text" className='create-input'/> <Button variant='success' onClick={async (e)=> {
-                // let payload = {
-                //     groupId:group.gsid,
-                //     topicId:3,
+            <div><input type="text" id="topicInput" className='create-input'/> <Button variant='success' onClick={async (e)=> {
+                // get the highest number in the topic list
+                let myId = 0;
+                // find the highest number
+                if(topics && topics.length){
+                    
+                    topics.map((itm)=>{
+                    if(itm.topicId > myId){
+                        myId = itm.topicId;
+                    }
+                    });
+                }
+                myId = myId + 1;
 
-                // }
+                let topicEl = document.getElementById('topicInput');
+                let topicTxt = topicEl.value.trim();
+                if(topicTxt === ""){
+                    return; 
+                }
+                // sanitize input 
+                
+                const reg = /[a-zA-Z0-9]/ig; 
+
+                if(reg.test(topicTxt)){
+                    await createTopic(group.gsid, myId, topicTxt)
+                }
+
+                
 
 
             }}>Create Topic</Button></div>
             {showTopics ? (
                 <ul>
-                {topics.map((topic)=>{
-                    return (<li>{topic.topic} | <Button variant='primary' onClick={(e)=>{
+                {topics.map((topic,ind)=>{
+                    return (<li key={ind}>{topic.topic} | <Button variant='primary' onClick={(e)=>{
                         let myTopic  = topic;
                         setTopic(myTopic);
-                    }}>Select</Button></li>)
+                        setShowTopics(false);
+                    }}>Select</Button> | {topic.active === true || topic.active === "true" ? ("true") : ("false")} | {topic.topicId} | <Button variant='warning' onClick={async (itm)=>{
+                        let myTopic = topic;
+                        await updateTopic(group.gsid,myTopic.topicId,false)
+                    }}>Deactivate</Button></li>)
                 })}
             </ul>
             ):(<></>)}
             
             </div>
-        ):(<></>)}
+        
+        </section>
+        <section className='conduit-section'>
         {group && topic && topics.length ? (
             <div>
                 <Button variant='primary' onClick={async (e)=>{
@@ -154,14 +216,15 @@ return (
                 
                 {comments && comments.length ? (
                     <ul>
-                        {comments.map((comment)=>{
-                            return (<li>Comment: {comment.comment}</li>)
+                        {comments.map((comment,ind)=>{
+                            return (<li key={ind}>Comment: {comment.comment}</li>)
                         })}
                     </ul>
                 ):(<div>No Comments Yet</div>)}
             </div>
 
         ):(<></>)}
+        </section>
     </Container>
     
 )
