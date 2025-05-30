@@ -16,8 +16,9 @@ export default function App() {
     <Container>
       <Row>
         <Col lg={8}>
-
-              <div className='nav'><div><NavLink to="/home">Home</NavLink></div><div><NavLink to="/visual">Visual</NavLink></div></div>
+              <div className='nav'><div><NavLink to="/home">Home</NavLink></div>
+              <div><NavLink to="/visual">Visual</NavLink></div></div>
+              <div><NavLink to="/conduit">Conduit</NavLink></div>
         </Col>
         <Col lg={4}>
           <Login user={user} setUser={setUser}></Login>

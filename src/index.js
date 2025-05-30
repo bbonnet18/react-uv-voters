@@ -7,7 +7,8 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LoginComp from "./LoginComp";
 import Manage from "./Manage";
-import NewVoterForm from "./NewVoterForm"
+import NewVoterForm from "./NewVoterForm";
+import Conduit from './Conduit';
 
 
 const router = createBrowserRouter(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
       <Route path={'/'} element={<LoginComp  />} />
       <Route path={'/home'} element={<Manage />} />
       <Route path={'/visual'} element={<NewVoterForm />} />
+      <Route path={'/conduit'} element={<Conduit />} />
     </Route>
   )
 )

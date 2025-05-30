@@ -44,7 +44,13 @@ body{
 .App-link {
   color: #61dafb;
 }
-
+.conduit-group{
+  display:inline-block;
+  margin-right: 20px; 
+}
+.create-input {
+  width:80%;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
