@@ -15,13 +15,14 @@ function Conduit(){
     const [showGroups, setShowGroups] = useState(true)
     const [showTopics, setShowTopics] = useState(false);
     const [showComments,setShowComments] = useState(false);
+    const [receivers, setReceivers] = useState([]);
 
 useEffect(()=>{
     const retrieveTopics = async () => { 
         if(group){
             await getTopics(group.gsid);
+            await getReceivers();
         }
-        console.log(group);
     }
     retrieveTopics();
 },[group])
@@ -54,8 +55,21 @@ const getGroups = async()=>{
     }
 
     setLoading(false);
+}
 
- 
+// get receivers we can use for tagging 
+const getReceivers = async()=>{
+    let res = await axios.post(`${config.apiBaseUrl}/conduit/get-receivers`,{
+        withCredentials:true
+    });
+
+    if(res && res.status === 200){
+        setReceivers(res.data.Items)
+    }else{
+        setReceivers([]);
+    }
+
+
 }
 
 //gets the topics in a group
@@ -148,6 +162,7 @@ return (
             </ul>
         ):(<></>)}
         <div>Group: {group ? (group.name) : <></>} | Topic: {topic ? (topic.topic):""}</div>
+        <div>Tags: {topic && topic.tags ? (topic.tags):(<></>)} </div>
         </section>
         <section className="conduit-section">
    
@@ -209,7 +224,7 @@ return (
                 <Button variant='primary' onClick={async (e)=>{
                         let gId = group.gsid;
                         let tId = topic.topicId;
-                        let active = true;
+                        let active = false;
                         await getComments(gId,tId,active);
                     }}>Get Comments</Button>
                 <h4>Comments</h4>
@@ -224,6 +239,14 @@ return (
             </div>
 
         ):(<></>)}
+        </section>
+            {receivers && receivers.length ?  (<ul>
+                {receivers.map((receiver,ind) => {
+                    return (<li key={ind}>{receiver.lastname.S}</li>)
+                })}
+            </ul>):(<></>)}
+        <section>
+
         </section>
     </Container>
     
