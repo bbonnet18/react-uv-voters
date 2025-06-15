@@ -197,7 +197,7 @@ function Conduit() {
                                 let group = itm
                                 setTopic();
                                 setGroup(group);
-                                setShowGroups(false);
+                                //setShowGroups(false);
                             }}>Select</Button></li>)
                         })}
                     </ul>
@@ -205,23 +205,23 @@ function Conduit() {
                 <div><h3>Group: {group ? (group.name) : <></>}</h3>
                     <div><h4>Topic: {topic ? (topic.topic) : ""}</h4></div>
                     { topic && topic.topicId ? (<><ButtonGroup>
-                        <ToggleButton className={topic.active === true ? "topic-selected" : "topic-unselected"} id="activeCheckTrue" type='checkbox' variant='success' checked={topic.active} value="true" onChange={(e) => {
+                        <ToggleButton className={topic.active === 'true' ? "topic-selected" : "topic-unselected"} id="activeCheckTrue" type='checkbox' variant='success' checked={topic.active === 'true'} value="true" onChange={(e) => {
                             let aTopic = { ...topic };
-                            aTopic.active = true;
+                            aTopic.active = 'true';
                             setTopic(aTopic);
                         }}>
                             Active
                         </ToggleButton>
-                        <ToggleButton className={topic.active === false ? "topic-selected" : "topic-unselected"
-                        } id="activeCheckFalse" type='checkbox' variant='danger' checked={!topic.active} value="false" onChange={(e) => {
+                        <ToggleButton className={topic.active === 'false' ? "topic-selected" : "topic-unselected"
+                        } id="activeCheckFalse" type='checkbox' variant='danger' checked={!topic.active === 'false'} value="false" onChange={(e) => {
                             let aTopic = { ...topic };
-                            aTopic.active = false;
+                            aTopic.active = 'false';
                             setTopic(aTopic);
                         }}>
                             Inactive
                         </ToggleButton>
                     </ButtonGroup>
-                <div>  Active: {topic.active === true ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
+                <div>  Active: {topic.active === 'true' ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
                         let myTopic = topic;
                         await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags)
                     }}>Update</Button> 
