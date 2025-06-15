@@ -228,6 +228,10 @@ form{
   background-color: beige;
 }
 
+.tag-btn{
+  margin-right: 8px;
+}
+
 
 .tester {
   background-color: green;
@@ -235,4 +239,16 @@ form{
 
 .tester2{
   background-color: blue;
+}
+
+.topic-selected{
+  border: 2px solid white !important;
+  box-sizing: border-box;
+  font-weight: bold !important;
+}
+.topic-unselected{
+  border: none !important;
+  opacity: 0.6 !important;
+  font-weight: lighter !important;
+
 }
