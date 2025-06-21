@@ -52,6 +52,12 @@ body{
   border-bottom:2px solid #ccc;
   padding-top: 10px;
 }
+.conduit-comment div{
+  display:inline-block;
+}
+.conduit-comment .actions{
+  display: block;
+}
 .create-input {
   width:80%;
 }

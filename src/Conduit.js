@@ -3,6 +3,7 @@ import axios from 'axios';
 import config from './config';
 import { Alert, Col, Row, Form, Button, ButtonGroup, Container, Modal, Spinner, Toast, ToastContainer, ToggleButton } from "react-bootstrap";
 import { useState, useRef, useEffect, useContext } from 'react';
+import unescape from 'validator/lib/unescape';
 
 
 function Conduit() {
@@ -19,6 +20,14 @@ function Conduit() {
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
     const [completedStatus, setCompletedStatus] = useState("success");
+
+
+    useEffect(()=>{
+        const fetchGroups = async ()=>{
+            await getGroups();
+        }
+        fetchGroups();
+    },[])
 
     useEffect(() => {
         const retrieveTopics = async () => {
@@ -111,7 +120,12 @@ function Conduit() {
         });
 
         if (res && res.status === 200) {
-            setTopics(res.data.Items);
+            let voterTopics = res.data.Items.map((itm) => {
+                let unescapedTopic = unescape(itm.topic);
+                itm.topic = unescapedTopic;
+                return itm;
+            });
+            setTopics(voterTopics);
         } else {
             setTopics([]);
         }
@@ -172,15 +186,42 @@ function Conduit() {
         });
 
         if (res && res.status === 200) {
-            setComments(res.data.Items);
+        let voterComments = res.data.Items.map((itm) => {
+            let unescapedComment = unescape(itm.comment);
+            itm.comment = unescapedComment
+            return itm;
+          });
+
+            setComments(voterComments);
         } else {
             setComments([]);
         }
         setShowComments(true);
     }
     // get topics within a group 
-    const updateComment = async (groupId, topicId, voterName, active) => {
+    const updateComment = async (groupId, topicId, voterName, active,comment_status) => {
+        let payload = {
+            groupId:groupId,
+            topicId:topicId,
+            voterName:voterName,
+            active:active,
+            comment_status:comment_status
+        }
 
+        let res = await axios.post(`${config.apiBaseUrl}/conduit/update-comment`, payload, {
+            withCredentials: true
+        });
+
+        if(res && res.status === 200){
+            console.log('completed ', res.statusText);
+                setCompletedStatus("success");
+                setCompletedMessage("Updated comment");
+                setCompleted(true);
+        }else{
+                setCompletedStatus("danger");
+                setCompletedMessage("Error updating comment");
+                setCompleted(true);
+        }
     }
     // need to create breadcrumbs to get back
     return (
@@ -308,7 +349,23 @@ function Conduit() {
                         {comments && comments.length ? (
                             <ul>
                                 {comments.map((comment, ind) => {
-                                    return (<li key={ind}>Comment: {comment.comment}</li>)
+                                    return (<li className="conduit-comment" key={ind}><div>Comment:</div> <div>{comment.comment}</div><div className='actions'><Button variant='success' onClick={async (e)=>{
+                                        let topicId = topic.topicId;
+                                        let groupId = group.gsid;
+                                        let voterName = comment.voterName;
+                                        let active = "true";
+                                        let comment_status = "approved";
+
+                                        await updateComment(groupId,topicId,voterName,active,comment_status);
+                                    }}>Approve</Button><Button variant='danger' onClick={async (e)=>{
+                                        let topicId = topic.topicId;
+                                        let groupId = group.gsid;
+                                        let voterName = comment.voterName;
+                                        let active = "false";
+                                        let comment_status = "rejected";
+
+                                        await updateComment(groupId,topicId,voterName,active,comment_status);
+                                    }}>Reject</Button></div></li>)
                                 })}
                             </ul>
                         ) : (<div>No Comments Yet</div>)}
