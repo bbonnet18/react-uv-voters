@@ -1,7 +1,7 @@
 import './App.css';
 import axios from 'axios';
 import config from './config';
-import { Alert, Col, Row, Form, Button, ButtonGroup, Container, Modal, Spinner, Toast, ToastContainer, ToggleButton } from "react-bootstrap";
+import { Alert, Col, Row, Form, Button, ButtonGroup, Container, Modal, Spinner, Tabs, Tab, Toast, ToastContainer, ToggleButton } from "react-bootstrap";
 import { useState, useRef, useEffect, useContext } from 'react';
 import unescape from 'validator/lib/unescape';
 
@@ -13,7 +13,6 @@ function Conduit() {
     const [topic, setTopic] = useState();
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [showGroups, setShowGroups] = useState(true)
     const [showTopics, setShowTopics] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [receivers, setReceivers] = useState([]);
@@ -22,12 +21,12 @@ function Conduit() {
     const [completedStatus, setCompletedStatus] = useState("success");
 
 
-    useEffect(()=>{
-        const fetchGroups = async ()=>{
+    useEffect(() => {
+        const fetchGroups = async () => {
             await getGroups();
         }
         fetchGroups();
-    },[])
+    }, [])
 
     useEffect(() => {
         const retrieveTopics = async () => {
@@ -61,7 +60,6 @@ function Conduit() {
             } else {
                 setGroups([]);
             }
-            setShowGroups(true)
         } catch (err) {
 
         }
@@ -114,7 +112,7 @@ function Conduit() {
 
     //gets the topics in a group
     const getTopics = async (groupId) => {
-        let payload = { groupId: groupId}
+        let payload = { groupId: groupId }
         let res = await axios.post(`${config.apiBaseUrl}/conduit/`, payload, {
             withCredentials: true
         });
@@ -161,10 +159,10 @@ function Conduit() {
         });
         let message = "Successfully updated topic!";
         let status = "success";
-        let completed = true; 
+        let completed = true;
         if (res && res.status === 200) {
             await getTopics(group.gsid);
-        }else{
+        } else {
             message = "Error updating topic!";
             status = "danger";
         }
@@ -186,11 +184,11 @@ function Conduit() {
         });
 
         if (res && res.status === 200) {
-        let voterComments = res.data.Items.map((itm) => {
-            let unescapedComment = unescape(itm.comment);
-            itm.comment = unescapedComment
-            return itm;
-          });
+            let voterComments = res.data.Items.map((itm) => {
+                let unescapedComment = unescape(itm.comment);
+                itm.comment = unescapedComment
+                return itm;
+            });
 
             setComments(voterComments);
         } else {
@@ -199,53 +197,63 @@ function Conduit() {
         setShowComments(true);
     }
     // get topics within a group 
-    const updateComment = async (groupId, topicId, voterName, active,comment_status) => {
+    const updateComment = async (groupId, topicId, voterName, active, comment_status) => {
         let payload = {
-            groupId:groupId,
-            topicId:topicId,
-            voterName:voterName,
-            active:active,
-            comment_status:comment_status
+            groupId: groupId,
+            topicId: topicId,
+            voterName: voterName,
+            active: active,
+            comment_status: comment_status
         }
 
         let res = await axios.post(`${config.apiBaseUrl}/conduit/update-comment`, payload, {
             withCredentials: true
         });
 
-        if(res && res.status === 200){
+        if (res && res.status === 200) {
             console.log('completed ', res.statusText);
-                setCompletedStatus("success");
-                setCompletedMessage("Updated comment");
-                setCompleted(true);
-        }else{
-                setCompletedStatus("danger");
-                setCompletedMessage("Error updating comment");
-                setCompleted(true);
+            setCompletedStatus("success");
+            setCompletedMessage("Updated comment");
+            setCompleted(true);
+        } else {
+            setCompletedStatus("danger");
+            setCompletedMessage("Error updating comment");
+            setCompleted(true);
         }
     }
     // need to create breadcrumbs to get back
     return (
         <Container>
             <h3>Conduit</h3>
-            <Button variant='primary' onClick={async (e) => { await getGroups() }}>Reset</Button>
             <p>Select a group and a topic to view comments and approve or reject.</p>
             <section className="conduit-section">
-                <div className='conduit-selection'><a onClick={(e) => setShowGroups(!showGroups)}>Show Groups</a></div>
-                {showGroups ? (
-                    <ul>
-                        {groups.map((itm, ind) => {
-                            return (<li key={ind} className='conduit-group'>{itm.title} | <Button variant='primary' onClick={(e) => {
-                                let group = itm
-                                setTopic();
-                                setGroup(group);
-                                //setShowGroups(false);
-                            }}>Select</Button></li>)
-                        })}
-                    </ul>
-                ) : (<></>)}
+                <Tabs onSelect={(groupId) => {
+                    let selectedGroup = {};
+                    groups.map((itm,ind)=>{
+                        if(itm && itm.gsid === parseInt(groupId)){
+                            selectedGroup = itm;
+                        }
+                    })
+                    setTopic();
+                    setGroup(selectedGroup);
+                }}>
+                    {groups.map((itm, ind) => {
+                        return (<Tab eventKey={itm.gsid} title={itm.title} key={ind} >
+                            {itm.title}
+                        </Tab>)
+                    }
+                    )
+                    }
+
+
+                </Tabs>
+
+
+
+
                 <div><h3>Group: {group ? (group.name) : <></>}</h3>
                     <div><h4>Topic: {topic ? (topic.topic) : ""}</h4></div>
-                    { topic && topic.topicId ? (<><ButtonGroup>
+                    {topic && topic.topicId ? (<><ButtonGroup>
                         <ToggleButton className={topic.active === 'true' ? "topic-selected" : "topic-unselected"} id="activeCheckTrue" type='checkbox' variant='success' checked={topic.active === 'true'} value="true" onChange={(e) => {
                             let aTopic = { ...topic };
                             aTopic.active = 'true';
@@ -262,11 +270,11 @@ function Conduit() {
                             Inactive
                         </ToggleButton>
                     </ButtonGroup>
-                <div>  Active: {topic.active === 'true' ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
-                        let myTopic = topic;
-                        await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags)
-                    }}>Update</Button> 
-                    </div></>): (<></>)}
+                        <div>  Active: {topic.active === 'true' ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
+                            let myTopic = topic;
+                            await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags)
+                        }}>Update</Button>
+                        </div></>) : (<></>)}
                 </div>
                 <div>Tags: {topic && topic.tags ? (topic.tags.split('|').map((itm) => {
                     return (<Button className="tag-btn" onClick={(e) => {
@@ -349,22 +357,22 @@ function Conduit() {
                         {comments && comments.length ? (
                             <ul>
                                 {comments.map((comment, ind) => {
-                                    return (<li className="conduit-comment" key={ind}><div>Comment:</div> <div>{comment.comment}</div><div className='actions'><Button variant='success' onClick={async (e)=>{
+                                    return (<li className="conduit-comment" key={ind}><div>Comment:</div> <div>{comment.comment}</div><div className='actions'><Button variant='success' onClick={async (e) => {
                                         let topicId = topic.topicId;
                                         let groupId = group.gsid;
                                         let voterName = comment.voterName;
                                         let active = "true";
                                         let comment_status = "approved";
 
-                                        await updateComment(groupId,topicId,voterName,active,comment_status);
-                                    }}>Approve</Button><Button variant='danger' onClick={async (e)=>{
+                                        await updateComment(groupId, topicId, voterName, active, comment_status);
+                                    }}>Approve</Button><Button variant='danger' onClick={async (e) => {
                                         let topicId = topic.topicId;
                                         let groupId = group.gsid;
                                         let voterName = comment.voterName;
                                         let active = "false";
                                         let comment_status = "rejected";
 
-                                        await updateComment(groupId,topicId,voterName,active,comment_status);
+                                        await updateComment(groupId, topicId, voterName, active, comment_status);
                                     }}>Reject</Button></div></li>)
                                 })}
                             </ul>
