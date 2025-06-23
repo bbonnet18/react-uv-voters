@@ -38,6 +38,19 @@ function Conduit() {
         retrieveTopics();
     }, [group])
 
+    useEffect(() => {
+        const checkComments = async () => {
+            if (group && group.gsid && topic && topic.topicId) {
+                let gId = group.gsid;
+                let tId = topic.topicId;
+                let active = false;
+                await getComments(gId, tId, active);
+            }
+
+        }
+        checkComments();
+    }, [topic])
+
 
     // will get the list of groups
     // this is a limeapi call 
@@ -124,6 +137,7 @@ function Conduit() {
                 return itm;
             });
             setTopics(voterTopics);
+
         } else {
             setTopics([]);
         }
@@ -142,7 +156,10 @@ function Conduit() {
         });
 
         if (res && res.status === 200) {
-            await getTopics(group.gsid);
+            await getTopics(group.gsid, false);
+            setCompletedStatus('success');
+            setCompletedMessage(`Successfully created a topic in ${groupId}`);
+            setCompleted(true);
         }
     }
 
@@ -226,62 +243,6 @@ function Conduit() {
         <Container>
             <h3>Conduit</h3>
             <p>Select a group and a topic to view comments and approve or reject.</p>
-            <section className="conduit-section">
-                <Tabs onSelect={(groupId) => {
-                    let selectedGroup = {};
-                    groups.map((itm,ind)=>{
-                        if(itm && itm.gsid === parseInt(groupId)){
-                            selectedGroup = itm;
-                        }
-                    })
-                    setTopic();
-                    setGroup(selectedGroup);
-                }}>
-                    {groups.map((itm, ind) => {
-                        return (<Tab eventKey={itm.gsid} title={itm.title} key={ind} >
-                            {itm.title}
-                        </Tab>)
-                    }
-                    )
-                    }
-
-
-                </Tabs>
-
-
-
-
-                <div><h3>Group: {group ? (group.name) : <></>}</h3>
-                    <div><h4>Topic: {topic ? (topic.topic) : ""}</h4></div>
-                    {topic && topic.topicId ? (<><ButtonGroup>
-                        <ToggleButton className={topic.active === 'true' ? "topic-selected" : "topic-unselected"} id="activeCheckTrue" type='checkbox' variant='success' checked={topic.active === 'true'} value="true" onChange={(e) => {
-                            let aTopic = { ...topic };
-                            aTopic.active = 'true';
-                            setTopic(aTopic);
-                        }}>
-                            Active
-                        </ToggleButton>
-                        <ToggleButton className={topic.active === 'false' ? "topic-selected" : "topic-unselected"
-                        } id="activeCheckFalse" type='checkbox' variant='danger' checked={!topic.active === 'false'} value="false" onChange={(e) => {
-                            let aTopic = { ...topic };
-                            aTopic.active = 'false';
-                            setTopic(aTopic);
-                        }}>
-                            Inactive
-                        </ToggleButton>
-                    </ButtonGroup>
-                        <div>  Active: {topic.active === 'true' ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
-                            let myTopic = topic;
-                            await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags)
-                        }}>Update</Button>
-                        </div></>) : (<></>)}
-                </div>
-                <div>Tags: {topic && topic.tags ? (topic.tags.split('|').map((itm) => {
-                    return (<Button className="tag-btn" onClick={(e) => {
-                        removeTag(itm)
-                    }}>{itm}</Button>)
-                })) : (<></>)} </div>
-            </section>
             <ToastContainer position='middle-center'>
                 <Toast bg={completedStatus} onClose={() => {
                     setCompleted(false);
@@ -293,107 +254,155 @@ function Conduit() {
                     <Toast.Body>{completedMessage}</Toast.Body>
                 </Toast>
             </ToastContainer>
-            <section className="conduit-section">
-
-                <div>
-                    <h3>Topics</h3>
-                    <div><a onClick={(e) => setShowTopics(!showTopics)}>Show Topics</a></div>
-                    <div><input type="text" id="topicInput" className='create-input' /> <Button variant='success' onClick={async (e) => {
-                        // get the highest number in the topic list
-                        let myId = 0;
-                        // find the highest number
-                        if (topics && topics.length) {
-
-                            topics.map((itm) => {
-                                if (itm.topicId > myId) {
-                                    myId = itm.topicId;
-                                }
-                            });
-                        }
-                        myId = myId + 1;
-
-                        let topicEl = document.getElementById('topicInput');
-                        let topicTxt = topicEl.value.trim();
-                        if (topicTxt === "") {
-                            return;
-                        }
-                        // sanitize input 
-
-                        const reg = /[a-zA-Z0-9]/ig;
-
-                        if (reg.test(topicTxt)) {
-                            await createTopic(group.gsid, myId, topicTxt)
-                        }
-
-
-
-
-                    }}>Create Topic</Button></div>
-                    {showTopics ? (
-                        <ul>
-                            {topics.map((topic, ind) => {
-                                return (<li key={ind}>{topic.topic} | <Button variant='primary' onClick={(e) => {
-                                    let myTopic = topic;
-                                    setTopic(myTopic);
-                                }}>Select</Button></li>)
-                            })}
-                        </ul>
-                    ) : (<></>)}
-
-                </div>
-
-            </section>
-            <section className='conduit-section'>
-                {group && topic && topics.length ? (
-                    <div>
-                        <Button variant='primary' onClick={async (e) => {
-                            let gId = group.gsid;
-                            let tId = topic.topicId;
-                            let active = false;
-                            await getComments(gId, tId, active);
-                        }}>Get Comments</Button>
-                        <h4>Comments</h4>
-
-                        {comments && comments.length ? (
-                            <ul>
-                                {comments.map((comment, ind) => {
-                                    return (<li className="conduit-comment" key={ind}><div>Comment:</div> <div>{comment.comment}</div><div className='actions'><Button variant='success' onClick={async (e) => {
-                                        let topicId = topic.topicId;
-                                        let groupId = group.gsid;
-                                        let voterName = comment.voterName;
-                                        let active = "true";
-                                        let comment_status = "approved";
-
-                                        await updateComment(groupId, topicId, voterName, active, comment_status);
-                                    }}>Approve</Button><Button variant='danger' onClick={async (e) => {
-                                        let topicId = topic.topicId;
-                                        let groupId = group.gsid;
-                                        let voterName = comment.voterName;
-                                        let active = "false";
-                                        let comment_status = "rejected";
-
-                                        await updateComment(groupId, topicId, voterName, active, comment_status);
-                                    }}>Reject</Button></div></li>)
+            <Tabs onSelect={(groupId) => {
+                let selectedGroup = {};
+                groups.map((itm, ind) => {
+                    if (itm && itm.gsid === parseInt(groupId)) {
+                        selectedGroup = itm;
+                    }
+                })
+                setTopic();
+                setGroup(selectedGroup);
+            }}>
+                {groups.map((itm, ind) => {
+                    return (<Tab eventKey={itm.gsid} title={itm.title} key={ind} >
+                        <section>
+                            <p>Tags:</p>
+                            {receivers && receivers.length ? (<ul className='conduit-tags'>
+                                {receivers.map((receiver, ind) => {
+                                    return (<li key={ind}><Button onClick={(e) => {
+                                        let rec = receiver;
+                                        if (topic && topic.topicId) {
+                                            createTag(rec, topic);
+                                        }
+                                    }}>{receiver.lastname.S}</Button></li>)
                                 })}
-                            </ul>
-                        ) : (<div>No Comments Yet</div>)}
-                    </div>
+                            </ul>) : (<></>)}
+                        </section>
+                        <section className='conduit-section'>
+                            <div><input type="text" id={`topicInput${itm.gsid}`} className='create-input' /> <Button variant='success' onClick={async (e) => {
+                                // get the highest number in the topic list
+                                let myId = 0;
+                                // find the highest number
+                                if (topics && topics.length) {
 
-                ) : (<></>)}
-            </section>
-            {receivers && receivers.length ? (<ul>
-                {receivers.map((receiver, ind) => {
-                    return (<li key={ind}><Button onClick={(e) => {
-                        let rec = receiver;
-                        if (topic && topic.topicId) {
-                            createTag(rec, topic);
-                        }
-                    }}>{receiver.lastname.S}</Button></li>)
-                })}
-            </ul>) : (<></>)}
-            <section>
+                                    topics.map((itm) => {
+                                        if (itm.topicId > myId) {
+                                            myId = itm.topicId;
+                                        }
+                                    });
+                                }
+                                myId = myId + 1;
 
-            </section>
+                                let topicEl = document.getElementById(`topicInput${group.gsid}`);
+                                let topicTxt = topicEl.value.trim();
+                                if (topicTxt === "") {
+                                    return;
+                                }
+                                // sanitize input 
+
+                                const reg = /[a-zA-Z0-9]/ig;
+
+                                if (reg.test(topicTxt)) {
+                                    await createTopic(group.gsid, myId, topicTxt)
+                                }
+
+
+
+
+                            }}>Create Topic</Button></div>
+                        </section>
+                        <section className="conduit-section">
+                            <div>
+                                <h3>Topics</h3>
+                                {showTopics ? (
+                                    <ul>
+                                        {topics.map((topic, ind) => {
+                                            return (<li key={ind}>{topic.topic} | <Button variant='primary' onClick={(e) => {
+                                                let myTopic = topic;
+                                                setTopic(myTopic);
+                                            }}>Select</Button></li>)
+                                        })}
+                                    </ul>
+                                ) : (<></>)}
+
+                            </div>
+                            <div>
+                                <h4>Topic: {topic ? (topic.topic) : ""}</h4>
+                                {topic && topic.topicId ? (<><ButtonGroup>
+                                    <ToggleButton className={topic.active === 'true' ? "topic-selected" : "topic-unselected"} id="activeCheckTrue" type='checkbox' variant='success' checked={topic.active === 'true'} value="true" onChange={(e) => {
+                                        let aTopic = { ...topic };
+                                        aTopic.active = 'true';
+                                        setTopic(aTopic);
+                                    }}>
+                                        Active
+                                    </ToggleButton>
+                                    <ToggleButton className={topic.active === 'false' ? "topic-selected" : "topic-unselected"
+                                    } id="activeCheckFalse" type='checkbox' variant='danger' checked={!topic.active === 'false'} value="false" onChange={(e) => {
+                                        let aTopic = { ...topic };
+                                        aTopic.active = 'false';
+                                        setTopic(aTopic);
+                                    }}>
+                                        Inactive
+                                    </ToggleButton>
+                                </ButtonGroup>
+                                    <div>  Active: {topic.active === 'true' ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
+                                        let myTopic = topic;
+                                        await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags)
+                                    }}>Update</Button>
+                                    </div></>) : (<></>)}
+                            </div>
+                            <div>Tags: {topic && topic.tags ? (topic.tags.split('|').map((itm) => {
+                                return (<Button className="tag-btn" onClick={(e) => {
+                                    removeTag(itm)
+                                }}>{itm}</Button>)
+                            })) : (<></>)} </div>
+
+                        </section>
+                        <section className='conduit-section'>
+                            {group && topic && topics.length ? (
+                                <div>
+                                    <h4>Comments</h4>
+
+                                    {comments && comments.length ? (
+                                        <ul>
+                                            {comments.map((comment, ind) => {
+                                                return (<li className="conduit-comment" key={ind}><div>Comment:</div> <div>{comment.comment}</div><div className='actions'><Button variant='success' onClick={async (e) => {
+                                                    let topicId = topic.topicId;
+                                                    let groupId = group.gsid;
+                                                    let voterName = comment.voterName;
+                                                    let active = "true";
+                                                    let comment_status = "approved";
+
+                                                    await updateComment(groupId, topicId, voterName, active, comment_status);
+                                                }}>Approve</Button><Button variant='danger' onClick={async (e) => {
+                                                    let topicId = topic.topicId;
+                                                    let groupId = group.gsid;
+                                                    let voterName = comment.voterName;
+                                                    let active = "false";
+                                                    let comment_status = "rejected";
+
+                                                    await updateComment(groupId, topicId, voterName, active, comment_status);
+                                                }}>Reject</Button></div></li>)
+                                            })}
+                                        </ul>
+                                    ) : (<div>No Comments Yet</div>)}
+                                </div>
+
+                            ) : (<></>)}
+                        </section>
+
+
+                    </Tab>)
+                }
+                )
+                }
+
+
+            </Tabs>
+
+
+
         </Container>
 
     )

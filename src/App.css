@@ -58,6 +58,15 @@ body{
 .conduit-comment .actions{
   display: block;
 }
+
+.conduit-tags{
+  list-style: none;
+}
+.conduit-tags li{
+  display:inline-block;
+  margin-right: 1em;
+}
+
 .create-input {
   width:80%;
 }
