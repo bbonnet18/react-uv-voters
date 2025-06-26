@@ -126,7 +126,7 @@ function Conduit() {
     //gets the topics in a group
     const getTopics = async (groupId) => {
         let payload = { groupId: groupId }
-        let res = await axios.post(`${config.apiBaseUrl}/conduit/`, payload, {
+        let res = await axios.post(`${config.apiBaseUrl}/conduit/admin-topics`, payload, {
             withCredentials: true
         });
 
