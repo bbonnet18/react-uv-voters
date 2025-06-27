@@ -243,6 +243,27 @@ form{
   background-color: beige;
 }
 
+.modal-dialog.receiver-dialog{
+  width: 100% !important;
+  margin: 0 auto;
+}
+
+#receiverForm.error input{
+  border: 1px red; 
+}
+
+.receiver-dialog{
+  font-size: small;
+}
+
+.receiver-dialog .modal-header{
+  padding: 10px; 
+}
+
+.receiver-title{
+  /* font-size: 1em !important; */
+}
+
 .tag-btn{
   margin-right: 8px;
 }

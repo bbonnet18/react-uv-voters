@@ -1,9 +1,10 @@
 import './App.css';
 import axios from 'axios';
 import config from './config';
-import { Alert, Col, Row, Form, Button, ButtonGroup, Container, Modal, Spinner, Tabs, Tab, Toast, ToastContainer, ToggleButton } from "react-bootstrap";
-import { useState, useRef, useEffect, useContext } from 'react';
+import { Button, ButtonGroup, Container, Tabs, Tab, Toast, ToastContainer, ToggleButton } from "react-bootstrap";
+import { useState, useEffect } from 'react';
 import unescape from 'validator/lib/unescape';
+import Receiver from './Receiver';
 
 
 function Conduit() {
@@ -15,6 +16,7 @@ function Conduit() {
     const [loading, setLoading] = useState(false);
     const [showTopics, setShowTopics] = useState(false);
     const [showComments, setShowComments] = useState(false);
+    const [showReceiver,setShowReceiver] = useState(false); 
     const [receivers, setReceivers] = useState([]);
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
@@ -238,6 +240,19 @@ function Conduit() {
             setCompleted(true);
         }
     }
+
+    const newReceiverStatus = (status)=>{
+        if(status === 'success'){
+            setCompletedStatus("success");
+            setCompletedMessage("Updated comment");
+        }else{
+            setCompletedStatus("danger");
+            setCompletedMessage("Error updating comment");
+        }
+         setCompleted(true);
+    }
+
+
     // need to create breadcrumbs to get back
     return (
         <Container>
@@ -278,6 +293,9 @@ function Conduit() {
                                     }}>{receiver.lastname.S}</Button></li>)
                                 })}
                             </ul>) : (<></>)}
+                            <div><Button variant='primary' onClick={()=>{
+                                setShowReceiver(true); 
+                            }}>Create Receiver</Button></div>
                         </section>
                         <section className='conduit-section'>
                             <div><input type="text" id={`topicInput${itm.gsid}`} className='create-input' /> <Button variant='success' onClick={async (e) => {
@@ -391,7 +409,9 @@ function Conduit() {
 
                             ) : (<></>)}
                         </section>
-
+                        <section>
+                            <Receiver show={showReceiver} hide={setShowReceiver}></Receiver>
+                        </section>
 
                     </Tab>)
                 }
