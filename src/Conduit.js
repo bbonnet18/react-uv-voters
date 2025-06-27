@@ -99,7 +99,7 @@ function Conduit() {
         if (receiver && topic) {
             let currTags = topic.tags || "";
             let tagArr = currTags.length ? currTags.split("|") : [];
-            let tag = receiver.lastname.S;
+            let tag = `${receiver.receiverId.S}-${receiver.lastname.S}`;
             tagArr.push(tag);
             currTags = tagArr.join("|");
             let newTopic = { ...topic };
