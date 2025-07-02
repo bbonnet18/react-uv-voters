@@ -265,10 +265,10 @@ function Conduit() {
     const newReceiverStatus = (status) => {
         if (status === 'success') {
             setCompletedStatus("success");
-            setCompletedMessage("Updated receiver");
+            setCompletedMessage("created receiver");
         } else {
             setCompletedStatus("danger");
-            setCompletedMessage("Error updating receiver");
+            setCompletedMessage("Error creating receiver");
         }
         setCompleted(true);
     }
@@ -291,6 +291,7 @@ function Conduit() {
                 form.classList.remove('.error');
                 var formFields = form.querySelectorAll('.form-control');
                 var partySelect = form.querySelector('#party');
+                var levelSelect = form.querySelector('#level');
                 var formVals = {}
                 for (let i = 0; i < formFields.length; i++) {
                     if(formFields[i].value !== ""){
@@ -298,6 +299,7 @@ function Conduit() {
                     }
                 }
                 formVals.party = partySelect.value;
+                formVals.level = levelSelect.value;
                 formVals.receiverId = parseInt(highestReceiverId) + 1; 
 
                 let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, formVals, {
@@ -360,6 +362,18 @@ function Conduit() {
                         </Col>
                         <Col lg={10} md={12}>
                             <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} required />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rLevel">Level:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Select aria-label="level" name="level" id="level" required defaultValue="local">
+                                <option value="local">local</option>
+                                <option value="state">state</option>
+                                <option value="national">national</option>
+                            </Form.Select>
                         </Col>
                     </Row>
                     <Row>
