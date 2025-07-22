@@ -323,7 +323,7 @@ function Conduit() {
 
     // need to create breadcrumbs to get back
     return (
-        <Container>
+        <Container className='conduit'>
             <h3>Conduit</h3>
             <p>Select a group and a topic to view comments and approve or reject.</p>
             <ToastContainer position='middle-center'>
