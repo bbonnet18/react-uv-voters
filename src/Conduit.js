@@ -98,7 +98,7 @@ function Conduit() {
 
     // get receivers we can use for tagging 
     const getReceivers = async () => {
-        let res = await axios.post(`${config.apiBaseUrl}/conduit/get-receivers`, {
+        let res = await axios.post(`${config.apiBaseUrl}/conduit/admin-receivers`,{}, {
             withCredentials: true
         });
 
@@ -219,7 +219,7 @@ function Conduit() {
             topicId: topicId,
             active: active
         }
-        let res = await axios.post(`${config.apiBaseUrl}/conduit/get-comments`, payload, {
+        let res = await axios.post(`${config.apiBaseUrl}/conduit/admin-comments`, payload, {
             withCredentials: true
         });
 
@@ -235,6 +235,26 @@ function Conduit() {
             setComments([]);
         }
         setShowComments(true);
+    }
+
+    const publish = async (groupId, topicId) => {
+        let payload = {
+            groupId: groupId,
+            topicId: topicId
+        }
+        let res = await axios.post(`${config.apiBaseUrl}/conduit/admin-publish`, payload, {
+            withCredentials: true
+        });
+
+        if (res && res.status === 200) {
+            setCompletedStatus("success");
+            setCompletedMessage("Successfully published topic");
+            setCompleted(true);
+        } else {
+            setCompletedStatus("danger");
+            setCompletedMessage("Error publishing topic");
+            setCompleted(true);
+        }
     }
     // get topics within a group 
     const updateComment = async (groupId, topicId, voterName, active, comment_status) => {
@@ -535,7 +555,9 @@ function Conduit() {
                                     <div>  Active: {topic.active === 'true' ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
                                         let myTopic = topic;
                                         await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags)
-                                    }}>Update</Button>
+                                    }}>Update</Button> | <Button onClick={async()=>{
+                                        await publish(group.gsid, topic.topicId);
+                                    }} variant='success'>Publish</Button>
                                     </div></>) : (<></>)}
                             </div>
                             <div>Tags: {topic && topic.tags ? (topic.tags.split('|').map((itm) => {
