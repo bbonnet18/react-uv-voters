@@ -105,7 +105,7 @@ function Conduit() {
         if (res && res.status === 200) {
             let highestId = 0
             res.data.Items.map((itm,ind)=>{
-                if(itm.receiverId.S > highestId){
+                if(parseInt(itm.receiverId.S) > highestId){
                     highestId = itm.receiverId.S;
                 }
             });
