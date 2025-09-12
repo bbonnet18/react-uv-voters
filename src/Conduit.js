@@ -22,7 +22,8 @@ function Conduit() {
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
     const [completedStatus, setCompletedStatus] = useState("success");
-
+    const [currentReceiver, setCurrentReceiver] = useState(starterReceiver);
+    const [firstName, setFirstName] = useState("");
 
     const starterReceiver = {
         "firstname": "",
@@ -33,9 +34,6 @@ function Conduit() {
         "social": "",
         "locality": "",
     }
-
-    const [currentReceiver, setCurrentReceiver] = useState(starterReceiver);
-    const [firstName, setFirstName] = useState("");
 
     useEffect(() => {
         const fetchGroups = async () => {
