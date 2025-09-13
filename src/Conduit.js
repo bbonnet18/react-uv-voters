@@ -22,10 +22,7 @@ function Conduit() {
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
     const [completedStatus, setCompletedStatus] = useState("success");
-    const [currentReceiver, setCurrentReceiver] = useState(starterReceiver);
-    const [firstName, setFirstName] = useState("");
-    const [votes,setVotes] = useState([])
-
+    
     const starterReceiver = {
         "firstname": "",
         "lastname": "",
@@ -36,6 +33,12 @@ function Conduit() {
         "locality": "",
     }
 
+    
+    const [currentReceiver, setCurrentReceiver] = useState(starterReceiver);
+    const [firstName, setFirstName] = useState("");
+    const [votes,setVotes] = useState([])
+
+   
     useEffect(() => {
         const fetchGroups = async () => {
             await getGroups();
@@ -127,7 +130,7 @@ function Conduit() {
         });
 
         if (votes && votes.status === 200) {
-            let voteList = votes.json();
+            let voteList = votes.data;
             //setVotes(voteList);
             console.log('votes: ',voteList); 
         } else {
