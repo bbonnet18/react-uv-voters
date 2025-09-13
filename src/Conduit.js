@@ -24,6 +24,7 @@ function Conduit() {
     const [completedStatus, setCompletedStatus] = useState("success");
     const [currentReceiver, setCurrentReceiver] = useState(starterReceiver);
     const [firstName, setFirstName] = useState("");
+    const [votes,setVotes] = useState([])
 
     const starterReceiver = {
         "firstname": "",
@@ -47,8 +48,12 @@ function Conduit() {
             if (group) {
                 await getTopics(group.gsid);
                 await getReceivers();
+                await getVotes(group.gsid); 
             }
         }
+
+        // also need to retrieve the votes 
+        // limeapi/list - post with groupId to get all active surveys from that group 
         retrieveTopics();
     }, [group])
 
@@ -112,9 +117,23 @@ function Conduit() {
         } else {
             setReceivers([]);
         }
-
-
     }
+
+    // get list of votes within a group
+    // get receivers we can use for tagging 
+    const getVotes = async (groupId) => {
+        let votes = await axios.post(`${config.apiBaseUrl}/limeapi/list`,{groupId:groupId}, {
+            withCredentials: true
+        });
+
+        if (votes && votes.status === 200) {
+            let voteList = votes.json();
+            setVotes(voteList);
+        } else {
+            setVotes([]);
+        }
+    }
+
 
     const createTag = (receiver, topic) => {
         if (receiver && topic) {
@@ -566,7 +585,9 @@ function Conduit() {
 
                         </section>
                         <section className='conduit-section'>
-                            {group && topic && topics.length ? (
+                            <Row>
+                                <Col lg={6}>
+                                {group && topic && topics.length ? (
                                 <div>
                                     <h4>Comments</h4>
 
@@ -596,6 +617,13 @@ function Conduit() {
                                 </div>
 
                             ) : (<></>)}
+                                
+                                </Col>
+                                <Col lg={6}>
+                                <h4>Votes</h4>
+                                </Col>
+                            </Row>
+                            
                         </section>
 
                     </Tab>)
