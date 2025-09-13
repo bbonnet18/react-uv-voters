@@ -128,9 +128,11 @@ function Conduit() {
 
         if (votes && votes.status === 200) {
             let voteList = votes.json();
-            setVotes(voteList);
+            //setVotes(voteList);
+            console.log('votes: ',voteList); 
         } else {
-            setVotes([]);
+            //setVotes([]);
+            console.log('no votes');
         }
     }
 
@@ -621,6 +623,7 @@ function Conduit() {
                                 </Col>
                                 <Col lg={6}>
                                 <h4>Votes</h4>
+
                                 </Col>
                             </Row>
                             
