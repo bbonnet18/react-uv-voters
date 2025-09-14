@@ -19,6 +19,7 @@ export default function App() {
               <div className='nav'><div><NavLink to="/home">Home</NavLink></div>
               <div><NavLink to="/visual">Visual</NavLink></div></div>
               <div><NavLink to="/conduit">Conduit</NavLink></div>
+              <div><NavLink to="/feeds">Feeds</NavLink></div>
         </Col>
         <Col lg={4}>
           <Login user={user} setUser={setUser}></Login>

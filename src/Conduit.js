@@ -131,11 +131,9 @@ function Conduit() {
 
         if (votes && votes.status === 200) {
             let voteList = votes.data;
-            //setVotes(voteList);
-            console.log('votes: ',voteList); 
+            setVotes(voteList);
         } else {
-            //setVotes([]);
-            console.log('no votes');
+            setVotes([]);
         }
     }
 
@@ -555,6 +553,7 @@ function Conduit() {
                                 ) : (<></>)}
 
                             </div>
+                            <hr></hr>
                             <div>
                                 <h4>Topic: {topic ? (topic.topic) : ""}</h4>
                                 {topic && topic.topicId ? (<><ButtonGroup>
@@ -626,7 +625,13 @@ function Conduit() {
                                 </Col>
                                 <Col lg={6}>
                                 <h4>Votes</h4>
-
+                                {votes && votes.length ? (
+                                    <ul>
+                                        {votes.map((vote, ind) => {
+                                            return (<li className="conduit-vote" key={ind}>Vote: {vote.surveyls_title} - {topic ? (<Button variant='success' >{topic.topicId}:{vote.gsid}:{vote.sid}</Button>):(<>Choose a topic</>) }</li>)
+                                        })}
+                                    </ul>
+                                ) : (<div>No Votes Yet</div>)}
                                 </Col>
                             </Row>
                             
