@@ -115,15 +115,40 @@ function Feeds() {
 
     const createFeed = async (topic) => {
         let payload = {
-            groupId: group.gsid,
-            topicId: topic.topicId
+            groupId: group.gsid.toString(),
+            topicId: topic.topicId.toString(),
+            title: topic.topic,
+            discussionKey: topic.discussionKey || "",
+            surveyId: vote.sid ? vote.sid.toString() : "",
+            tags: topic.tags || ""
         };
-        let res = await axios.post(`${config.apiBaseUrl}/feeds`, payload, {
+
+        console.log('payload:', payload);
+        let res = await axios.post(`${config.apiBaseUrl}/feeds/create-feed`, payload, {
             withCredentials: true
         });
 
         if (res && res.status === 200) {
             setFeeds([...feeds, res.data]);
+        }
+    }
+
+    const updateFeed = async (feed) => {
+        let payload = {
+            groupId: group.gsid.toString(),
+            topicId: topic.topicId.toString(),
+            feedId: feed.feedId.toString(),
+            title: topic.topic,
+            discussionKey: topic.discussionKey || "",
+            surveyId: vote.sid ? vote.sid.toString() : "",
+            tags: topic.tags || ""
+        };
+        let res = await axios.put(`${config.apiBaseUrl}/feeds/update-feed`, payload, {
+            withCredentials: true
+        });
+
+        if (res && res.status === 200) {
+            setFeeds(feeds.map(f => f.feedId === feed.feedId ? res.data : f));
         }
     }
 
@@ -150,6 +175,7 @@ function Feeds() {
                     <Col xs={6}>
                         <h2>Topics</h2>
                         <div>Selected Topic: {topic ? topic.topic : 'None'}</div>
+                        <div>Topic Metadata: {topic ? JSON.stringify(topic) : 'None'}</div>
                         {topic ? (<Button variant="success" onClick={() => createFeed(topic)}>Create Feed</Button>) : (<></>)}
                         <ul>
                             {topics && topics.length > 0 ? (topics.map((topic) => (<li key={topic.topicId}>{topic.topic} - ID: {topic.topicId} <Button onClick={() => setTopic(topic)}>Select</Button></li>))) : (<li>No topics</li>)}
@@ -157,10 +183,15 @@ function Feeds() {
                     </Col>
                     <Col xs={6}>
                         <h2>Votes</h2>
+                        <div>Selected Vote: {vote ? vote.surveyls_title : 'None'}</div>
+                        <div>Vote Metadata: {vote ? JSON.stringify(vote) : 'None'}</div>
                         <ul>
                             {votes && votes.length > 0 ? (votes.map((vote) => (<li key={vote.sid}> - ID: {vote.sid} - {vote.surveyls_title} {topic ? (<Button variant="success" onClick={() => setVote(vote)}>Link</Button>) : (<></>)}</li>))) : (<li>No votes</li>)}
                         </ul>
                     </Col>
+                </Row>
+                <Row>
+                    <Button variant="success" onClick={async () => await createFeed(topic)}>Create Feed</Button>
                 </Row>
             </Container>
                 
