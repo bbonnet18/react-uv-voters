@@ -37,6 +37,10 @@ function Feeds() {
         fetchData();
     }, [group]);
 
+    useEffect(() => {
+        setVote();
+    }, [topic]);
+
     // will get the list of groups
     // this is a limeapi call 
     const getGroups = async () => {
@@ -119,7 +123,7 @@ function Feeds() {
             topicId: topic.topicId.toString(),
             title: topic.topic,
             discussionKey: topic.discussionKey || "",
-            surveyId: vote.sid ? vote.sid.toString() : "",
+            surveyId: vote && vote.sid ? vote.sid.toString() : "",
             tags: topic.tags || ""
         };
 
@@ -129,26 +133,29 @@ function Feeds() {
         });
 
         if (res && res.status === 200) {
-            setFeeds([...feeds, res.data]);
+            await getFeeds(group.gsid);
         }
     }
 
     const updateFeed = async (feed) => {
-        let payload = {
-            groupId: group.gsid.toString(),
-            topicId: topic.topicId.toString(),
-            feedId: feed.feedId.toString(),
-            title: topic.topic,
-            discussionKey: topic.discussionKey || "",
-            surveyId: vote.sid ? vote.sid.toString() : "",
-            tags: topic.tags || ""
-        };
-        let res = await axios.put(`${config.apiBaseUrl}/feeds/update-feed`, payload, {
+        let payload = {...feed};
+        let res = await axios.post(`${config.apiBaseUrl}/feeds/update-feed`, payload, {
             withCredentials: true
         });
 
         if (res && res.status === 200) {
-            setFeeds(feeds.map(f => f.feedId === feed.feedId ? res.data : f));
+            await getFeeds(group.gsid);
+        }
+    }
+
+    const publishFeed = async (feed) => {
+        let payload = { groupId: group.gsid.toString(), topicId: feed.topicId.toString() };
+        let res = await axios.post(`${config.apiBaseUrl}/feeds/publish-feed`, payload, {
+            withCredentials: true
+        });
+
+        if (res && res.status === 200) {
+            await getFeeds(group.gsid);
         }
     }
 
@@ -174,8 +181,8 @@ function Feeds() {
                 <Row>
                     <Col xs={6}>
                         <h2>Topics</h2>
-                        <div>Selected Topic: {topic ? topic.topic : 'None'}</div>
-                        <div>Topic Metadata: {topic ? JSON.stringify(topic) : 'None'}</div>
+                        <div><strong>Selected Topic:</strong> {topic ? topic.topic : 'None'}</div>
+                        <div><strong>Active: </strong> {topic && topic.active === "true"  ? "true" : "false"}</div>
                         {topic ? (<Button variant="success" onClick={() => createFeed(topic)}>Create Feed</Button>) : (<></>)}
                         <ul>
                             {topics && topics.length > 0 ? (topics.map((topic) => (<li key={topic.topicId}>{topic.topic} - ID: {topic.topicId} <Button onClick={() => setTopic(topic)}>Select</Button></li>))) : (<li>No topics</li>)}
@@ -183,15 +190,29 @@ function Feeds() {
                     </Col>
                     <Col xs={6}>
                         <h2>Votes</h2>
-                        <div>Selected Vote: {vote ? vote.surveyls_title : 'None'}</div>
-                        <div>Vote Metadata: {vote ? JSON.stringify(vote) : 'None'}</div>
+                        <div><strong>Selected Vote:</strong> {vote ? vote.surveyls_title : 'None'}</div>
+                        <div><strong>Active: </strong> {vote && vote.active === "Y"  ? "true" : "false"}</div>
                         <ul>
                             {votes && votes.length > 0 ? (votes.map((vote) => (<li key={vote.sid}> - ID: {vote.sid} - {vote.surveyls_title} {topic ? (<Button variant="success" onClick={() => setVote(vote)}>Link</Button>) : (<></>)}</li>))) : (<li>No votes</li>)}
                         </ul>
                     </Col>
                 </Row>
                 <Row>
-                    <Button variant="success" onClick={async () => await createFeed(topic)}>Create Feed</Button>
+                   {<Col xs={6}>
+                       <h2>Feeds</h2>
+                       <ul>
+                           {feeds && feeds.length > 0 ? (feeds.map((feed) => (<li key={feed.feedId}>{feed.title} Tags: {feed.tags} <Button variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
+                               try{
+                                   let newFeed = {...feed};
+                                   newFeed.active = newFeed.active === "true" ? "false" : "true";
+                                   await updateFeed(newFeed);// toggle the feed active status
+                               }catch(err){
+                                   console.error("Error updating feed:", err);
+                                   alert("Error updating feed");
+                               }
+                           }}>{feed.active === "true" ? "Deactivate" : "Activate"}</Button> {feed.active === "true" ? (<Button variant="warning">Publish</Button>) : ("")}</li>))) : (<li>No feeds</li>)}
+                       </ul>
+                   </Col>}
                 </Row>
             </Container>
                 
