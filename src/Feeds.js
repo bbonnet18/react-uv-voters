@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from './config';
-import { Button, ButtonGroup, Col, Container, Row, Tabs, Tab, Toast, ToastContainer, Form, ToggleButton } from "react-bootstrap";
+import { Badge, Button, Col, Container, Row, Stack, Table,Toast, ToastContainer } from "react-bootstrap";
 import { useState, useEffect } from 'react';
 import unescape from 'validator/lib/unescape';
 
@@ -14,6 +14,9 @@ function Feeds() {
     const [votes, setVotes] = useState([]);
     const [vote, setVote] = useState();
     const [feeds, setFeeds] = useState([]);
+    const [completed, setCompleted] = useState(false);
+    const [completedMessage, setCompletedMessage] = useState("");
+    const [completedStatus, setCompletedStatus] = useState("success");
 
 
     useEffect(() => {
@@ -131,10 +134,18 @@ function Feeds() {
         let res = await axios.post(`${config.apiBaseUrl}/feeds/create-feed`, payload, {
             withCredentials: true
         });
-
+        
+        let message = "successfully created feed!";
+        let status = "success";
         if (res && res.status === 200) {
             await getFeeds(group.gsid);
+        }else{
+            message = "Error creating feed!";
+            status = "danger";
         }
+        setCompletedStatus(status);
+        setCompletedMessage(message);
+        setCompleted(true);
     }
 
     const updateFeed = async (feed) => {
@@ -142,66 +153,130 @@ function Feeds() {
         let res = await axios.post(`${config.apiBaseUrl}/feeds/update-feed`, payload, {
             withCredentials: true
         });
-
+        let message = "successfully updated feed!";
+        let status = "success";
         if (res && res.status === 200) {
             await getFeeds(group.gsid);
+        }else{
+            message = "Error updating feed!";
+            status = "danger";
         }
+        setCompletedStatus(status);
+        setCompletedMessage(message);
+        setCompleted(true);
     }
 
     const publishFeed = async (feed) => {
+        if(!group || !feed){
+            return; 
+        }
         let payload = { groupId: group.gsid.toString(), topicId: feed.topicId.toString() };
         let res = await axios.post(`${config.apiBaseUrl}/feeds/publish-feed`, payload, {
             withCredentials: true
         });
-
+        
+        let message = "successfully created feed!";
+        let status = "success";
         if (res && res.status === 200) {
             await getFeeds(group.gsid);
+        }else{
+            message = "Error publishing feed!";
+            status = "danger";
         }
+        setCompletedStatus(status);
+        setCompletedMessage(message);
+        setCompleted(true);
+    }
+
+    const buildTags = (tags) => {
+        if(!tags){
+            return (tags);
+        }
+
+
+        let newTags = tags.split('|');// get the array
+        let newTagEl = "";
+        if(newTags && newTags.length){
+            let tagItms = newTags.map((tag)=>{
+                return (<Badge pill bg="primary">{tag}</Badge>)
+            });
+            newTagEl = (tagItms);
+        }
+        let tagStack = (<Stack direction='horizontal' gap={2}>{newTagEl}</Stack>)
+        return (tagStack);
     }
 
     return (
         <div style={{ display: 'flex', gap: '2rem', padding: '2rem' }}>
-
-
-            {/* Feeds Section */}
-          
-
-            {/* Topics and Votes Section */}
             <Container>
+                <h3>Feeds</h3>
+                <p>Select a topic and optionally select a vote to create a feed</p>
                   <Row>
                    {groups ? (<ul>{groups.map((group) => (<Button onClick={() => setGroup(group)} key={group.gsid}>{group.name}</Button> ))}</ul>) : (<></>)}
                 Current Group: {group ? group.name : 'None'}
-                <h2>Feeds</h2>
-                <ul>
-                    {feeds && feeds.length > 0 ? (feeds.map((feed) => (<li key={feed.feedId}>{feed.title} - Active: {feed.active} - Tags: {feed.tags}</li>))) : (<li>No feeds</li>)}
-
-                </ul>
-                
-            </Row>
+                </Row>
                 <Row>
                     <Col xs={6}>
                         <h2>Topics</h2>
                         <div><strong>Selected Topic:</strong> {topic ? topic.topic : 'None'}</div>
                         <div><strong>Active: </strong> {topic && topic.active === "true"  ? "true" : "false"}</div>
                         {topic ? (<Button variant="success" onClick={() => createFeed(topic)}>Create Feed</Button>) : (<></>)}
-                        <ul>
-                            {topics && topics.length > 0 ? (topics.map((topic) => (<li key={topic.topicId}>{topic.topic} - ID: {topic.topicId} <Button onClick={() => setTopic(topic)}>Select</Button></li>))) : (<li>No topics</li>)}
-                        </ul>
                     </Col>
                     <Col xs={6}>
                         <h2>Votes</h2>
                         <div><strong>Selected Vote:</strong> {vote ? vote.surveyls_title : 'None'}</div>
                         <div><strong>Active: </strong> {vote && vote.active === "Y"  ? "true" : "false"}</div>
-                        <ul>
-                            {votes && votes.length > 0 ? (votes.map((vote) => (<li key={vote.sid}> - ID: {vote.sid} - {vote.surveyls_title} {topic ? (<Button variant="success" onClick={() => setVote(vote)}>Link</Button>) : (<></>)}</li>))) : (<li>No votes</li>)}
-                        </ul>
                     </Col>
+                    <Col xs={6}>
+                        <Table>
+                            <thead>
+                                <th>Topic</th>
+                                <th>Select</th>
+                            </thead>
+                            <tbody>
+                            {topics && topics.length > 0 ? (topics.map((topic) => ( <tr><td key={topic.topicId}>{topic.topic} - ID: {topic.topicId}</td> <td><Button onClick={() => setTopic(topic)}>Select</Button></td>
+                            </tr>))) : (<tr><td>no topic</td><td> - </td></tr>)}
+                         
+                            
+                            </tbody>
+                        </Table>
+                       
+                    </Col>
+                    <Col xs={6}>
+                        <Table>
+                            <thead>
+                                <th>Vote</th>
+                                <th>Select</th>
+                            </thead>
+                            <tbody>
+                                {votes && votes.length > 0 ? (votes.map((vote) => (<tr key={vote.sid}><td>  - ID: {vote.sid} - {vote.surveyls_title}</td><td>{topic ? (<Button variant="success" onClick={() => setVote(vote)}>Link</Button>):(<span>no topic</span>)}</td></tr>))) : (<tr><td> not vote</td><td> - </td></tr>)}
+                            </tbody>
+                        </Table>
+                    </Col>
+                </Row>
+                <Row>
+                <ToastContainer position='middle-center'>
+                <Toast bg={completedStatus} onClose={() => {
+                    setCompleted(false);
+                }} show={completed} delay={3000} autohide>
+                    <Toast.Header>
+                        <strong className="me-auto">Status</strong>
+                        <small>{completedStatus}</small>
+                    </Toast.Header>
+                    <Toast.Body>{completedMessage}</Toast.Body>
+                </Toast>
+            </ToastContainer>
                 </Row>
                 <Row>
                    {<Col xs={6}>
                        <h2>Feeds</h2>
-                       <ul>
-                           {feeds && feeds.length > 0 ? (feeds.map((feed) => (<li key={feed.feedId}>{feed.title} Tags: {feed.tags} <Button variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
+                        <Table>
+                            <thead>
+                                <th>Feed</th>
+                                <th>Select</th>
+                            </thead>
+                            <tbody>
+                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td>{feed.title} Tags: {buildTags(feed.tags)}</td><td><Button variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
                                try{
                                    let newFeed = {...feed};
                                    newFeed.active = newFeed.active === "true" ? "false" : "true";
@@ -210,8 +285,12 @@ function Feeds() {
                                    console.error("Error updating feed:", err);
                                    alert("Error updating feed");
                                }
-                           }}>{feed.active === "true" ? "Deactivate" : "Activate"}</Button> {feed.active === "true" ? (<Button variant="warning">Publish</Button>) : ("")}</li>))) : (<li>No feeds</li>)}
-                       </ul>
+                           }}>{feed.active === "true" ? "Deactivate" : "Activate"}</Button>{feed.active === "true" ? (<Button variant="warning" onClick={async ()=>{
+                                let newFeed = {...feed};
+                                await publishFeed(newFeed); 
+                           }}>Publish</Button>) : ("")}</td></tr>))) : (<tr><td>No feeds</td><td> - </td></tr>)}
+                            </tbody>
+                       </Table>
                    </Col>}
                 </Row>
             </Container>

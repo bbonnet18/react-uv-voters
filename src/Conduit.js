@@ -192,18 +192,24 @@ function Conduit() {
         let payload = {
             groupId: groupId,
             topicId: topicId,
-            topic
+            topic: topic
         }
         let res = await axios.post(`${config.apiBaseUrl}/conduit/create-topic`, payload, {
             withCredentials: true
         });
-
+        let message = "Successfully created topic!";
+        let status = "success";
         if (res && res.status === 200) {
             await getTopics(group.gsid, false);
-            setCompletedStatus('success');
-            setCompletedMessage(`Successfully created a topic in ${groupId}`);
-            setCompleted(true);
+     
+        } else {
+            message = "Error creating topic!";
+            status = "danger";
         }
+
+        setCompletedStatus(status);
+        setCompletedMessage(message);
+        setCompleted(true);
     }
 
     // can deactivate a group with this 
