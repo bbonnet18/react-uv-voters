@@ -114,7 +114,13 @@ function Feeds() {
 
         if (feeds && feeds.status === 200) {
             let feedList = feeds.data.feeds;
-            setFeeds(feedList);
+            let newFeeds = feedList.map((feed) => {
+                return {
+                    ...feed,
+                    title: unescape(feed.title)
+                };
+            });
+            setFeeds(newFeeds);
         } else {
             setFeeds([]);
         }
@@ -129,23 +135,28 @@ function Feeds() {
             surveyId: vote && vote.sid ? vote.sid.toString() : "",
             tags: topic.tags || ""
         };
-
-        console.log('payload:', payload);
-        let res = await axios.post(`${config.apiBaseUrl}/feeds/create-feed`, payload, {
+        try{
+            let res = await axios.post(`${config.apiBaseUrl}/feeds/create-feed`, payload, {
             withCredentials: true
-        });
+            });
         
-        let message = "successfully created feed!";
-        let status = "success";
-        if (res && res.status === 200) {
-            await getFeeds(group.gsid);
-        }else{
-            message = "Error creating feed!";
-            status = "danger";
+            let message = "successfully created feed!";
+            let status = "success";
+            if (res && res.status === 200) {
+                await getFeeds(group.gsid);
+            }else{
+                message = "Error creating feed!";
+                status = "danger";
+            }
+            setCompletedStatus(status);
+            setCompletedMessage(message);
+            setCompleted(true);
+        }catch(err){
+            setCompletedStatus("danger");
+            setCompletedMessage("Error creating feed, may be a duplicate");
+            setCompleted(true);
         }
-        setCompletedStatus(status);
-        setCompletedMessage(message);
-        setCompleted(true);
+        
     }
 
     const updateFeed = async (feed) => {
@@ -159,6 +170,27 @@ function Feeds() {
             await getFeeds(group.gsid);
         }else{
             message = "Error updating feed!";
+            status = "danger";
+        }
+        setCompletedStatus(status);
+        setCompletedMessage(message);
+        setCompleted(true);
+    }
+
+    const deleteFeed = async (feed) => {
+        if(!group || !feed){
+            return; 
+        }
+        let payload = { groupId: group.gsid.toString(), topicId: feed.topicId.toString() };
+        let res = await axios.post(`${config.apiBaseUrl}/feeds/delete-feed`, payload, {
+            withCredentials: true
+        });
+        let message = "successfully deleted feed!";
+        let status = "success";
+        if (res && res.status === 200) {
+            await getFeeds(group.gsid);
+        }else{
+            message = "Error deleting feed!";
             status = "danger";
         }
         setCompletedStatus(status);
@@ -276,7 +308,7 @@ function Feeds() {
                                 <th>Select</th>
                             </thead>
                             <tbody>
-                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td>{feed.title} Tags: {buildTags(feed.tags)}</td><td><Button variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
+                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td>Title: {feed.title} <br />Tags: {buildTags(feed.tags)}</td><td><Button className='mb-1'  variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
                                try{
                                    let newFeed = {...feed};
                                    newFeed.active = newFeed.active === "true" ? "false" : "true";
@@ -285,7 +317,9 @@ function Feeds() {
                                    console.error("Error updating feed:", err);
                                    alert("Error updating feed");
                                }
-                           }}>{feed.active === "true" ? "Deactivate" : "Activate"}</Button>{feed.active === "true" ? (<Button variant="warning" onClick={async ()=>{
+                           }}>{feed.active === "true" ? "Deactivate" : "Activate"}</Button><Button className='mb-1' variant="danger" onClick={async () => {
+                               await deleteFeed(feed);
+                           }}>Delete</Button>{feed.active === "true" ? (<Button variant="warning" onClick={async ()=>{
                                 let newFeed = {...feed};
                                 await publishFeed(newFeed); 
                            }}>Publish</Button>) : ("")}</td></tr>))) : (<tr><td>No feeds</td><td> - </td></tr>)}
