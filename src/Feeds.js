@@ -234,7 +234,7 @@ function Feeds() {
             });
             newTagEl = (tagItms);
         }
-        let tagStack = (<Stack direction='horizontal' gap={2}>{newTagEl}</Stack>)
+        let tagStack = (<div gap={2}>{newTagEl}</div>)
         return (tagStack);
     }
 
@@ -266,7 +266,7 @@ function Feeds() {
                                 <th>Select</th>
                             </thead>
                             <tbody>
-                            {topics && topics.length > 0 ? (topics.map((topic) => ( <tr><td key={topic.topicId}>{topic.topic} - ID: {topic.topicId}</td> <td><Button onClick={() => setTopic(topic)}>Select</Button></td>
+                            {topics && topics.length > 0 ? (topics.map((topic) => ( <tr><td key={topic.topicId}><div>{topic.topic} - ID: {topic.topicId}</div><div>Tags: {buildTags(topic.tags)}</div></td><td><Button onClick={() => setTopic(topic)}>Select</Button></td>
                             </tr>))) : (<tr><td>no topic</td><td> - </td></tr>)}
                          
                             
@@ -300,7 +300,7 @@ function Feeds() {
             </ToastContainer>
                 </Row>
                 <Row>
-                   {<Col xs={6}>
+                   {<Col xs={12}>
                        <h2>Feeds</h2>
                         <Table>
                             <thead>
@@ -308,7 +308,7 @@ function Feeds() {
                                 <th>Select</th>
                             </thead>
                             <tbody>
-                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td>Title: {feed.title} <br />Tags: {buildTags(feed.tags)}</td><td><Button className='mb-1'  variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
+                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td><div>Title: {feed.title}</div><div>Survey: {feed.surveyId ? feed.surveyId : "no survey"}</div><div>Tags: {buildTags(feed.tags)}</div></td><td><Button className='mb-1'  variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
                                try{
                                    let newFeed = {...feed};
                                    newFeed.active = newFeed.active === "true" ? "false" : "true";

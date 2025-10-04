@@ -17,7 +17,9 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
+.badge {
+  margin-right: 5px; 
+}
 body{
   background-color: darkslategrey !important;
 }

@@ -596,7 +596,7 @@ function Conduit() {
                         </section>
                         <section className='conduit-section'>
                             <Row>
-                                <Col lg={6}>
+                                <Col lg={12}>
                                 {group && topic && topics.length ? (
                                 <div>
                                     <h4>Comments</h4>
@@ -628,16 +628,6 @@ function Conduit() {
 
                             ) : (<></>)}
                                 
-                                </Col>
-                                <Col lg={6}>
-                                <h4>Votes</h4>
-                                {votes && votes.length ? (
-                                    <ul>
-                                        {votes.map((vote, ind) => {
-                                            return (<li className="conduit-vote" key={ind}>Vote: {vote.surveyls_title} - {topic ? (<Button variant='success' >{topic.topicId}:{vote.gsid}:{vote.sid}</Button>):(<>Choose a topic</>) }</li>)
-                                        })}
-                                    </ul>
-                                ) : (<div>No Votes Yet</div>)}
                                 </Col>
                             </Row>
                             
