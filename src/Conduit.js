@@ -1,7 +1,7 @@
 import './App.css';
 import axios from 'axios';
 import config from './config';
-import { Button, ButtonGroup, Col, Container, Row, Tabs, Tab, Toast, ToastContainer, Form, ToggleButton } from "react-bootstrap";
+import { Badge, Button, ButtonGroup, Col, Container, Row, Table, Stack, Tabs, Tab, Toast, ToastContainer, Form, ToggleButton } from "react-bootstrap";
 import { useState, useEffect } from 'react';
 import unescape from 'validator/lib/unescape';
 import Receiver from './Receiver';
@@ -545,20 +545,24 @@ function Conduit() {
                             }}>Create Topic</Button></div>
                         </section>
                         <section className="conduit-section">
-                            <div>
                                 <h3>Topics</h3>
-                                {showTopics ? (
-                                    <ul>
-                                        {topics.map((topic, ind) => {
-                                            return (<li key={ind}>{topic.topic} | <Button variant='primary' onClick={(e) => {
+                                <Table>
+                                    <thead>
+                                        <th>Topic</th>
+                                        <th>action</th>
+                                    </thead>
+                                    <tbody>
+                                    {showTopics ? (
+                                        topics.map((topic, ind) => {
+                                            return (<tr><td key={ind}>{topic.topic}</td><td><Button variant='primary' onClick={(e) => {
                                                 let myTopic = topic;
                                                 setTopic(myTopic);
-                                            }}>Select</Button></li>)
-                                        })}
-                                    </ul>
-                                ) : (<></>)}
-
-                            </div>
+                                            }}>Select</Button></td></tr>)
+                                        })
+                                ) : (<tr><td>no topics</td><td>no actions</td></tr>)}
+                                    </tbody>
+                                
+                                </Table>
                             <hr></hr>
                             <div>
                                 <h4>Topic: {topic ? (topic.topic) : ""}</h4>
@@ -597,33 +601,43 @@ function Conduit() {
                         <section className='conduit-section'>
                             <Row>
                                 <Col lg={12}>
+                                <h4>Comments</h4>
                                 {group && topic && topics.length ? (
                                 <div>
-                                    <h4>Comments</h4>
+                                    <Table>
+                                        <thead>
+                                            <th>
+                                                Comment
+                                            </th>
+                                            <th>
+                                                Options
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                        {comments && comments.length ? (
+                                        comments.map((comment, ind) => {
+                                            return (<tr className="conduit-comment" key={ind}><td>Comment:{comment.comment}</td><td><Button variant='success' onClick={async (e) => {
+                                                let topicId = topic.topicId;
+                                                let groupId = group.gsid;
+                                                let voterName = comment.voterName;
+                                                let active = "true";
+                                                let comment_status = "approved";
 
-                                    {comments && comments.length ? (
-                                        <ul>
-                                            {comments.map((comment, ind) => {
-                                                return (<li className="conduit-comment" key={ind}><div>Comment:</div> <div>{comment.comment}</div><div className='actions'><Button variant='success' onClick={async (e) => {
-                                                    let topicId = topic.topicId;
-                                                    let groupId = group.gsid;
-                                                    let voterName = comment.voterName;
-                                                    let active = "true";
-                                                    let comment_status = "approved";
+                                                await updateComment(groupId, topicId, voterName, active, comment_status);
+                                            }}>Approve</Button></td><td><Button variant='danger' onClick={async (e) => {
+                                                let topicId = topic.topicId;
+                                                let groupId = group.gsid;
+                                                let voterName = comment.voterName;
+                                                let active = "false";
+                                                let comment_status = "rejected";
 
-                                                    await updateComment(groupId, topicId, voterName, active, comment_status);
-                                                }}>Approve</Button><Button variant='danger' onClick={async (e) => {
-                                                    let topicId = topic.topicId;
-                                                    let groupId = group.gsid;
-                                                    let voterName = comment.voterName;
-                                                    let active = "false";
-                                                    let comment_status = "rejected";
-
-                                                    await updateComment(groupId, topicId, voterName, active, comment_status);
-                                                }}>Reject</Button></div></li>)
-                                            })}
-                                        </ul>
-                                    ) : (<div>No Comments Yet</div>)}
+                                                await updateComment(groupId, topicId, voterName, active, comment_status);
+                                            }}>Reject</Button></td></tr>)
+                                        })
+                                    ) : (<tr><td>No Comments Yet</td><td>no actions</td></tr>)}
+                                        </tbody>
+                                    </Table>
+                                    
                                 </div>
 
                             ) : (<></>)}
