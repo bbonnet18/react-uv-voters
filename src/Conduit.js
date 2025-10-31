@@ -17,11 +17,14 @@ function Conduit() {
     const [showTopics, setShowTopics] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [showReceiver, setShowReceiver] = useState(false);
+    const [sourcererBtn, setSourcererBtn] = useState(true);
     const [highestReceiverId,setHighestReceiverId] = useState(0);
     const [receivers, setReceivers] = useState([]);
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
     const [completedStatus, setCompletedStatus] = useState("success");
+    const [sourcererPrompt, setSourcererPrompt] = useState(""); 
+    const [sourcererText,setSourcererTxt] = useState("");
     
     const starterReceiver = {
         "firstname": "",
@@ -365,6 +368,10 @@ function Conduit() {
 
 
     }
+    // hit the sourcerer API 
+    const sourcery = async (val) => {
+        
+    }
 
 
     // need to create breadcrumbs to get back
@@ -383,109 +390,6 @@ function Conduit() {
                     <Toast.Body>{completedMessage}</Toast.Body>
                 </Toast>
             </ToastContainer>
-            <Row>
-                <div><Button variant='primary' onClick={() => {
-                    setShowReceiver(!showReceiver);
-                }}>{showReceiver ? "Hide Receiver Form" : "Show Receiver Form"}</Button> <span>Highest Receiver Id: {highestReceiverId}</span></div>
-            </Row>
-            {showReceiver ? (<section>
-
-
-                <Form id="receiverForm" >
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rFirst">First:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="firstName" name="firstname" lg={6} type="text" placeholder="first name" value={firstName} onChange={(e) => {
-                                setFirstName(e.target.value);
-                            }} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rLast">Last:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rLevel">Level:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Select aria-label="level" name="level" id="level" required defaultValue="local">
-                                <option value="local">local</option>
-                                <option value="state">state</option>
-                                <option value="national">national</option>
-                            </Form.Select>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rLocality">Locality:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="locality" name="locality" lg={6} type="text" placeholder="state abbreviation or town name" defaultValue={currentReceiver.locality} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rOffice">Office:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="office" name="office" lg={6} type="text" placeholder="office" defaultValue={currentReceiver.office} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rStatus">Status:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="status" name="status" lg={6} type="text" placeholder="status: incumbant | challenger" defaultValue={currentReceiver.status} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rParty">Party:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Select aria-label="party" name="party" id="party" required defaultValue="D">
-                                <option value="D">Democrat</option>
-                                <option value="R">Republican</option>
-                                <option value="I">Independent</option>
-                                <option value="G">Green</option>
-                                <option value="L">Libertarian</option>
-                            </Form.Select>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rWebsite">Website:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="website" name="website" lg={6} type="url" placeholder="main website" defaultValue={currentReceiver.website} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rSocial">Social Media:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="social" name="social" lg={6} type="text" placeholder="social media handles" defaultValue={currentReceiver.social} />
-                        </Col>
-                    </Row>
-                </Form>
-                <Row>
-                    <Col lg={{ offset: 10, span: 2 }}>
-                        <Button variant="primary" onClick={async (e) => {
-                            await submitReceiver();
-                        }}>Submit</Button>
-                    </Col>
-
-                </Row>
-            </section>) : (<></>)}
             <Tabs onSelect={(groupId) => {
                 let selectedGroup = {};
                 groups.map((itm, ind) => {
@@ -498,18 +402,25 @@ function Conduit() {
             }}>
                 {groups.map((itm, ind) => {
                     return (<Tab eventKey={itm.gsid} title={itm.title} key={ind} >
-                        <section>
-                            <p>Tags:</p>
-                            {receivers && receivers.length ? (<ul className='conduit-tags'>
-                                {receivers.map((receiver, ind) => {
-                                    return (<li key={ind}><Button onClick={(e) => {
-                                        let rec = receiver;
-                                        if (topic && topic.topicId) {
-                                            createTag(rec, topic);
-                                        }
-                                    }}>{receiver.receiverId.S}-{receiver.lastname.S}</Button></li>)
-                                })}
-                            </ul>) : (<></>)}
+                        <section >
+                            <h3>Sourcer-er AI <span className='sourcerer-toggle'><Button variant='info' onClick={()=> setSourcererBtn(!sourcererBtn)}><img src={sourcererBtn ? "chevron-bar-down.svg" : "chevron-bar-up.svg"}/></Button></span></h3>
+                            <div className={sourcererBtn ? 'sourcerer-container' : 'sourcerer-container hide'}>
+                                <div className='sourcerer-image'><img src="./sourcerer.jpg" /></div>
+                                <div className='sourcerer-output'>
+                                    <div className='sourcerer-main-output'>
+                                        {sourcererText}
+                                    </div>
+                                </div>
+                                <div><textarea type="text" id="sourcererInput" className='sourcerer-input' placeholder={`prompt to generate issues for the selected location: ${group && group.name ? group.name : ''}`} value={sourcererPrompt} onChange={(e) => {
+                                    let val = e.currentTarget.value;
+                                    setSourcererPrompt(val); 
+                                }}></textarea>
+                                 <Button className='sourcerer-input-btn' variant='success'>Summon</Button>
+                                </div>
+                            </div>
+                            
+                            
+                           
                         </section>
                         <section className='conduit-section'>
                             <div><input type="text" id={`topicInput${itm.gsid}`} className='create-input' /> <Button variant='success' onClick={async (e) => {
@@ -543,6 +454,19 @@ function Conduit() {
 
 
                             }}>Create Topic</Button></div>
+                        </section>
+                        <section>
+                            <p>Tags:</p>
+                            {receivers && receivers.length ? (<ul className='conduit-tags'>
+                                {receivers.map((receiver, ind) => {
+                                    return (<li key={ind}><Button onClick={(e) => {
+                                        let rec = receiver;
+                                        if (topic && topic.topicId) {
+                                            createTag(rec, topic);
+                                        }
+                                    }}>{receiver.receiverId.S}-{receiver.lastname.S}</Button></li>)
+                                })}
+                            </ul>) : (<></>)}
                         </section>
                         <section className="conduit-section">
                                 <h3>Topics</h3>
@@ -654,7 +578,109 @@ function Conduit() {
 
 
             </Tabs>
+            <Row>
+                <div><Button variant='primary' onClick={() => {
+                    setShowReceiver(!showReceiver);
+                }}>{showReceiver ? "Hide Receiver Form" : "Show Receiver Form"}</Button> <span>Highest Receiver Id: {highestReceiverId}</span></div>
+            </Row>
+            {showReceiver ? (<section>
 
+
+                <Form id="receiverForm" >
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rFirst">First:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Control id="firstName" name="firstname" lg={6} type="text" placeholder="first name" value={firstName} onChange={(e) => {
+                                setFirstName(e.target.value);
+                            }} required />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rLast">Last:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} required />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rLevel">Level:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Select aria-label="level" name="level" id="level" required defaultValue="local">
+                                <option value="local">local</option>
+                                <option value="state">state</option>
+                                <option value="national">national</option>
+                            </Form.Select>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rLocality">Locality:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Control id="locality" name="locality" lg={6} type="text" placeholder="state abbreviation or town name" defaultValue={currentReceiver.locality} required />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rOffice">Office:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Control id="office" name="office" lg={6} type="text" placeholder="office" defaultValue={currentReceiver.office} required />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rStatus">Status:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Control id="status" name="status" lg={6} type="text" placeholder="status: incumbant | challenger" defaultValue={currentReceiver.status} required />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rParty">Party:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Select aria-label="party" name="party" id="party" required defaultValue="D">
+                                <option value="D">Democrat</option>
+                                <option value="R">Republican</option>
+                                <option value="I">Independent</option>
+                                <option value="G">Green</option>
+                                <option value="L">Libertarian</option>
+                            </Form.Select>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rWebsite">Website:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Control id="website" name="website" lg={6} type="url" placeholder="main website" defaultValue={currentReceiver.website} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={2} md={12}>
+                            <Form.Label id="rSocial">Social Media:</Form.Label>
+                        </Col>
+                        <Col lg={10} md={12}>
+                            <Form.Control id="social" name="social" lg={6} type="text" placeholder="social media handles" defaultValue={currentReceiver.social} />
+                        </Col>
+                    </Row>
+                </Form>
+                <Row>
+                    <Col lg={{ offset: 10, span: 2 }}>
+                        <Button variant="primary" onClick={async (e) => {
+                            await submitReceiver();
+                        }}>Submit</Button>
+                    </Col>
+
+                </Row>
+            </section>):(<></>)}
 
 
         </Container>

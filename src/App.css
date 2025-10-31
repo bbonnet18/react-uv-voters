@@ -269,6 +269,57 @@ form{
   /* font-size: 1em !important; */
 }
 
+.sourcerer{
+
+}
+.sourcerer-container{
+  display: block;
+}
+
+.sourcerer-container.hide{
+  display: none; 
+}
+
+.sourcerer h3{
+  margin-top: 20px;
+}
+.sourcerer-output{
+  margin-top:20px;
+  padding: 1em;
+  background-color: #282c34;
+  height: 500px;
+}
+.sourcerer-main-output{
+  background-color: darkgray;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+.sourcerer-image{
+  width: 100px;
+}
+.sourcerer-image img{
+  width: 100px;
+}
+
+.sourcerer-output textarea{
+  width: 100%;
+  height: 500px; 
+}
+
+.sourcerer-input{
+  width: 90%;
+  height: 100px; 
+}
+
+.sourcerer-input .btn{
+  width: 100%;
+  vertical-align: top;
+}
+
+.sourcerer-toggle img{
+  width: 30px; 
+}
 .tag-btn{
   margin-right: 8px;
 }
