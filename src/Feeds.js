@@ -108,7 +108,7 @@ function Feeds() {
 
     // get feeds
     const getFeeds = async (groupId) => {
-        let feeds = await axios.post(`${config.apiBaseUrl}/feeds`, { groupId: groupId }, {
+        let feeds = await axios.post(`${config.apiBaseUrl}/feeds/admin-feeds`, { groupId: groupId }, {
             withCredentials: true
         });
 
@@ -198,27 +198,27 @@ function Feeds() {
         setCompleted(true);
     }
 
-    const publishFeed = async (feed) => {
-        if(!group || !feed){
-            return; 
-        }
-        let payload = { groupId: group.gsid.toString(), topicId: feed.topicId.toString() };
-        let res = await axios.post(`${config.apiBaseUrl}/feeds/publish-feed`, payload, {
-            withCredentials: true
-        });
+    // const publishFeed = async (feed) => {
+    //     if(!group || !feed){
+    //         return; 
+    //     }
+    //     let payload = { groupId: group.gsid.toString(), topicId: feed.topicId.toString() };
+    //     let res = await axios.post(`${config.apiBaseUrl}/feeds/publish-feed`, payload, {
+    //         withCredentials: true
+    //     });
         
-        let message = "successfully created feed!";
-        let status = "success";
-        if (res && res.status === 200) {
-            await getFeeds(group.gsid);
-        }else{
-            message = "Error publishing feed!";
-            status = "danger";
-        }
-        setCompletedStatus(status);
-        setCompletedMessage(message);
-        setCompleted(true);
-    }
+    //     let message = "successfully created feed!";
+    //     let status = "success";
+    //     if (res && res.status === 200) {
+    //         await getFeeds(group.gsid);
+    //     }else{
+    //         message = "Error publishing feed!";
+    //         status = "danger";
+    //     }
+    //     setCompletedStatus(status);
+    //     setCompletedMessage(message);
+    //     setCompleted(true);
+    // }
 
     const buildTags = (tags) => {
         if(!tags){
@@ -244,7 +244,7 @@ function Feeds() {
                 <h3>Feeds</h3>
                 <p>Select a topic and optionally select a vote to create a feed</p>
                   <Row>
-                   {groups ? (<ul>{groups.map((group) => (<Button onClick={() => setGroup(group)} key={group.gsid}>{group.name}</Button> ))}</ul>) : (<></>)}
+                   {groups ? (<ul>{groups.map((group) => (<Button className="action-btn" onClick={() => setGroup(group)} key={group.gsid}>{group.name}</Button> ))}</ul>) : (<></>)}
                 Current Group: {group ? group.name : 'None'}
                 </Row>
                 <Row>
@@ -308,7 +308,7 @@ function Feeds() {
                                 <th>Select</th>
                             </thead>
                             <tbody>
-                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td><div>Title: {feed.title}</div><div>Survey: {feed.surveyId ? feed.surveyId : "no survey"}</div><div>Tags: {buildTags(feed.tags)}</div></td><td><Button className='mb-1'  variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
+                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td><div>Title: {feed.title}</div><div>Survey: {feed.surveyId ? feed.surveyId : "no survey"}</div><div>Tags: {buildTags(feed.tags)}</div></td><td><Button className='action-btn'  variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
                                try{
                                    let newFeed = {...feed};
                                    newFeed.active = newFeed.active === "true" ? "false" : "true";
@@ -317,12 +317,9 @@ function Feeds() {
                                    console.error("Error updating feed:", err);
                                    alert("Error updating feed");
                                }
-                           }}>{feed.active === "true" ? "Deactivate" : "Activate"}</Button><Button className='mb-1' variant="danger" onClick={async () => {
+                           }}>{feed.active === "true" ? "Deactivate" : "Activate"}</Button><Button className='action-btn' variant="danger" onClick={async () => {
                                await deleteFeed(feed);
-                           }}>Delete</Button>{feed.active === "true" ? (<Button variant="warning" onClick={async ()=>{
-                                let newFeed = {...feed};
-                                await publishFeed(newFeed); 
-                           }}>Publish</Button>) : ("")}</td></tr>))) : (<tr><td>No feeds</td><td> - </td></tr>)}
+                           }}>Delete</Button></td></tr>))) : (<tr><td>No feeds</td><td> - </td></tr>)}
                             </tbody>
                        </Table>
                    </Col>}
