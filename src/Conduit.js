@@ -370,7 +370,24 @@ function Conduit() {
     }
     // hit the sourcerer API 
     const sourcery = async (val) => {
+
+        let payload = {
+            prompt: val
+        }
         
+        // let res = await axios.post(`${config.apiBaseUrl}/sourcerer/`, payload, {
+        //     withCredentials: true
+        // });
+
+        // if(res && res.status ===  200){
+        //     let resData = res.data;
+        //     setSourcererTxt(resData); 
+        // }else{
+        //     setSourcererTxt('Nothing to report');
+        // }
+
+        setSourcererTxt('the response should go here');
+
     }
 
 
@@ -415,7 +432,11 @@ function Conduit() {
                                     let val = e.currentTarget.value;
                                     setSourcererPrompt(val); 
                                 }}></textarea>
-                                 <Button className='sourcerer-input-btn' variant='success'>Summon</Button>
+                                 <Button className='sourcerer-input-btn' variant='success' onClick={async ()=>{
+                                        let prompt = sourcererPrompt;
+                                        await sourcery(prompt);
+                                        
+                                 }}>Summon</Button>
                                 </div>
                             </div>
                             
