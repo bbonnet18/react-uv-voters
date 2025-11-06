@@ -386,7 +386,7 @@ function Conduit() {
         //     setSourcererTxt('Nothing to report');
         // }
 
-        setSourcererTxt('the response should go here');
+        setSourcererTxt(`the response should go here: ${val}`);
 
     }
 
@@ -435,7 +435,7 @@ function Conduit() {
                                  <Button className='sourcerer-input-btn' variant='success' onClick={async ()=>{
                                         let prompt = sourcererPrompt;
                                         await sourcery(prompt);
-                                        
+
                                  }}>Summon</Button>
                                 </div>
                             </div>
