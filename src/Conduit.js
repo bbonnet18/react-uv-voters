@@ -249,16 +249,23 @@ function Conduit() {
         let res = await axios.post(`${config.apiBaseUrl}/conduit/delete-topic`, payload, {
             withCredentials: true
         });
-
+        let message = "Successfully deleted topic!";
+        let status = "success";
+        let completed = true;
         if (res && res.status === 200) {
             setTopic();
             setComments([]);
             let m = group; 
             await getTopics(m.gsid);
         } else {
+            message = "Error deleting topic!";
+            status = "danger";
             setComments([]);
         }
         setShowComments(true);
+        setCompletedStatus(status);
+        setCompletedMessage(message);
+        setCompleted(completed);
     }
 
 
