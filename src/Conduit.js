@@ -1,7 +1,7 @@
 import './App.css';
 import axios from 'axios';
 import config from './config';
-import { Badge, Button, ButtonGroup, Col, Container, Row, Table, Stack, Tabs, Tab, Toast, ToastContainer, Form, ToggleButton } from "react-bootstrap";
+import { Badge, Button, ButtonGroup, Col, Container, Row, Table, Stack, Tabs, Tab, Toast, ToastContainer, Form, Spinner, ToggleButton } from "react-bootstrap";
 import { useState, useEffect } from 'react';
 import unescape from 'validator/lib/unescape';
 import Receiver from './Receiver';
@@ -14,6 +14,7 @@ function Conduit() {
     const [topic, setTopic] = useState();
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [sourcererLoading, setSourcererLoading] = useState(false);
     const [showTopics, setShowTopics] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [showReceiver, setShowReceiver] = useState(false);
@@ -370,23 +371,30 @@ function Conduit() {
     }
     // hit the sourcerer API 
     const sourcery = async (val) => {
+        try{
+            let payload = {
+                prompt: val
+            }
+            // get the cookie and set the auth header
+            setSourcererLoading(true);
+            let res = await axios.post(`${config.apiBaseUrl}/sourcerer/`, payload, {
+                withCredentials:true
+            });
+    
+            if(res && res.status ===  200){
+                let resData = res.data;
+                setSourcererTxt(resData.answer); 
+            }else{
+                setSourcererTxt('Nothing to report');
+            }
+    
+            setSourcererLoading(false); 
+        }catch(err){
 
-        let payload = {
-            prompt: val
+            setSourcererLoading(false); 
         }
+
         
-        // let res = await axios.post(`${config.apiBaseUrl}/sourcerer/`, payload, {
-        //     withCredentials: true
-        // });
-
-        // if(res && res.status ===  200){
-        //     let resData = res.data;
-        //     setSourcererTxt(resData); 
-        // }else{
-        //     setSourcererTxt('Nothing to report');
-        // }
-
-        setSourcererTxt(`the response should go here: ${val}`);
 
     }
 
@@ -420,9 +428,9 @@ function Conduit() {
                 {groups.map((itm, ind) => {
                     return (<Tab eventKey={itm.gsid} title={itm.title} key={ind} >
                         <section >
-                            <h3>Sourcer-er AI <span className='sourcerer-toggle'><Button variant='info' onClick={()=> setSourcererBtn(!sourcererBtn)}><img src={sourcererBtn ? "chevron-bar-down.svg" : "chevron-bar-up.svg"}/></Button></span></h3>
+                            <h3>Sourcerer AI <span className='sourcerer-toggle'><Button variant='info' onClick={()=> setSourcererBtn(!sourcererBtn)}><img src={sourcererBtn ? "chevron-bar-down.svg" : "chevron-bar-up.svg"}/></Button></span></h3>
                             <div className={sourcererBtn ? 'sourcerer-container' : 'sourcerer-container hide'}>
-                                <div className='sourcerer-image'><img src="./sourcerer.jpg" /></div>
+                                {sourcererLoading ? (<Spinner></Spinner>) : (<div className='sourcerer-image'><img src="./sourcerer.jpg" /></div>)}
                                 <div className='sourcerer-output'>
                                     <div className='sourcerer-main-output'>
                                         {sourcererText}
