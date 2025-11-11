@@ -242,6 +242,33 @@ function Conduit() {
         setCompleted(completed);
     }
 
+    const deleteTopic = async (groupId, topicId) => {
+        let payload = {
+            groupId: groupId,
+            topicId: topicId
+        }
+        let res = await axios.post(`${config.apiBaseUrl}/conduit/delete-topic`, payload, {
+            withCredentials: true
+        });
+        let message = "Successfully deleted topic!";
+        let status = "success";
+        let completed = true;
+        if (res && res.status === 200) {
+            setTopic();
+            setComments([]);
+            let m = group; 
+            await getTopics(m.gsid);
+        } else {
+            message = "Error deleting topic!";
+            status = "danger";
+            setComments([]);
+        }
+        setShowComments(true);
+        setCompletedStatus(status);
+        setCompletedMessage(message);
+        setCompleted(completed);
+    }
+
 
     const getComments = async (groupId, topicId, active) => {
         let payload = {
@@ -266,6 +293,7 @@ function Conduit() {
         }
         setShowComments(true);
     }
+
 
     const publish = async (groupId, topicId) => {
         let payload = {
@@ -542,6 +570,9 @@ function Conduit() {
                                     }}>Update</Button> | <Button onClick={async()=>{
                                         await publish(group.gsid, topic.topicId);
                                     }} variant='success'>Publish</Button>
+                                    | <Button onClick={async()=>{
+                                        await deleteTopic(group.gsid, topic.topicId);
+                                    }} variant='danger'>Delete</Button>
                                     </div></>) : (<></>)}
                             </div>
                             <div>Tags: {topic && topic.tags ? (topic.tags.split('|').map((itm) => {
