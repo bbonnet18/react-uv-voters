@@ -31,7 +31,7 @@ function Conduit() {
         "firstname": "",
         "lastname": "",
         "office": "",
-        "status": "",
+        "category": "",
         "website": "",
         "social": "",
         "locality": "",
@@ -369,7 +369,8 @@ function Conduit() {
                 form.classList.remove('.error');
                 var formFields = form.querySelectorAll('.form-control');
                 var partySelect = form.querySelector('#party');
-                var levelSelect = form.querySelector('#level');
+                var categorySelect = form.querySelector('#category');
+                var localitySelect = form.querySelector('#locality');
                 var formVals = {}
                 for (let i = 0; i < formFields.length; i++) {
                     if(formFields[i].value !== ""){
@@ -377,7 +378,8 @@ function Conduit() {
                     }
                 }
                 formVals.party = partySelect.value;
-                formVals.level = levelSelect.value;
+                formVals.category = categorySelect.value;
+                formVals.locality = localitySelect.value;
                 formVals.receiverId = parseInt(highestReceiverId) + 1; 
 
                 let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, formVals, {
@@ -667,22 +669,75 @@ function Conduit() {
                     </Row>
                     <Row>
                         <Col lg={2} md={12}>
-                            <Form.Label id="rLevel">Level:</Form.Label>
+                            <Form.Label id="rCategory">Category:</Form.Label>
                         </Col>
                         <Col lg={10} md={12}>
-                            <Form.Select aria-label="level" name="level" id="level" required defaultValue="local">
+                            <Form.Select aria-label="category" name="category" id="category" required defaultValue="local">
                                 <option value="local">local</option>
                                 <option value="state">state</option>
                                 <option value="national">national</option>
                             </Form.Select>
                         </Col>
                     </Row>
-                    <Row>
+                     <Row>
                         <Col lg={2} md={12}>
                             <Form.Label id="rLocality">Locality:</Form.Label>
                         </Col>
                         <Col lg={10} md={12}>
-                            <Form.Control id="locality" name="locality" lg={6} type="text" placeholder="state abbreviation or town name" defaultValue={currentReceiver.locality} required />
+                            <Form.Select aria-label="locality" name="locality" id="locality" required defaultValue="local">
+                                <option value="US">United States</option>
+                                <option value="LOCAL">LOCAL</option>
+                                <option value="AL">Alabama</option>
+                                <option value="AK">Alaska</option>
+                                <option value="AZ">Arizona</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="CA">California</option>
+                                <option value="CO">Colorado</option>
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="HI">Hawaii</option>
+                                <option value="ID">Idaho</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IN">Indiana</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NV">Nevada</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="NY">New York</option>
+                                <option value="NC">North Carolina</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="OH">Ohio</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="OR">Oregon</option>
+                                <option value="PA">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="TX">Texas</option>
+                                <option value="UT">Utah</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WA">Washington</option>
+                                <option value="WV">West Virginia</option>
+                                <option value="WI">Wisconsin</option>
+                                <option value="WY">Wyoming</option>
+                            </Form.Select>
                         </Col>
                     </Row>
                     <Row>
@@ -695,19 +750,11 @@ function Conduit() {
                     </Row>
                     <Row>
                         <Col lg={2} md={12}>
-                            <Form.Label id="rStatus">Status:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="status" name="status" lg={6} type="text" placeholder="status: incumbant | challenger" defaultValue={currentReceiver.status} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
                             <Form.Label id="rParty">Party:</Form.Label>
                         </Col>
                         <Col lg={10} md={12}>
                             <Form.Select aria-label="party" name="party" id="party" required defaultValue="D">
-                                <option value="D">Democrat</option>
+                                <option value="D">Democratic</option>
                                 <option value="R">Republican</option>
                                 <option value="I">Independent</option>
                                 <option value="G">Green</option>

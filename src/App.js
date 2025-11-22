@@ -15,12 +15,15 @@ export default function App() {
 
     <Container>
       <Row>
-        <Col lg={8}>
-              <div className='nav'><div><NavLink to="/home">Home</NavLink></div>
-              <div><NavLink to="/visual">Visual</NavLink></div></div>
-              <div><NavLink to="/conduit">Conduit</NavLink></div>
-              <div><NavLink to="/feeds">Feeds</NavLink></div>
-        </Col>
+        <nav className='nav'>
+            <ul>
+              <li className='nav-itm'><NavLink to="/home">Home</NavLink></li>
+              <li className='nav-itm'><NavLink to="/visual">Visual</NavLink></li>
+              <li className='nav-itm'><NavLink to="/conduit">Conduit</NavLink></li>
+              <li className='nav-itm'><NavLink to="/feeds">feeds</NavLink></li>
+              <li className='nav-itm'><NavLink to="/receivers">Receivers</NavLink></li>
+            </ul>
+        </nav>
         <Col lg={4}>
           <Login user={user} setUser={setUser}></Login>
         </Col>

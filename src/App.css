@@ -235,6 +235,18 @@ form{
   display: inline-block;
 }
 
+.nav-itm{
+  font-size: larger;
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.nav-itm a{
+  border-radius: 0 !important;
+  vertical-align: middle;
+  
+}
+
 .nav div{
   padding: 0 10px;
   margin-right: 20px;

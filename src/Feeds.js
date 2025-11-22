@@ -92,7 +92,6 @@ function Feeds() {
     }
 
     // get list of votes within a group
-    // get receivers we can use for tagging 
     const getVotes = async (groupId) => {
         let votes = await axios.post(`${config.apiBaseUrl}/limeapi/list`, { groupId: groupId }, {
             withCredentials: true

@@ -10,6 +10,7 @@ import Manage from "./Manage";
 import NewVoterForm from "./NewVoterForm";
 import Conduit from './Conduit';
 import Feeds from './Feeds';
+import Recevers from './Receivers';
 
 
 const router = createBrowserRouter(
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
       <Route path={'/visual'} element={<NewVoterForm />} />
       <Route path={'/conduit'} element={<Conduit />} />
       <Route path={'/feeds'} element={<Feeds />} />
+      <Route path={'/receivers'} element={<Recevers />} />
     </Route>
   )
 )
