@@ -19,8 +19,8 @@ export default function Receivers() {
     const [completedStatus, setCompletedStatus] = useState("success");
     const [receivers, setReceivers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [showReceiver,setShowReceiver] = useState(true); 
-    const [currentReceiver, setCurrentREceiver] = useState(true); 
+    const [showReceiver,setShowReceiver] = useState(false); 
+    const [currentReceiver, setCurrentReceiver] = useState(true); 
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -65,7 +65,52 @@ export default function Receivers() {
     }
 
     // update the receiver 
-    const updateReceiver = async () => {
+    const updateReceiver = async (receiver) => {
+        
+        console.log('from component: ', receiver); 
+        
+        // try{
+        //     const receiverId = receiver.receiverId.S;
+        //     const lastname = receiver.lastname.S;
+        //     const firstname = receiver.firstname.S;
+        //     const website = receiver.website.S || "";
+        //     const social = receiver.social.S || "";
+        //     const locality = receiver.locality.S || "";
+        //     const category = receiver.category.S || "";
+    
+        //     const payload = {
+        //         receiverId:receiverId,
+        //         lastname:lastname,
+        //         firstname:firstname,
+        //         website:website,
+        //         social:social,
+        //         locality:locality,
+        //         category:category
+        //     }
+    
+        //     let res = await axios.post(`${config.apiBaseUrl}/conduit/delete-receiver`,payload, {
+        //         withCredentials: true
+        //     });
+            
+        //     let message = "Updated receiver";
+        //     let status = "success"
+        //     if (res && res.status === 200) {
+        //        await getReceivers();           
+        //     } else {
+        //         message = "Error updating receiver"
+        //         status = "danger"
+        //     }
+        //     setCompletedStatus(status);
+        //     setCompletedMessage(message);
+        //     setCompleted(true);
+        // }catch(err){
+          
+        //     let message = "Error updating receiver"
+        //     let status = "danger"
+        //     setCompletedStatus(status);
+        //     setCompletedMessage(message);
+        //     setCompleted(true);
+        // }
 
     }
 
@@ -124,8 +169,9 @@ export default function Receivers() {
                                 </Toast>
                             </ToastContainer>
                 <ul>
-                    { receivers && receivers.length ? (receivers.map((receiver,ind) => (<li key={`${receiver.lastname.S}-${ind}`}>{receiver.receiverId.S} - {receiver.lastname.S}, {receiver.firstname.S} | Locality: {receiver && receiver.locality ? receiver.locality.S : "unknown"} <Button variant="primary" onClick={(e)=>{
-
+                    { receivers && receivers.length ? (receivers.map((receiver,ind) => (<li key={`${receiver.lastname.S}-${ind}`}>{receiver.receiverId.S} - {receiver.lastname.S}, {receiver.firstname.S} | Locality: {receiver && receiver.locality ? receiver.locality.S : "unknown"} <Button variant="primary" onClick={async (e)=>{
+                           setCurrentReceiver(receiver); 
+                           setShowReceiver(true);
                     }}>Edit</Button> <Button variant="danger" onClick={async (e)=>{
                             
                         try{

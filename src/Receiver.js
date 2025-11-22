@@ -2,7 +2,7 @@ import './App.css';
 import axios from 'axios';
 import config from './config';
 import { Button, Form, Row, Col, Modal } from "react-bootstrap";
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
 
 // this will be the main way a voter enters their information after they are hit with the quote
@@ -12,13 +12,23 @@ function Receiver(props) {
         "firstname":"",
         "lastname":"",
         "office":"",
-        "status":"",
+        "category":"",
+        "party":"",
         "website":"",
         "social":"",
         "locality":"",
     }
     const [firstName,setFirstName] = useState("");
     const [currentReceiver,setCurrentReceiver] = useState(starterReceiver);
+
+    useEffect(()=>{
+        let newReceiver = {};
+        let receiverKeys = Object.keys(props.receiver); 
+        for(let k in receiverKeys){
+            newReceiver[receiverKeys[k]] = props.receiver[receiverKeys[k]].S;
+        }
+        setCurrentReceiver(newReceiver);
+    },[props.receiver])
 
     const submitReceiver = async (e) => {
         const form = document.getElementById('receiverForm');
@@ -44,12 +54,8 @@ function Receiver(props) {
                 }
                 formVals.party = partySelect.value;
 
-                let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, formVals, {
-                            withCredentials: true
-                })
-                if(res && res.status === 200){
-                    props.hide(false);
-                }
+                await props.updateReceiver(formVals); 
+                props.hide(false);
             }else{
                 form.classList.add('.error');
             }
@@ -73,20 +79,20 @@ function Receiver(props) {
                             <Form id="receiverForm" >
                                 <Row>
                                     <Col lg={2} md={12}>
-                                        <Form.Label id="rFirst">First:</Form.Label>
+                                        <Form.Label id="rLast">Last:</Form.Label>
                                     </Col>
-                                        <Col lg={10} md={12}>
-                                            <Form.Control id="firstName" name="firstname" lg={6} type="text" placeholder="first name" value={firstName} onChange={(e)=>{
-                                                setFirstName(e.target.value); 
-                                            }} required />
+                                    <Col lg={10} md={12}>
+                                            <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} disabled required />
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col lg={2} md={12}>
-                                        <Form.Label id="rLast">Last:</Form.Label>
+                                        <Form.Label id="rFirst">First:</Form.Label>
                                     </Col>
-                                    <Col lg={10} md={12}>
-                                            <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} required />
+                                        <Col lg={10} md={12}>
+                                            <Form.Control id="firstName" name="firstname" lg={6} type="text" placeholder="first name" defaultValue={currentReceiver.firstname} onChange={(e)=>{
+                                                setFirstName(e.target.value); 
+                                            }} required disabled />
                                     </Col>
                                 </Row>
                                  <Row>
@@ -94,7 +100,7 @@ function Receiver(props) {
                                         <Form.Label id="rLocality">Locality:</Form.Label>
                                     </Col>
                                     <Col lg={10} md={12}>
-                                        <Form.Select aria-label="locality" name="locality" id="locality" required defaultValue="local">
+                                        <Form.Select aria-label="locality" name="locality" id="locality" required defaultValue={currentReceiver.locality}>
                                             <option value="US">United States</option>
                                             <option value="LOCAL">LOCAL</option>
                                             <option value="AL">Alabama</option>
@@ -160,10 +166,10 @@ function Receiver(props) {
                                 </Row>
                                 <Row>
                                     <Col lg={2} md={12}>
-                                        <Form.Label id="rStatus">Status:</Form.Label>
+                                        <Form.Label id="rStatus">Category:</Form.Label>
                                     </Col>
                                     <Col lg={10} md={12}>
-                                            <Form.Control id="status" name="status" lg={6} type="text" placeholder="status: incumbant | challenger" defaultValue={currentReceiver.status} required />
+                                            <Form.Control id="category" name="category" lg={6} type="text" placeholder="category: (state or local)" defaultValue={currentReceiver.catgory} required />
                                     </Col>
                                 </Row>
                                 <Row>
@@ -194,6 +200,14 @@ function Receiver(props) {
                                     </Col>
                                     <Col lg={10} md={12}>
                                             <Form.Control id="social" name="social" lg={6} type="text" placeholder="social media handles" defaultValue={currentReceiver.social} />
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col lg={2} md={12}>
+                                        <Form.Label id="rLocality">Locality:</Form.Label>
+                                    </Col>
+                                    <Col lg={10} md={12}>
+                                            <Form.Control id="locality" name="locality" lg={6} type="text" placeholder="locality" defaultValue={currentReceiver.locality} />
                                     </Col>
                                 </Row>
                             </Form>

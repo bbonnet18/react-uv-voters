@@ -19,7 +19,6 @@ function Conduit() {
     const [showComments, setShowComments] = useState(false);
     const [showReceiver, setShowReceiver] = useState(false);
     const [sourcererBtn, setSourcererBtn] = useState(true);
-    const [highestReceiverId,setHighestReceiverId] = useState(0);
     const [receivers, setReceivers] = useState([]);
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
@@ -380,7 +379,6 @@ function Conduit() {
                 formVals.party = partySelect.value;
                 formVals.category = categorySelect.value;
                 formVals.locality = localitySelect.value;
-                formVals.receiverId = parseInt(highestReceiverId) + 1; 
 
                 let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, formVals, {
                     withCredentials: true
