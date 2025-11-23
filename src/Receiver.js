@@ -8,16 +8,6 @@ import { useState,useEffect } from 'react';
 // this will be the main way a voter enters their information after they are hit with the quote
 // and the check is made for the existing comment
 function Receiver(props) {
-        //    const starterReceiver = {
-        //     "firstname":"",
-        //     "lastname":"",
-        //     "office":"",
-        //     "category":"",
-        //     "party":"",
-        //     "website":"",
-        //     "social":"",
-        //     "locality":"",
-        // }
     const [currentReceiver,setCurrentReceiver] = useState(props.receiver);
     const [firstName,setFirstName] = useState("");
 
@@ -100,7 +90,11 @@ function Receiver(props) {
                                         <Form.Label id="rLocality">Locality:</Form.Label>
                                     </Col>
                                     <Col lg={10} md={12}>
-                                        <Form.Select aria-label="locality" name="locality" id="locality" required defaultValue={currentReceiver.locality}>
+                                        <Form.Select aria-label="locality" name="locality" id="locality" required value={currentReceiver.locality} onChange={(e)=>{
+                                            let newReceiver = {...currentReceiver}
+                                            newReceiver.locality = e.currentTarget.value;
+                                            setCurrentReceiver(newReceiver); 
+                                        }}>
                                             <option value="US">United States</option>
                                             <option value="LOCAL">LOCAL</option>
                                             <option value="AL">Alabama</option>
@@ -153,6 +147,12 @@ function Receiver(props) {
                                             <option value="WV">West Virginia</option>
                                             <option value="WI">Wisconsin</option>
                                             <option value="WY">Wyoming</option>
+                                            <option value="DC">District of Columbia</option>
+                                            <option value="PR">Puerto Rico</option>
+                                            <option value="VI">Virgin Islands</option>
+                                            <option value="AS">American Samoa</option>
+                                            <option value="GU">Guam</option>
+                                            <option value="MP">Northern Mariana Islands</option>
                                         </Form.Select>
                                     </Col>
                                 </Row>
@@ -169,7 +169,11 @@ function Receiver(props) {
                                         <Form.Label id="rStatus">Category:</Form.Label>
                                     </Col>
                                     <Col lg={10} md={12}>
-                                            <Form.Select id="category" name="category" lg={6} type="text" placeholder="local" defaultValue={currentReceiver.category} required >
+                                            <Form.Select id="category" name="category" lg={6} type="text" placeholder="local" value={currentReceiver.category} onChange={(e)=>{
+                                            let newReceiver = {...currentReceiver}
+                                            newReceiver.category = e.currentTarget.value;
+                                            setCurrentReceiver(newReceiver); 
+                                        }} required >
                                                 <option value="local">local</option>
                                                 <option value="state">state</option>
                                                 <option value="federal">federal</option>
@@ -181,7 +185,11 @@ function Receiver(props) {
                                         <Form.Label id="rParty">Party:</Form.Label>
                                     </Col>
                                     <Col lg={10} md={12}>
-                                        <Form.Select aria-label="party" name="party" id="party" required defaultValue="D">
+                                        <Form.Select aria-label="party" name="party" id="party" required value={currentReceiver.party} onChange={(e)=>{
+                                            let newReceiver = {...currentReceiver}
+                                            newReceiver.party = e.currentTarget.value;
+                                            setCurrentReceiver(newReceiver); 
+                                        }}>
                                             <option value="D">Democratic</option>
                                             <option value="R">Republican</option>
                                             <option value="I">Independent</option>

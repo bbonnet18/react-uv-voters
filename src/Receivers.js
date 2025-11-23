@@ -176,56 +176,32 @@ export default function Receivers() {
     }
 
      const submitReceiver = async (receiver) => {
-        //const form = document.getElementById('receiverForm');
         try {
 
-            // const isValid = form.checkValidity();
-            // if (!isValid) {
-            //     var formFields = form.querySelectorAll('.form-control');
-            //     for (let i = 0; i < formFields.length; i++) {
-            //         let field = formFields[i];
-            //         console.log('val: ', field.value);
-            //         console.log('Name: ', field.name, " isValid: ", field.checkValidity());
-            //     }
-            // }
+                let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, receiver, {
+                    withCredentials: true
+                })
+                let message = "Created receiver";
+                let status = "success"
+                if (res && res.status === 200) {
+                   await getReceivers();           
+                } else {
+                    message = "Error creating receiver"
+                    status = "danger"
+                }
 
-            // if (isValid) {
-            //     form.classList.remove('.error');
-            //     var formFields = form.querySelectorAll('.form-control');
-            //     var partySelect = form.querySelector('#party');
-            //     var categorySelect = form.querySelector('#category');
-            //     var localitySelect = form.querySelector('#locality');
-            //     var formVals = {}
-            //     for (let i = 0; i < formFields.length; i++) {
-            //         if(formFields[i].value !== ""){
-            //             formVals[formFields[i].name] = formFields[i].value;
-            //         }
-            //     }
-            //     formVals.party = partySelect.value;
-            //     formVals.category = categorySelect.value;
-            //     formVals.locality = localitySelect.value;
-                console.log(receiver); 
-
-                // let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, receiver, {
-                //     withCredentials: true
-                // })
-                // let message = "Created receiver";
-                // let status = "success"
-                // if (res && res.status === 200) {
-                //    await getReceivers();           
-                // } else {
-                //     message = "Error creating receiver"
-                //     status = "danger"
-                //     form.classList.add('.error');
-                // }
-
-                // setCompletedStatus(status);
-                // setCompletedMessage(message);
-                // setIsNew(false);
-                // setCompleted(true);
-            //}
+                setCompletedStatus(status);
+                setCompletedMessage(message);
+                setIsNew(false);
+                setCompleted(true);
+            
         } catch (err) {
-            alert('Error ', err);
+                let message = "Error creating receiver"
+                let status = "danger"
+                setCompletedStatus(status);
+                setCompletedMessage(message);
+                setIsNew(false);
+                setCompleted(true);
         }
 
     }
