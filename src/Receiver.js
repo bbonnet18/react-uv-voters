@@ -8,18 +8,18 @@ import { useState,useEffect } from 'react';
 // this will be the main way a voter enters their information after they are hit with the quote
 // and the check is made for the existing comment
 function Receiver(props) {
-    const starterReceiver = {
-        "firstname":"",
-        "lastname":"",
-        "office":"",
-        "category":"",
-        "party":"",
-        "website":"",
-        "social":"",
-        "locality":"",
-    }
+        //    const starterReceiver = {
+        //     "firstname":"",
+        //     "lastname":"",
+        //     "office":"",
+        //     "category":"",
+        //     "party":"",
+        //     "website":"",
+        //     "social":"",
+        //     "locality":"",
+        // }
+    const [currentReceiver,setCurrentReceiver] = useState(props.receiver);
     const [firstName,setFirstName] = useState("");
-    const [currentReceiver,setCurrentReceiver] = useState(starterReceiver);
 
     useEffect(()=>{
         let newReceiver = {};
@@ -35,26 +35,28 @@ function Receiver(props) {
         try{
             
             const isValid = form.checkValidity();
-            if(!isValid){
-                var formFields = form.querySelectorAll('.form-control');
-                for (let i = 0; i < formFields.length; i++) {
-                    let field = formFields[i];
-                    console.log('val: ',field.value); 
-                    console.log('Name: ',field.name," isValid: ",field.checkValidity());
-                }
-            }
-
+      
             if(isValid){
                 form.classList.remove('.error');
-                var formFields = form.querySelectorAll('.form-control');
-                var partySelect = form.querySelector('#party');
+                const formFields = form.querySelectorAll('.form-control');
+                const partySelect = form.querySelector('#party');
+                const categorySelect = form.querySelector('#category');
+                const localitySelect = form.querySelector('#locality');
+
                 var formVals = {}
                 for (let i = 0; i < formFields.length; i++) {
                         formVals[formFields[i].name] =  formFields[i].value;
                 }
                 formVals.party = partySelect.value;
-
-                await props.updateReceiver(formVals); 
+                formVals.category = categorySelect.value;
+                formVals.locality = localitySelect.value;
+                if(props.isNew){
+                    await props.createReceiver(formVals);
+                }else{
+                    formVals.receiverId = currentReceiver.receiverId;
+                    await props.updateReceiver(formVals); 
+                }
+                
                 props.hide(false);
             }else{
                 form.classList.add('.error');
@@ -82,7 +84,7 @@ function Receiver(props) {
                                         <Form.Label id="rLast">Last:</Form.Label>
                                     </Col>
                                     <Col lg={10} md={12}>
-                                            <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} disabled required />
+                                            <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} disabled={currentReceiver.lastname !== ""}    required />
                                     </Col>
                                 </Row>
                                 <Row>
@@ -90,9 +92,7 @@ function Receiver(props) {
                                         <Form.Label id="rFirst">First:</Form.Label>
                                     </Col>
                                         <Col lg={10} md={12}>
-                                            <Form.Control id="firstName" name="firstname" lg={6} type="text" placeholder="first name" defaultValue={currentReceiver.firstname} onChange={(e)=>{
-                                                setFirstName(e.target.value); 
-                                            }} required disabled />
+                                            <Form.Control id="firstName" name="firstname" lg={6} type="text" placeholder="first name" defaultValue={currentReceiver.firstname} disabled={currentReceiver.firstname !== ""} required />
                                     </Col>
                                 </Row>
                                  <Row>
@@ -169,7 +169,11 @@ function Receiver(props) {
                                         <Form.Label id="rStatus">Category:</Form.Label>
                                     </Col>
                                     <Col lg={10} md={12}>
-                                            <Form.Control id="category" name="category" lg={6} type="text" placeholder="category: (state or local)" defaultValue={currentReceiver.catgory} required />
+                                            <Form.Select id="category" name="category" lg={6} type="text" placeholder="local" defaultValue={currentReceiver.category} required >
+                                                <option value="local">local</option>
+                                                <option value="state">state</option>
+                                                <option value="federal">federal</option>
+                                            </Form.Select>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -178,7 +182,7 @@ function Receiver(props) {
                                     </Col>
                                     <Col lg={10} md={12}>
                                         <Form.Select aria-label="party" name="party" id="party" required defaultValue="D">
-                                            <option value="D">Democrat</option>
+                                            <option value="D">Democratic</option>
                                             <option value="R">Republican</option>
                                             <option value="I">Independent</option>
                                             <option value="G">Green</option>
@@ -200,14 +204,6 @@ function Receiver(props) {
                                     </Col>
                                     <Col lg={10} md={12}>
                                             <Form.Control id="social" name="social" lg={6} type="text" placeholder="social media handles" defaultValue={currentReceiver.social} />
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col lg={2} md={12}>
-                                        <Form.Label id="rLocality">Locality:</Form.Label>
-                                    </Col>
-                                    <Col lg={10} md={12}>
-                                            <Form.Control id="locality" name="locality" lg={6} type="text" placeholder="locality" defaultValue={currentReceiver.locality} />
                                     </Col>
                                 </Row>
                             </Form>

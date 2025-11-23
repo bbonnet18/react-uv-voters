@@ -14,14 +14,30 @@ import unescape from 'validator/lib/unescape';
  * Adjust endpoint paths to match your backend if needed.
  */
 export default function Receivers() {
+
+           const starterReceiver = {
+            "firstname":{"S":""},
+            "lastname":{"S":""},
+            "office":{"S":""},
+            "category":{"S":""},
+            "party":{"S":""},
+            "website":{"S":""},
+            "social":{"S":""},
+            "locality":{"S":""},
+        }
+
+ 
+
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
     const [completedStatus, setCompletedStatus] = useState("success");
     const [receivers, setReceivers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showReceiver,setShowReceiver] = useState(false); 
-    const [currentReceiver, setCurrentReceiver] = useState(true); 
+    const [currentReceiver, setCurrentReceiver] = useState(starterReceiver); 
     const [error, setError] = useState(null);
+
+     
 
     useEffect(() => {
         let mounted = true;
@@ -42,6 +58,12 @@ export default function Receivers() {
             mounted = false;
         };
     }, []);
+
+    useEffect(() => {
+        if(!showReceiver){
+            setCurrentReceiver(starterReceiver);
+        }
+    }, [showReceiver]);
 
 
     // get receivers we can use for tagging 
@@ -69,48 +91,52 @@ export default function Receivers() {
         
         console.log('from component: ', receiver); 
         
-        // try{
-        //     const receiverId = receiver.receiverId.S;
-        //     const lastname = receiver.lastname.S;
-        //     const firstname = receiver.firstname.S;
-        //     const website = receiver.website.S || "";
-        //     const social = receiver.social.S || "";
-        //     const locality = receiver.locality.S || "";
-        //     const category = receiver.category.S || "";
+        try{
+            const receiverId = receiver.receiverId;
+            const lastname = receiver.lastname;
+            const firstname = receiver.firstname;
+            const office = receiver.office;
+            const party = receiver.party;
+            const website = receiver.website || "";
+            const social = receiver.social || "";
+            const locality = receiver.locality || "";
+            const category = receiver.category || "";
     
-        //     const payload = {
-        //         receiverId:receiverId,
-        //         lastname:lastname,
-        //         firstname:firstname,
-        //         website:website,
-        //         social:social,
-        //         locality:locality,
-        //         category:category
-        //     }
+            const payload = {
+                receiverId:receiverId,
+                lastname:lastname,
+                firstname:firstname,
+                office:office,
+                party:party,
+                website:website,
+                social:social,
+                locality:locality,
+                category:category
+            }
     
-        //     let res = await axios.post(`${config.apiBaseUrl}/conduit/delete-receiver`,payload, {
-        //         withCredentials: true
-        //     });
+            let res = await axios.post(`${config.apiBaseUrl}/conduit/update-receiver`,payload, {
+                withCredentials: true
+            });
             
-        //     let message = "Updated receiver";
-        //     let status = "success"
-        //     if (res && res.status === 200) {
-        //        await getReceivers();           
-        //     } else {
-        //         message = "Error updating receiver"
-        //         status = "danger"
-        //     }
-        //     setCompletedStatus(status);
-        //     setCompletedMessage(message);
-        //     setCompleted(true);
-        // }catch(err){
-          
-        //     let message = "Error updating receiver"
-        //     let status = "danger"
-        //     setCompletedStatus(status);
-        //     setCompletedMessage(message);
-        //     setCompleted(true);
-        // }
+            let message = "Updated receiver";
+            let status = "success"
+            if (res && res.status === 200) {
+                await getReceivers();           
+            } else {
+                message = "Error updating receiver"
+                status = "danger"
+            }
+            setCompletedStatus(status);
+            setCompletedMessage(message);
+            setCompleted(true);
+        }catch(err){
+        
+            let message = "Error updating receiver"
+            let status = "danger"
+            setCompletedStatus(status);
+            setCompletedMessage(message);
+            setCompleted(true);
+        }
 
     }
 
@@ -148,6 +174,54 @@ export default function Receivers() {
         }
     }
 
+     const submitReceiver = async (e) => {
+        const form = document.getElementById('receiverForm');
+        try {
+
+            const isValid = form.checkValidity();
+            if (!isValid) {
+                var formFields = form.querySelectorAll('.form-control');
+                for (let i = 0; i < formFields.length; i++) {
+                    let field = formFields[i];
+                    console.log('val: ', field.value);
+                    console.log('Name: ', field.name, " isValid: ", field.checkValidity());
+                }
+            }
+
+            if (isValid) {
+                form.classList.remove('.error');
+                var formFields = form.querySelectorAll('.form-control');
+                var partySelect = form.querySelector('#party');
+                var categorySelect = form.querySelector('#category');
+                var localitySelect = form.querySelector('#locality');
+                var formVals = {}
+                for (let i = 0; i < formFields.length; i++) {
+                    if(formFields[i].value !== ""){
+                        formVals[formFields[i].name] = formFields[i].value;
+                    }
+                }
+                formVals.party = partySelect.value;
+                formVals.category = categorySelect.value;
+                formVals.locality = localitySelect.value;
+
+                let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, formVals, {
+                    withCredentials: true
+                })
+                if (res && res.status === 200) {
+                
+                }
+            } else {
+                form.classList.add('.error');
+    
+            }
+
+        } catch (err) {
+            alert('Error ', err);
+        }
+
+
+    }
+
 
     return (
 
@@ -168,6 +242,10 @@ export default function Receivers() {
                                     <Toast.Body>{completedMessage}</Toast.Body>
                                 </Toast>
                             </ToastContainer>
+                <div><Button onClick={()=>{
+                    setCurrentReceiver(starterReceiver);
+                    setShowReceiver(true);
+                }}>Add Receiver</Button></div>
                 <ul>
                     { receivers && receivers.length ? (receivers.map((receiver,ind) => (<li key={`${receiver.lastname.S}-${ind}`}>{receiver.receiverId.S} - {receiver.lastname.S}, {receiver.firstname.S} | Locality: {receiver && receiver.locality ? receiver.locality.S : "unknown"} <Button variant="primary" onClick={async (e)=>{
                            setCurrentReceiver(receiver); 
@@ -188,7 +266,7 @@ export default function Receivers() {
                 </>
                 
             )}
-            {<Receiver show={showReceiver} hide={setShowReceiver} receiver={currentReceiver} updateReceiver={updateReceiver}></Receiver>}
+            {<Receiver show={showReceiver} hide={setShowReceiver} receiver={currentReceiver} updateReceiver={updateReceiver} isNew={isNew} createReceiver={createReceiver}></Receiver>}
         </Container>
     );
 }

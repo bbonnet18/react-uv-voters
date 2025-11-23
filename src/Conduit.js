@@ -4,7 +4,6 @@ import config from './config';
 import { Badge, Button, ButtonGroup, Col, Container, Row, Table, Stack, Tabs, Tab, Toast, ToastContainer, Form, Spinner, ToggleButton } from "react-bootstrap";
 import { useState, useEffect } from 'react';
 import unescape from 'validator/lib/unescape';
-import Receiver from './Receiver';
 
 
 function Conduit() {
@@ -118,7 +117,7 @@ function Conduit() {
                     highestId = itm.receiverId.S;
                 }
             });
-            setHighestReceiverId(highestId);
+            //setHighestReceiverId(highestId);
             setReceivers(res.data.Items)
         } else {
             setReceivers([]);
@@ -339,64 +338,9 @@ function Conduit() {
         }
     }
 
-    const newReceiverStatus = (status) => {
-        if (status === 'success') {
-            setCompletedStatus("success");
-            setCompletedMessage("created receiver");
-        } else {
-            setCompletedStatus("danger");
-            setCompletedMessage("Error creating receiver");
-        }
-        setCompleted(true);
-    }
-
-    const submitReceiver = async (e) => {
-        const form = document.getElementById('receiverForm');
-        try {
-
-            const isValid = form.checkValidity();
-            if (!isValid) {
-                var formFields = form.querySelectorAll('.form-control');
-                for (let i = 0; i < formFields.length; i++) {
-                    let field = formFields[i];
-                    console.log('val: ', field.value);
-                    console.log('Name: ', field.name, " isValid: ", field.checkValidity());
-                }
-            }
-
-            if (isValid) {
-                form.classList.remove('.error');
-                var formFields = form.querySelectorAll('.form-control');
-                var partySelect = form.querySelector('#party');
-                var categorySelect = form.querySelector('#category');
-                var localitySelect = form.querySelector('#locality');
-                var formVals = {}
-                for (let i = 0; i < formFields.length; i++) {
-                    if(formFields[i].value !== ""){
-                        formVals[formFields[i].name] = formFields[i].value;
-                    }
-                }
-                formVals.party = partySelect.value;
-                formVals.category = categorySelect.value;
-                formVals.locality = localitySelect.value;
-
-                let res = await axios.post(`${config.apiBaseUrl}/conduit/create-receiver`, formVals, {
-                    withCredentials: true
-                })
-                if (res && res.status === 200) {
-                    newReceiverStatus("success");
-                }
-            } else {
-                form.classList.add('.error');
-                newReceiverStatus("error");
-            }
-
-        } catch (err) {
-            alert('Error ', err);
-        }
 
 
-    }
+   
     // hit the sourcerer API 
     const sourcery = async (val) => {
         try{
@@ -638,12 +582,12 @@ function Conduit() {
 
 
             </Tabs>
-            <Row>
+            {/* <Row>
                 <div><Button variant='primary' onClick={() => {
                     setShowReceiver(!showReceiver);
-                }}>{showReceiver ? "Hide Receiver Form" : "Show Receiver Form"}</Button> <span>Highest Receiver Id: {highestReceiverId}</span></div>
-            </Row>
-            {showReceiver ? (<section>
+                }}>{showReceiver ? "Hide Receiver Form" : "Show Receiver Form"}</Button> <span>Highest Receiver Id: </span></div>
+            </Row> */}
+            {/* {showReceiver ? (<section>
 
 
                 <Form id="receiverForm" >
@@ -785,7 +729,7 @@ function Conduit() {
                     </Col>
 
                 </Row>
-            </section>):(<></>)}
+            </section>):(<></>)} */}
 
 
         </Container>
