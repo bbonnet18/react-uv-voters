@@ -22,9 +22,9 @@ function Conduit() {
     const [completed, setCompleted] = useState(false);
     const [completedMessage, setCompletedMessage] = useState("");
     const [completedStatus, setCompletedStatus] = useState("success");
-    const [sourcererPrompt, setSourcererPrompt] = useState(""); 
-    const [sourcererText,setSourcererTxt] = useState("");
-    
+    const [sourcererPrompt, setSourcererPrompt] = useState("");
+    const [sourcererText, setSourcererTxt] = useState("");
+
     const starterReceiver = {
         "firstname": "",
         "lastname": "",
@@ -35,12 +35,12 @@ function Conduit() {
         "locality": "",
     }
 
-    
+
     const [currentReceiver, setCurrentReceiver] = useState(starterReceiver);
     const [firstName, setFirstName] = useState("");
-    const [votes,setVotes] = useState([])
+    const [votes, setVotes] = useState([])
 
-   
+
     useEffect(() => {
         const fetchGroups = async () => {
             await getGroups();
@@ -53,7 +53,7 @@ function Conduit() {
             if (group) {
                 await getTopics(group.gsid);
                 await getReceivers();
-                await getVotes(group.gsid); 
+                await getVotes(group.gsid);
             }
         }
 
@@ -106,14 +106,14 @@ function Conduit() {
 
     // get receivers we can use for tagging 
     const getReceivers = async () => {
-        let res = await axios.post(`${config.apiBaseUrl}/conduit/admin-receivers`,{}, {
+        let res = await axios.post(`${config.apiBaseUrl}/conduit/admin-receivers`, {}, {
             withCredentials: true
         });
 
         if (res && res.status === 200) {
             let highestId = 0
-            res.data.Items.map((itm,ind)=>{
-                if(parseInt(itm.receiverId.S) > highestId){
+            res.data.Items.map((itm, ind) => {
+                if (parseInt(itm.receiverId.S) > highestId) {
                     highestId = itm.receiverId.S;
                 }
             });
@@ -127,7 +127,7 @@ function Conduit() {
     // get list of votes within a group
     // get receivers we can use for tagging 
     const getVotes = async (groupId) => {
-        let votes = await axios.post(`${config.apiBaseUrl}/limeapi/list`,{groupId:groupId}, {
+        let votes = await axios.post(`${config.apiBaseUrl}/limeapi/list`, { groupId: groupId }, {
             withCredentials: true
         });
 
@@ -190,11 +190,12 @@ function Conduit() {
     }
 
     //create a topic
-    const createTopic = async (groupId, topicId, topic) => {
+    const createTopic = async (groupId, topicId, topic, description) => {
         let payload = {
             groupId: groupId,
             topicId: topicId,
-            topic: topic
+            topic: topic,
+            description: description
         }
         let res = await axios.post(`${config.apiBaseUrl}/conduit/create-topic`, payload, {
             withCredentials: true
@@ -203,7 +204,7 @@ function Conduit() {
         let status = "success";
         if (res && res.status === 200) {
             await getTopics(group.gsid, false);
-     
+
         } else {
             message = "Error creating topic!";
             status = "danger";
@@ -215,11 +216,12 @@ function Conduit() {
     }
 
     // can deactivate a group with this 
-    const updateTopic = async (groupId, topicId, active, tags) => {
+    const updateTopic = async (groupId, topicId, active, tags, description) => {
         let payload = {
             groupId: groupId,
             topicId: topicId,
             active: active,
+            description: description,
             tags: tags
         }
         let res = await axios.post(`${config.apiBaseUrl}/conduit/update-topic`, payload, {
@@ -254,7 +256,7 @@ function Conduit() {
         if (res && res.status === 200) {
             setTopic();
             setComments([]);
-            let m = group; 
+            let m = group;
             await getTopics(m.gsid);
         } else {
             message = "Error deleting topic!";
@@ -340,33 +342,33 @@ function Conduit() {
 
 
 
-   
+
     // hit the sourcerer API 
     const sourcery = async (val) => {
-        try{
+        try {
             let payload = {
                 prompt: val
             }
             // get the cookie and set the auth header
             setSourcererLoading(true);
             let res = await axios.post(`${config.apiBaseUrl}/sourcerer/`, payload, {
-                withCredentials:true
+                withCredentials: true
             });
-    
-            if(res && res.status ===  200){
+
+            if (res && res.status === 200) {
                 let resData = res.data;
-                setSourcererTxt(resData.answer); 
-            }else{
+                setSourcererTxt(resData.answer);
+            } else {
                 setSourcererTxt('Nothing to report');
             }
-    
-            setSourcererLoading(false); 
-        }catch(err){
 
-            setSourcererLoading(false); 
+            setSourcererLoading(false);
+        } catch (err) {
+
+            setSourcererLoading(false);
         }
 
-        
+
 
     }
 
@@ -376,17 +378,17 @@ function Conduit() {
         <Container className='conduit'>
             <h3>Conduit</h3>
             <p>Select a group and a topic to view comments and approve or reject.</p>
-            <ToastContainer position='middle-center'>
-                <Toast bg={completedStatus} onClose={() => {
-                    setCompleted(false);
-                }} show={completed} delay={3000} autohide>
-                    <Toast.Header>
-                        <strong className="me-auto">Status</strong>
-                        <small>{completedStatus}</small>
-                    </Toast.Header>
-                    <Toast.Body>{completedMessage}</Toast.Body>
-                </Toast>
-            </ToastContainer>
+                  <ToastContainer position='middle-center'>
+                    <Toast bg={completedStatus} onClose={() => {
+                        setCompleted(false);
+                    }} show={completed} delay={3000} autohide>
+                        <Toast.Header>
+                            <strong className="me-auto">Status</strong>
+                            <small>{completedStatus}</small>
+                        </Toast.Header>
+                        <Toast.Body>{completedMessage}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
             <Tabs onSelect={(groupId) => {
                 let selectedGroup = {};
                 groups.map((itm, ind) => {
@@ -400,7 +402,7 @@ function Conduit() {
                 {groups.map((itm, ind) => {
                     return (<Tab eventKey={itm.gsid} title={itm.title} key={ind} >
                         <section >
-                            <h3>Sourcerer AI <span className='sourcerer-toggle'><Button variant='info' onClick={()=> setSourcererBtn(!sourcererBtn)}><img src={sourcererBtn ? "chevron-bar-down.svg" : "chevron-bar-up.svg"}/></Button></span></h3>
+                            <h3>Sourcerer AI <span className='sourcerer-toggle'><Button variant='info' onClick={() => setSourcererBtn(!sourcererBtn)}><img src={sourcererBtn ? "chevron-bar-down.svg" : "chevron-bar-up.svg"} /></Button></span></h3>
                             <div className={sourcererBtn ? 'sourcerer-container' : 'sourcerer-container hide'}>
                                 {sourcererLoading ? (<Spinner></Spinner>) : (<div className='sourcerer-image'><img src="./sourcerer.jpg" /></div>)}
                                 <div className='sourcerer-output'>
@@ -410,51 +412,54 @@ function Conduit() {
                                 </div>
                                 <div><textarea type="text" id="sourcererInput" className='sourcerer-input' placeholder={`prompt to generate issues for the selected location: ${group && group.name ? group.name : ''}`} value={sourcererPrompt} onChange={(e) => {
                                     let val = e.currentTarget.value;
-                                    setSourcererPrompt(val); 
+                                    setSourcererPrompt(val);
                                 }}></textarea>
-                                 <Button className='sourcerer-input-btn' variant='success' onClick={async ()=>{
+                                    <Button className='sourcerer-input-btn' variant='success' onClick={async () => {
                                         let prompt = sourcererPrompt;
                                         await sourcery(prompt);
 
-                                 }}>Summon</Button>
+                                    }}>Summon</Button>
                                 </div>
                             </div>
-                            
-                            
-                           
+
+
+
                         </section>
                         <section className='conduit-section'>
-                            <div><input type="text" id={`topicInput${itm.gsid}`} className='create-input' /> <Button variant='success' onClick={async (e) => {
-                                // get the highest number in the topic list
-                                let myId = 0;
-                                // find the highest number
-                                if (topics && topics.length) {
+                            <div><label htmlFor={`topicInput${itm.gsid}`}>Topic:</label><input type="text" id={`topicInput${itm.gsid}`} placeholder='Topic title' className='create-input' />
+                                <div><label htmlFor={`descriptionInput${itm.gsid}`}>Description:</label><textarea type="text" id={`descriptionInput${itm.gsid}`} className='create-input' placeholder='Description'></textarea></div>
+                                <Button variant='success' onClick={async (e) => {
+                                    // get the highest number in the topic list
+                                    let myId = 0;
+                                    // find the highest number
+                                    if (topics && topics.length) {
 
-                                    topics.map((itm) => {
-                                        if (itm.topicId > myId) {
-                                            myId = itm.topicId;
-                                        }
-                                    });
-                                }
-                                myId = myId + 1;
+                                        topics.map((itm) => {
+                                            if (itm.topicId > myId) {
+                                                myId = itm.topicId;
+                                            }
+                                        });
+                                    }
+                                    myId = myId + 1;
 
-                                let topicEl = document.getElementById(`topicInput${group.gsid}`);
-                                let topicTxt = topicEl.value.trim();
-                                if (topicTxt === "") {
-                                    return;
-                                }
-                                // sanitize input 
+                                    let topicEl = document.getElementById(`topicInput${group.gsid}`);
+                                    let descriptionEl = document.getElementById(`descriptionInput${group.gsid}`);
+                                    let topicTxt = topicEl.value.trim();
+                                    let descriptionTxt = descriptionEl.value.trim();
+                                    if (topicTxt === "" || topicTxt.length === 0 || descriptionTxt === "" || descriptionTxt.length === 0) {
+                                        return;
+                                    }
+                                    // sanitize input 
 
-                                const reg = /[a-zA-Z0-9]/ig;
+                                    const reg = /[a-zA-Z0-9]/ig;
 
-                                if (reg.test(topicTxt)) {
-                                    await createTopic(group.gsid, myId, topicTxt)
-                                }
+                                    if (reg.test(topicTxt)) {
+                                        await createTopic(group.gsid, myId, topicTxt, descriptionTxt);
+                                        topicEl.value = "";
+                                        descriptionEl.value = "";
+                                    }
 
-
-
-
-                            }}>Create Topic</Button></div>
+                                }} >Create Topic</Button></div>
                         </section>
                         <section>
                             <p>Tags:</p>
@@ -470,13 +475,13 @@ function Conduit() {
                             </ul>) : (<></>)}
                         </section>
                         <section className="conduit-section">
-                                <h3>Topics</h3>
-                                <Table>
-                                    <thead>
-                                        <th>Topic</th>
-                                        <th>action</th>
-                                    </thead>
-                                    <tbody>
+                            <h3>Topics</h3>
+                            <Table>
+                                <thead>
+                                    <th>Topic</th>
+                                    <th>action</th>
+                                </thead>
+                                <tbody>
                                     {showTopics ? (
                                         topics.map((topic, ind) => {
                                             return (<tr><td key={ind}>{topic.topic}</td><td><Button variant='primary' onClick={(e) => {
@@ -484,14 +489,21 @@ function Conduit() {
                                                 setTopic(myTopic);
                                             }}>Select</Button></td></tr>)
                                         })
-                                ) : (<tr><td>no topics</td><td>no actions</td></tr>)}
-                                    </tbody>
-                                
-                                </Table>
+                                    ) : (<tr><td>no topics</td><td>no actions</td></tr>)}
+                                </tbody>
+
+                            </Table>
                             <hr></hr>
                             <div>
                                 <h4>Topic: {topic ? (topic.topic) : ""}</h4>
-                                {topic && topic.topicId ? (<><ButtonGroup>
+                                {topic && topic.topicId ? (<>
+                                <div><label htmlFor={`descriptionInput${topic.topicId}`}>Description:</label><textarea type="text" id={`descriptionInput${topic.topicId}`} className='create-input' value={topic && topic.description || "" } onChange={(e)=>{
+                                    let desc = e.currentTarget.value;
+                                    let newTopic = {...topic};
+                                    newTopic.description = desc;
+                                    setTopic(newTopic);
+                                }}></textarea></div>
+                                <ButtonGroup>
                                     <ToggleButton className={topic.active === 'true' ? "topic-selected" : "topic-unselected"} id="activeCheckTrue" type='checkbox' variant='success' checked={topic.active === 'true'} value="true" onChange={(e) => {
                                         let aTopic = { ...topic };
                                         aTopic.active = 'true';
@@ -510,13 +522,13 @@ function Conduit() {
                                 </ButtonGroup>
                                     <div>  Active: {topic.active === 'true' ? "true" : "false"} | Topic ID: {topic.topicId} | <Button variant='warning' onClick={async () => {
                                         let myTopic = topic;
-                                        await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags)
-                                    }}>Update</Button> | <Button onClick={async()=>{
+                                        await updateTopic(group.gsid, myTopic.topicId, myTopic.active, myTopic.tags, myTopic.description);
+                                    }}>Update</Button> | <Button onClick={async () => {
                                         await publish(group.gsid, topic.topicId);
                                     }} variant='success'>Publish</Button>
-                                    | <Button onClick={async()=>{
-                                        await deleteTopic(group.gsid, topic.topicId);
-                                    }} variant='danger'>Delete</Button>
+                                        | <Button onClick={async () => {
+                                            await deleteTopic(group.gsid, topic.topicId);
+                                        }} variant='danger'>Delete</Button>
                                     </div></>) : (<></>)}
                             </div>
                             <div>Tags: {topic && topic.tags ? (topic.tags.split('|').map((itm) => {
@@ -529,50 +541,50 @@ function Conduit() {
                         <section className='conduit-section'>
                             <Row>
                                 <Col lg={12}>
-                                <h4>Comments</h4>
-                                {group && topic && topics.length ? (
-                                <div>
-                                    <Table>
-                                        <thead>
-                                            <th>
-                                                Comment
-                                            </th>
-                                            <th>
-                                                Options
-                                            </th>
-                                        </thead>
-                                        <tbody>
-                                        {comments && comments.length ? (
-                                        comments.map((comment, ind) => {
-                                            return (<tr className="conduit-comment" key={ind}><td>Comment:{comment.comment}</td><td><Button variant='success' onClick={async (e) => {
-                                                let topicId = topic.topicId;
-                                                let groupId = group.gsid;
-                                                let voterName = comment.voterName;
-                                                let active = "true";
-                                                let comment_status = "approved";
+                                    <h4>Comments</h4>
+                                    {group && topic && topics.length ? (
+                                        <div>
+                                            <Table>
+                                                <thead>
+                                                    <th>
+                                                        Comment
+                                                    </th>
+                                                    <th>
+                                                        Options
+                                                    </th>
+                                                </thead>
+                                                <tbody>
+                                                    {comments && comments.length ? (
+                                                        comments.map((comment, ind) => {
+                                                            return (<tr className="conduit-comment" key={ind}><td>Comment:{comment.comment}</td><td><Button variant='success' onClick={async (e) => {
+                                                                let topicId = topic.topicId;
+                                                                let groupId = group.gsid;
+                                                                let voterName = comment.voterName;
+                                                                let active = "true";
+                                                                let comment_status = "approved";
 
-                                                await updateComment(groupId, topicId, voterName, active, comment_status);
-                                            }}>Approve</Button></td><td><Button variant='danger' onClick={async (e) => {
-                                                let topicId = topic.topicId;
-                                                let groupId = group.gsid;
-                                                let voterName = comment.voterName;
-                                                let active = "false";
-                                                let comment_status = "rejected";
+                                                                await updateComment(groupId, topicId, voterName, active, comment_status);
+                                                            }}>Approve</Button></td><td><Button variant='danger' onClick={async (e) => {
+                                                                let topicId = topic.topicId;
+                                                                let groupId = group.gsid;
+                                                                let voterName = comment.voterName;
+                                                                let active = "false";
+                                                                let comment_status = "rejected";
 
-                                                await updateComment(groupId, topicId, voterName, active, comment_status);
-                                            }}>Reject</Button></td></tr>)
-                                        })
-                                    ) : (<tr><td>No Comments Yet</td><td>no actions</td></tr>)}
-                                        </tbody>
-                                    </Table>
-                                    
-                                </div>
+                                                                await updateComment(groupId, topicId, voterName, active, comment_status);
+                                                            }}>Reject</Button></td></tr>)
+                                                        })
+                                                    ) : (<tr><td>No Comments Yet</td><td>no actions</td></tr>)}
+                                                </tbody>
+                                            </Table>
 
-                            ) : (<></>)}
-                                
+                                        </div>
+
+                                    ) : (<></>)}
+
                                 </Col>
                             </Row>
-                            
+
                         </section>
 
                     </Tab>)
@@ -582,156 +594,6 @@ function Conduit() {
 
 
             </Tabs>
-            {/* <Row>
-                <div><Button variant='primary' onClick={() => {
-                    setShowReceiver(!showReceiver);
-                }}>{showReceiver ? "Hide Receiver Form" : "Show Receiver Form"}</Button> <span>Highest Receiver Id: </span></div>
-            </Row> */}
-            {/* {showReceiver ? (<section>
-
-
-                <Form id="receiverForm" >
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rFirst">First:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="firstName" name="firstname" lg={6} type="text" placeholder="first name" value={firstName} onChange={(e) => {
-                                setFirstName(e.target.value);
-                            }} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rLast">Last:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="lastName" name="lastname" lg={6} type="text" placeholder="last name" defaultValue={currentReceiver.lastname} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rCategory">Category:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Select aria-label="category" name="category" id="category" required defaultValue="local">
-                                <option value="local">local</option>
-                                <option value="state">state</option>
-                                <option value="national">national</option>
-                            </Form.Select>
-                        </Col>
-                    </Row>
-                     <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rLocality">Locality:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Select aria-label="locality" name="locality" id="locality" required defaultValue="local">
-                                <option value="US">United States</option>
-                                <option value="LOCAL">LOCAL</option>
-                                <option value="AL">Alabama</option>
-                                <option value="AK">Alaska</option>
-                                <option value="AZ">Arizona</option>
-                                <option value="AR">Arkansas</option>
-                                <option value="CA">California</option>
-                                <option value="CO">Colorado</option>
-                                <option value="CT">Connecticut</option>
-                                <option value="DE">Delaware</option>
-                                <option value="FL">Florida</option>
-                                <option value="GA">Georgia</option>
-                                <option value="HI">Hawaii</option>
-                                <option value="ID">Idaho</option>
-                                <option value="IL">Illinois</option>
-                                <option value="IN">Indiana</option>
-                                <option value="IA">Iowa</option>
-                                <option value="KS">Kansas</option>
-                                <option value="KY">Kentucky</option>
-                                <option value="LA">Louisiana</option>
-                                <option value="ME">Maine</option>
-                                <option value="MD">Maryland</option>
-                                <option value="MA">Massachusetts</option>
-                                <option value="MI">Michigan</option>
-                                <option value="MN">Minnesota</option>
-                                <option value="MS">Mississippi</option>
-                                <option value="MO">Missouri</option>
-                                <option value="MT">Montana</option>
-                                <option value="NE">Nebraska</option>
-                                <option value="NV">Nevada</option>
-                                <option value="NH">New Hampshire</option>
-                                <option value="NJ">New Jersey</option>
-                                <option value="NM">New Mexico</option>
-                                <option value="NY">New York</option>
-                                <option value="NC">North Carolina</option>
-                                <option value="ND">North Dakota</option>
-                                <option value="OH">Ohio</option>
-                                <option value="OK">Oklahoma</option>
-                                <option value="OR">Oregon</option>
-                                <option value="PA">Pennsylvania</option>
-                                <option value="RI">Rhode Island</option>
-                                <option value="SC">South Carolina</option>
-                                <option value="SD">South Dakota</option>
-                                <option value="TN">Tennessee</option>
-                                <option value="TX">Texas</option>
-                                <option value="UT">Utah</option>
-                                <option value="VT">Vermont</option>
-                                <option value="VA">Virginia</option>
-                                <option value="WA">Washington</option>
-                                <option value="WV">West Virginia</option>
-                                <option value="WI">Wisconsin</option>
-                                <option value="WY">Wyoming</option>
-                            </Form.Select>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rOffice">Office:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="office" name="office" lg={6} type="text" placeholder="office" defaultValue={currentReceiver.office} required />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rParty">Party:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Select aria-label="party" name="party" id="party" required defaultValue="D">
-                                <option value="D">Democratic</option>
-                                <option value="R">Republican</option>
-                                <option value="I">Independent</option>
-                                <option value="G">Green</option>
-                                <option value="L">Libertarian</option>
-                            </Form.Select>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rWebsite">Website:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="website" name="website" lg={6} type="url" placeholder="main website" defaultValue={currentReceiver.website} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={2} md={12}>
-                            <Form.Label id="rSocial">Social Media:</Form.Label>
-                        </Col>
-                        <Col lg={10} md={12}>
-                            <Form.Control id="social" name="social" lg={6} type="text" placeholder="social media handles" defaultValue={currentReceiver.social} />
-                        </Col>
-                    </Row>
-                </Form>
-                <Row>
-                    <Col lg={{ offset: 10, span: 2 }}>
-                        <Button variant="primary" onClick={async (e) => {
-                            await submitReceiver();
-                        }}>Submit</Button>
-                    </Col>
-
-                </Row>
-            </section>):(<></>)} */}
-
-
         </Container>
 
     )
