@@ -105,7 +105,8 @@ function NewVoterForm() {
     setShowSelect(true);
 
     try {
-      const payload = { address: val };
+      const payload = { address: val, hasSecondary: false };
+
       let res = await axios.post(`${config.apiBaseUrl}/address`, payload, { withCredentials: true });
       if (res.status === 200) {
         setAddressOptions(res.data.result)
