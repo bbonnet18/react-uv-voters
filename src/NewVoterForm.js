@@ -27,6 +27,7 @@ function NewVoterForm() {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [currentVoter, setCurrentVoter] = useState(starterVoter);
+  const [newAddress, setNewAddress] = useState(true);// used to set the options to unselected 
   const [addressOptions, setAddressOptions] = useState([]);// used to show addresses as the user types 
   const [selectedAddress, setSelectedAddress] = useState();// the address the user chose
   const [showSelect, setShowSelect] = useState(false);// controls showing the address select
@@ -279,12 +280,16 @@ function NewVoterForm() {
                 <Col lg={8} className='address-check'>
                   <Form.Control id="address1" name="address1" lg={6} type="text" placeholder="enter and select your address" onChange={(e) => {
 
-                    if (verified && normalizedStreet !== e.currentTarget.value) {
-                      setAddressOptions([]);
-                    }
-                    else {
-                      setSelectedStreet1(e.currentTarget.value)
-                    }
+                    // if (verified && normalizedStreet !== e.currentTarget.value) {
+                    //   setAddressOptions([]);
+                    // }
+                    // else {
+                    //   setSelectedStreet1(e.currentTarget.value)
+                    // }
+
+                    let val = e.target.value;
+                    setSelectedStreet1(val);
+                    setVerified(false);
 
 
                   }} value={selectedStreet1} required /> {(verified) ? <img alt="check mark for verified address" src="check2-square.svg" /> : <></>}
@@ -327,22 +332,59 @@ function NewVoterForm() {
                     <Col lg={10}>
                       <Form.Select id="address" name="address" lg={6} type="text" minLength={2} placeholder="enter and select your address" onChange={(e) => {
 
-                        setSelectedAddress(addressOptions[e.target.value]);
-                        if (addressOptions[e.target.value].streetLine) {
-                          setSelectedStreet1(addressOptions[e.target.value].streetLine);
-                          setNormalizedStreet(addressOptions[e.target.value].streetLine)
-                          setSelectedStreet2(addressOptions[e.target.value].secondary);
-                          let streetInput = document.getElementById('address1');
-                          if (streetInput && streetInput.value) {
-                            streetInput.value = addressOptions[0].streetLine;
-                          }
+                        //clear
+                        setNormalizedStreet("")
+                        setSelectedStreet2("");
+                        setSelectedAddress({});
+                      // if has secondary, re-run a query
+                        let selectedOption = addressOptions[e.target.value];
+                        let optionEl = e.currentTarget; 
+                        if (selectedOption && selectedOption.entries && selectedOption.entries > 1) {
+                          // trigger another query to the address API
+                          // build the string for another query
+                          let addressStr = `${selectedOption.streetLine} ${selectedOption.secondary} (${selectedOption.entries}) ${selectedOption.city} ${selectedOption.state}, ${selectedOption.zipcode}`;
+                          checkAddress(addressStr, true);
+                          return; 
                         }
 
+                        if(selectedOption){
+                            setSelectedAddress(addressOptions[e.target.value]);
+                            
+                            if (addressOptions[e.target.value].streetLine) {
+                              setSelectedStreet1(addressOptions[e.target.value].streetLine);
+                              setNormalizedStreet(addressOptions[e.target.value].streetLine)
+                              setSelectedStreet2(addressOptions[e.target.value].secondary);
+                              
+                              let streetInput = document.getElementById('address1');
+                              if (streetInput && streetInput.value) {
+                                streetInput.value = addressOptions[0].streetLine;
+                              }
+                          }
+
+                        optionEl.size = 1;
                         setVerified(true);
+                        }
+                        setNewAddress(false);
+
+                        //----------------------
+                        // setSelectedAddress(addressOptions[e.target.value]);
+                        // if (addressOptions[e.target.value].streetLine) {
+                        //   setSelectedStreet1(addressOptions[e.target.value].streetLine);
+                        //   setNormalizedStreet(addressOptions[e.target.value].streetLine)
+                        //   setSelectedStreet2(addressOptions[e.target.value].secondary);
+                        //   let streetInput = document.getElementById('address1');
+                        //   if (streetInput && streetInput.value) {
+                        //     streetInput.value = addressOptions[0].streetLine;
+                        //   }
+                        // }
+
+                        // setVerified(true);
 
                         //setShowSelect(false);
+                        //----------------------
                       }}
                         className={verified ? 'verified' : 'unverified'} required >
+                          <option key={"unselected"} disabled selected={newAddress} value="">Select an address</option>
                         {addressOptions.map((itm, ind) => {
                           return <option key={ind} value={ind}>{itm.streetLine} {itm.secondary}</option>
                         })}
