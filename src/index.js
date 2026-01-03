@@ -11,6 +11,7 @@ import NewVoterForm from "./NewVoterForm";
 import Conduit from './Conduit';
 import Feeds from './Feeds';
 import Recevers from './Receivers';
+import TestVoter from './TestVoter';
 
 
 const router = createBrowserRouter(
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
       <Route path={'/conduit'} element={<Conduit />} />
       <Route path={'/feeds'} element={<Feeds />} />
       <Route path={'/receivers'} element={<Recevers />} />
+      <Route path={'/testvoter'} element={<TestVoter />} />
     </Route>
   )
 )
