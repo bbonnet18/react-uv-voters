@@ -1,16 +1,15 @@
 import './App.css';
 import axios from 'axios';
 import config from './config';
-import { Alert, Col, Row, Form, Button, Container, Modal, Spinner, Toast, ToastContainer } from "react-bootstrap";
+import {Col, Row, Form, Button, Container, Spinner } from "react-bootstrap";
 import { useState, useRef, useEffect, useContext } from 'react';
-import { UserContext } from './userContext';
-import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from "react-google-recaptcha";
 
 function TestVoter(props) {
 
     const [registerToken, setRegisterToken] = useState(null);
     const [disabled, setDisabled] = useState(true);
+    const [loading, setLoading] = useState(false);
     const recaptchaRef = useRef(null);
 
     // check captcha val
@@ -39,6 +38,7 @@ function TestVoter(props) {
     const createTestVoter = async (phone, passcode) => {
         try {
 
+            setLoading(true);
             const myForm = document.getElementById('testVoterForm');
             if (!myForm.checkValidity()) {
                 myForm.reportValidity();
@@ -55,13 +55,15 @@ function TestVoter(props) {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
+            setLoading(false);
             if (resp && resp.data) {
                 return resp.data;
             } else {
                 return null;
             }
+
         } catch (err) {
+            setLoading(false);
             console.error("error creating test voter: ", err);
             return null;
         }
@@ -93,13 +95,23 @@ function TestVoter(props) {
             <Row className='mb-4 mt-4' >
               <ReCAPTCHA ref={recaptchaRef} sitekey={"6Le-QPIoAAAAAJT5-G3P009gn52wZR3TLLSBB3Fj"} onChange={() => checkCaptcha()} />
             </Row>
+            {loading && <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>}
             <Button variant="primary" type="submit" onClick={async (e) => {
               e.preventDefault();
               const phone = document.getElementById('phone').value;
               const passcode = document.getElementById('passcode').value;
               const newVoter = await createTestVoter(phone, passcode);
               if(newVoter){
-                alert(`Test voter created with id: ${newVoter._id}`);
+                const phone = document.getElementById('phone');;
+                const passcode = document.getElementById('passcode');
+                phone.value = '';
+                passcode.value = '';
+                recaptchaRef.current.reset();
+                setDisabled(true);
+                setRegisterToken(null);
+                alert(`Test voter created`);
               } else {
                 alert('unable to create test voter');
               }
