@@ -130,6 +130,7 @@ function Feeds() {
             groupId: group.gsid.toString(),
             topicId: topic.topicId.toString(),
             title: topic.topic,
+            description: topic.description || "",
             discussionKey: topic.discussionKey || "",
             surveyId: vote && vote.sid ? vote.sid.toString() : "",
             tags: topic.tags || ""
@@ -265,7 +266,7 @@ function Feeds() {
                                 <th>Select</th>
                             </thead>
                             <tbody>
-                            {topics && topics.length > 0 ? (topics.map((topic) => ( <tr><td key={topic.topicId}><div>{topic.topic} - ID: {topic.topicId}</div><div>Tags: {buildTags(topic.tags)}</div></td><td><Button onClick={() => setTopic(topic)}>Select</Button></td>
+                            {topics && topics.length > 0 ? (topics.map((topic) => ( <tr><td key={topic.topicId}><div>{topic.topic} - ID: {topic.topicId}</div><div>{topic && topic.description || "no description"}</div><div>Tags: {buildTags(topic.tags)}</div></td><td><Button onClick={() => setTopic(topic)}>Select</Button></td>
                             </tr>))) : (<tr><td>no topic</td><td> - </td></tr>)}
                          
                             
@@ -307,7 +308,16 @@ function Feeds() {
                                 <th>Select</th>
                             </thead>
                             <tbody>
-                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={feed.feedId}><td><div>Title: {feed.title}</div><div>Survey: {feed.surveyId ? feed.surveyId : "no survey"}</div><div>Tags: {buildTags(feed.tags)}</div></td><td><Button className='action-btn'  variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
+                            {feeds && feeds.length > 0 ? (feeds.map((feed) => (<tr key={`feed-${feed.groupId}-${feed.topicId}`}><td><div>Title: {feed.title}</div><div>Survey: {feed.surveyId ? feed.surveyId : "no survey"}</div>
+                            <div>Description: {feed.feedId} | 
+                                <div><textarea id={`feedDescription${feed.groupId}-${feed.topicId}`} rows="5" cols="100" defaultValue={feed && feed.description || "no description"}></textarea></div>
+                            </div><div>Tags: {buildTags(feed.tags)}</div></td><td>
+                                <Button className='action-btn' variant="primary" onClick={async () => {
+                                    let newFeed = {...feed};
+                                    newFeed.description = document.getElementById(`feedDescription${feed.groupId}-${feed.topicId}`).value;
+                                    await updateFeed(newFeed);
+                                }}>Update</Button>
+                                <Button className='action-btn'  variant={feed.active === "true" ? "danger" : "success"} onClick={async () => {
                                try{
                                    let newFeed = {...feed};
                                    newFeed.active = newFeed.active === "true" ? "false" : "true";

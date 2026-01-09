@@ -22,6 +22,7 @@ export default function App() {
               <li className='nav-itm'><NavLink to="/conduit">Conduit</NavLink></li>
               <li className='nav-itm'><NavLink to="/feeds">feeds</NavLink></li>
               <li className='nav-itm'><NavLink to="/receivers">Receivers</NavLink></li>
+              <li className='nav-itm'><NavLink to="/testvoter">Test Voter</NavLink></li>
             </ul>
         </nav>
         <Col lg={4}>
