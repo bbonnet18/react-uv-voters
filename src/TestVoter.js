@@ -1,7 +1,7 @@
 import './App.css';
 import axios from 'axios';
 import config from './config';
-import { Alert, Col, Row, Form, Button, Container, Modal, Spinner, Toast, ToastContainer } from "react-bootstrap";
+import { Col, Row, Form, Button, Container, Modal, Spinner, Toast, ToastContainer } from "react-bootstrap";
 import { useState, useRef, useEffect, useContext } from 'react';
 import { UserContext } from './userContext';
 import { useNavigate } from 'react-router-dom';
@@ -45,11 +45,15 @@ function TestVoter(props) {
                 return null;
             }
 
+            const localitySelect = document.getElementById('localitySelect').value;
+            const zipcode = document.getElementById('zipcode').value;
             const apiUrl = `${config.apiBaseUrl}/register/test-voter`;
             var formData = new FormData();
             formData.append('regToken', registerToken); 
             formData.append('phone', phone);
             formData.append('passcode', passcode);
+            formData.append('locality', localitySelect);
+            formData.append('zipcode', zipcode);
             const resp = await axios.post(apiUrl, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -88,6 +92,27 @@ function TestVoter(props) {
               </Col>
               <Col lg={10}>
                 <Form.Control className='' id="passcode" name="passcode" type="password" defaultValue={""} pattern="[a-z]{1,10}" required />
+              </Col>
+            </Row>
+            <Row className='mb-2'>
+              <Col lg={2}>
+                <Form.Label id="aSelect">Locality</Form.Label>
+              </Col>
+              <Col lg={6}>
+                <Form.Select id="localitySelect" name="localitySelect" defaultValue={"8"}>
+                    <option value={"8"}>Arlington</option>
+                    <option value={"11"}>Fairfax</option>
+                    <option value={"12"}>Alexandria</option>
+                    <option value={"13"}>Loudon</option>
+                </Form.Select>
+              </Col>
+            </Row>
+            <Row className='mb-2'>
+            <Col lg={2}>
+                <Form.Label id="aZipcode" >Zipcode</Form.Label>
+              </Col>
+              <Col lg={10}>
+                <Form.Control className='' id="zipcode" name="zipcode" type="zipcode" defaultValue={"22204"} pattern="[0-9]{1,5}" required />
               </Col>
             </Row>
             <Row className='mb-4 mt-4' >
