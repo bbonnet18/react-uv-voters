@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "../../uv-voters"
+		},
+		{
+			"path": "../../uv-vote"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../uv-vote-charts"
+		},
+		{
+			"path": "../../uvote-ai-issues"
+		},
+		{
+			"name": "u-vote-lambdas",
+			"path": "../../u-vote-lambdas"
+		},
+		{
+			"path": "../../Interstellar"
+		}
+	],
+	"settings": {}
+}
