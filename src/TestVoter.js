@@ -35,7 +35,7 @@ function TestVoter(props) {
 
   }
 
-    const createTestVoter = async (phone, passcode) => {
+    const createTestVoter = async (phone, passcode, city, zipcode) => {
         try {
 
             setLoading(true);
@@ -45,14 +45,13 @@ function TestVoter(props) {
                 return null;
             }
 
-            const localitySelect = document.getElementById('localitySelect').value;
-            const zipcode = document.getElementById('zipcode').value;
+       
             const apiUrl = `${config.apiBaseUrl}/register/test-voter`;
             var formData = new FormData();
             formData.append('regToken', registerToken); 
             formData.append('phone', phone);
             formData.append('passcode', passcode);
-            formData.append('locality', localitySelect);
+            formData.append('city', city);
             formData.append('zipcode', zipcode);
             const resp = await axios.post(apiUrl, formData, {
                 headers: {
@@ -102,10 +101,10 @@ function TestVoter(props) {
               </Col>
               <Col lg={6}>
                 <Form.Select id="localitySelect" name="localitySelect" defaultValue={"8"}>
-                    <option value={"8"}>Arlington</option>
-                    <option value={"11"}>Fairfax</option>
-                    <option value={"12"}>Alexandria</option>
-                    <option value={"13"}>Loudon</option>
+                    <option value={"Arlington"}>Arlington</option>
+                    <option value={"Fairfax"}>Fairfax</option>
+                    <option value={"Alexandria"}>Alexandria</option>
+                    <option value={"Loudon"}>Loudon</option>
                 </Form.Select>
               </Col>
             </Row>
@@ -125,14 +124,19 @@ function TestVoter(props) {
             </Spinner>}
             <Button variant="primary" type="submit" onClick={async (e) => {
               e.preventDefault();
-              const phone = document.getElementById('phone').value;
-              const passcode = document.getElementById('passcode').value;
-              const newVoter = await createTestVoter(phone, passcode);
+              const phone = document.getElementById('phone');
+            const passcode = document.getElementById('passcode');
+            const city = document.getElementById('localitySelect');
+            const cityName = city.options[city.selectedIndex].text;
+            const zipcode = document.getElementById('zipcode');
+              const newVoter = await createTestVoter(phone.value, passcode.value, city.value, zipcode.value);
               if(newVoter){
-                const phone = document.getElementById('phone');;
-                const passcode = document.getElementById('passcode');
+                
                 phone.value = '';
                 passcode.value = '';
+                city.value = '8';
+                zipcode.value = '';
+
                 recaptchaRef.current.reset();
                 setDisabled(true);
                 setRegisterToken(null);
