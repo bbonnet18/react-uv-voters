@@ -351,7 +351,7 @@ function Conduit() {
             }
             // get the cookie and set the auth header
             setSourcererLoading(true);
-            let res = await axios.post(`${config.apiBaseUrl}/sourcerer/`, payload, {
+            let res = await axios.post(`${config.apiBaseUrl}/sourcerer`, payload, {
                 withCredentials: true
             });
 
